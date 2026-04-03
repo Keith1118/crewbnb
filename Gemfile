@@ -31,7 +31,7 @@ gem "geocoder"
 gem "pg_search"
 
 # Pagination
-gem "pagy", "~> 9.0"
+gem "pagy", "~> 43.4"
 
 # Image processing (already included above)
 gem "mini_magick"
