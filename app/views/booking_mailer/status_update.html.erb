@@ -1,0 +1,26 @@
+<h1>Booking Update</h1>
+
+<p>Hi <%= @guest.first_name || @guest.email.split("@").first %>,</p>
+
+<p>Your booking for <strong><%= @property.title %></strong> has been updated.</p>
+
+<div class="detail-box">
+  <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 14px;">
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Status</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right; text-transform: capitalize;"><%= @booking.status %></td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Dates</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right;"><%= @booking.check_in.strftime("%d %b") %> &ndash; <%= @booking.check_out.strftime("%d %b %Y") %></td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Property</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right;"><%= @property.title %></td>
+    </tr>
+  </table>
+</div>
+
+<p style="text-align: center; margin: 24px 0;">
+  <a href="<%= booking_url(@booking) %>" class="btn">View Booking</a>
+</p>

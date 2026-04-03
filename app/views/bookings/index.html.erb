@@ -1,0 +1,88 @@
+<% content_for(:title, "My Bookings - WorkStays") %>
+
+<section class="max-w-screen-xl mx-auto px-6 py-12">
+  <%# Header %>
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="font-headline text-3xl font-extrabold text-on-surface tracking-tight">My Bookings</h1>
+  </div>
+
+  <%# Tabs / Filters %>
+  <div class="flex items-center gap-2 mb-8 border-b border-outline-variant/20 pb-px">
+    <% tabs = { "All" => bookings_path, "Upcoming" => bookings_path(status: "upcoming"), "Past" => bookings_path(status: "past"), "Cancelled" => bookings_path(status: "cancelled") } %>
+    <% tabs.each do |label, path| %>
+      <%= link_to label, path,
+          class: "px-5 py-3 text-sm font-medium transition-colors duration-200 border-b-2 -mb-px #{request.fullpath == path || (label == 'All' && request.fullpath == bookings_path && params[:status].blank?) ? 'border-primary-container text-primary-container font-bold' : 'border-transparent text-on-surface-variant hover:text-on-surface hover:border-outline-variant/40'}" %>
+    <% end %>
+  </div>
+
+  <%# Booking Cards List %>
+  <% if @bookings.any? %>
+    <div class="space-y-4">
+      <% @bookings.each do |booking| %>
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6 hover:shadow-md transition-shadow duration-200">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <%# Left: Property & Dates %>
+            <div class="flex-1 space-y-2">
+              <div class="flex items-center gap-3">
+                <%= link_to booking.property.title, property_path(booking.property),
+                    class: "font-headline text-lg font-bold text-on-surface hover:text-primary-container transition-colors" %>
+
+                <%# Status Badge %>
+                <% badge_classes = case booking.status
+                   when "pending" then "bg-yellow-100 text-yellow-800 border-yellow-200"
+                   when "confirmed" then "bg-green-100 text-green-800 border-green-200"
+                   when "cancelled" then "bg-red-100 text-red-800 border-red-200"
+                   when "completed" then "bg-blue-100 text-blue-800 border-blue-200"
+                   end %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border <%= badge_classes %>">
+                  <%= booking.status.capitalize %>
+                </span>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-4 text-sm text-on-surface-variant">
+                <span class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-base">calendar_today</span>
+                  <%= booking.check_in.strftime("%b %d") %> &mdash; <%= booking.check_out.strftime("%b %d, %Y") %>
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-base">person</span>
+                  <%= pluralize(booking.guests_count, "guest") %>
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-base">nights_stay</span>
+                  <%= pluralize(booking.nights, "night") %>
+                </span>
+              </div>
+            </div>
+
+            <%# Right: Price & Action %>
+            <div class="flex items-center gap-6">
+              <div class="text-right">
+                <p class="font-headline text-xl font-bold text-on-surface">&euro;<%= number_with_delimiter(booking.total_price, delimiter: ",") %></p>
+                <p class="text-xs text-on-surface-variant">total</p>
+              </div>
+
+              <%= link_to booking_path(booking), class: "flex items-center gap-2 text-sm font-medium text-primary-container hover:text-on-primary-container hover:bg-primary-container/10 px-4 py-2 rounded-xl transition-colors" do %>
+                <span>View Details</span>
+                <span class="material-symbols-outlined text-base">arrow_forward</span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Pagination %>
+    <div class="mt-8 flex justify-center">
+      <%== pagy_nav(@pagy) %>
+    </div>
+  <% else %>
+    <div class="text-center py-20">
+      <span class="material-symbols-outlined text-6xl text-on-surface-variant/30 mb-4">luggage</span>
+      <h3 class="font-headline text-xl font-bold text-on-surface mb-2">No bookings yet</h3>
+      <p class="text-on-surface-variant mb-6">Start exploring properties and book your next work stay.</p>
+      <%= link_to "Find Stays", properties_path,
+          class: "inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold active:scale-95 transition-transform" %>
+    </div>
+  <% end %>
+</section>

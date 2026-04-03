@@ -1,0 +1,24 @@
+<h1>We Got Your Message</h1>
+
+<p>Hi <%= @contact.name %>,</p>
+
+<p>Thanks for reaching out. We've received your message and will get back to you within 24 hours. Usually quicker.</p>
+
+<div class="detail-box">
+  <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 14px;">
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Subject</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right;"><%= @contact.subject %></td>
+    </tr>
+    <tr>
+      <td colspan="2" style="padding: 12px 0 6px; color: #6b7280; font-size: 12px;">Your message:</td>
+    </tr>
+    <tr>
+      <td colspan="2" style="padding: 6px 0; color: #111c2d; font-size: 14px; white-space: pre-wrap;"><%= @contact.message %></td>
+    </tr>
+  </table>
+</div>
+
+<p>In the meantime, you might find what you need in our <a href="<%= help_page_url %>" style="color: #001949; font-weight: 600;">Help Centre</a>.</p>
+
+<p>Cheers,<br>The WorkStays Team</p>

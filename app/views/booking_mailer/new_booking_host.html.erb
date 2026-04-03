@@ -1,0 +1,34 @@
+<h1>New Booking</h1>
+
+<p>Hi <%= @host.first_name || @host.email.split("@").first %>,</p>
+
+<p>You have a new booking for <strong><%= @property.title %></strong>.</p>
+
+<div class="detail-box">
+  <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 14px;">
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Guest</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right;"><%= @guest.first_name %> <%= @guest.last_name %></td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Check-in</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right;"><%= @booking.check_in.strftime("%A, %d %B %Y") %></td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Check-out</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right;"><%= @booking.check_out.strftime("%A, %d %B %Y") %></td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Guests</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right;"><%= @booking.guests_count %></td>
+    </tr>
+    <tr style="border-top: 1px solid #e5e7eb;">
+      <td style="padding: 10px 0 6px; color: #111c2d; font-weight: 700;">Total</td>
+      <td style="padding: 10px 0 6px; color: #111c2d; font-weight: 700; text-align: right; font-size: 16px;">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></td>
+    </tr>
+  </table>
+</div>
+
+<p style="text-align: center; margin: 24px 0;">
+  <a href="<%= host_booking_url(@booking) %>" class="btn">View Booking</a>
+</p>

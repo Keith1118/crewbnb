@@ -1,0 +1,191 @@
+<% content_for(:title, "How It Works - WorkStays") %>
+<% meta_description "Book crew accommodation in 2 minutes. Search by project location, pick a stay, pay — done. Every booking includes a proper invoice." %>
+
+<%# ===== HERO ===== %>
+<section class="bg-[#001949] pt-10 pb-16">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <p class="text-blue-200/60 text-sm font-medium mb-2">How it works</p>
+    <h1 class="font-headline text-3xl md:text-[2.75rem] font-extrabold text-white leading-[1.1] tracking-tight mb-4 max-w-2xl">
+      Book accommodation for your crew in 2 minutes.
+    </h1>
+    <p class="text-blue-200/80 text-base md:text-lg max-w-lg">
+      No back-and-forth. No tourist prices. Just beds near your job site, booked and invoiced.
+    </p>
+  </div>
+</section>
+
+<%# ===== FOR GUESTS ===== %>
+<section class="bg-white py-16">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <div class="text-center mb-14">
+      <span class="inline-flex items-center gap-2 bg-[#001949]/5 text-[#001949] text-xs font-semibold px-4 py-1.5 rounded-full mb-4">
+        <span class="material-symbols-outlined text-[16px]">luggage</span>
+        Booking a stay
+      </span>
+      <h2 class="font-headline text-2xl font-bold text-slate-900">How to book</h2>
+    </div>
+
+    <div class="max-w-3xl mx-auto space-y-0">
+      <%# Step 1 %>
+      <div class="flex gap-6 items-start pb-10 relative">
+        <div class="flex flex-col items-center">
+          <div class="w-12 h-12 rounded-full bg-[#001949] text-white text-sm font-bold flex items-center justify-center flex-shrink-0 z-10">1</div>
+          <div class="w-0.5 bg-slate-200 flex-1 mt-2"></div>
+        </div>
+        <div class="pb-2">
+          <h3 class="font-headline font-bold text-slate-900 text-lg mb-2">Search by project location</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">
+            Enter the town or area where your team is working. We'll show you stays nearby. You can also filter by team size, dates, and what you need (parking, WiFi speed, number of beds).
+          </p>
+        </div>
+      </div>
+
+      <%# Step 2 %>
+      <div class="flex gap-6 items-start pb-10 relative">
+        <div class="flex flex-col items-center">
+          <div class="w-12 h-12 rounded-full bg-[#001949] text-white text-sm font-bold flex items-center justify-center flex-shrink-0 z-10">2</div>
+          <div class="w-0.5 bg-slate-200 flex-1 mt-2"></div>
+        </div>
+        <div class="pb-2">
+          <h3 class="font-headline font-bold text-slate-900 text-lg mb-2">Pick a stay that fits</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">
+            See photos, amenities, and pricing up front. Check the bed count, parking situation, and WiFi speed. Every listing shows exactly what your crew gets.
+          </p>
+        </div>
+      </div>
+
+      <%# Step 3 %>
+      <div class="flex gap-6 items-start pb-10 relative">
+        <div class="flex flex-col items-center">
+          <div class="w-12 h-12 rounded-full bg-[#001949] text-white text-sm font-bold flex items-center justify-center flex-shrink-0 z-10">3</div>
+          <div class="w-0.5 bg-slate-200 flex-1 mt-2"></div>
+        </div>
+        <div class="pb-2">
+          <h3 class="font-headline font-bold text-slate-900 text-lg mb-2">Book and pay</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">
+            Confirm your dates, enter payment details, done. The host is notified immediately. No waiting around for "request accepted" messages.
+          </p>
+        </div>
+      </div>
+
+      <%# Step 4 %>
+      <div class="flex gap-6 items-start pb-10 relative">
+        <div class="flex flex-col items-center">
+          <div class="w-12 h-12 rounded-full bg-[#001949] text-white text-sm font-bold flex items-center justify-center flex-shrink-0 z-10">4</div>
+          <div class="w-0.5 bg-slate-200 flex-1 mt-2"></div>
+        </div>
+        <div class="pb-2">
+          <h3 class="font-headline font-bold text-slate-900 text-lg mb-2">Crew checks in</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">
+            Check-in details are sent to you. Keys sorted, parking sorted, everything ready. If you need anything, message the host directly through WorkStays.
+          </p>
+        </div>
+      </div>
+
+      <%# Step 5 %>
+      <div class="flex gap-6 items-start">
+        <div class="flex flex-col items-center">
+          <div class="w-12 h-12 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center flex-shrink-0 z-10">5</div>
+        </div>
+        <div>
+          <h3 class="font-headline font-bold text-slate-900 text-lg mb-2">Invoice sent automatically</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">
+            A proper invoice is generated for every booking. Send it straight to your accountant. No chasing, no manual paperwork.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# ===== FOR HOSTS ===== %>
+<section class="bg-slate-50 py-16 border-t border-slate-100">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <div class="text-center mb-14">
+      <span class="inline-flex items-center gap-2 bg-[#001949]/5 text-[#001949] text-xs font-semibold px-4 py-1.5 rounded-full mb-4">
+        <span class="material-symbols-outlined text-[16px]">home_work</span>
+        Listing a property
+      </span>
+      <h2 class="font-headline text-2xl font-bold text-slate-900">How hosting works</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+      <div class="bg-white rounded-2xl p-8 border border-slate-100 text-center">
+        <div class="w-12 h-12 rounded-full bg-[#001949] text-white text-sm font-bold flex items-center justify-center mx-auto mb-5">1</div>
+        <h3 class="font-headline font-bold text-slate-900 mb-2">List your property</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Sign up as a host, add your property details, photos, pricing, and amenities. Takes about 10 minutes.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 border border-slate-100 text-center">
+        <div class="w-12 h-12 rounded-full bg-[#001949] text-white text-sm font-bold flex items-center justify-center mx-auto mb-5">2</div>
+        <h3 class="font-headline font-bold text-slate-900 mb-2">Get bookings</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Workers and companies find your listing and book. You get notified instantly and can message them through the site.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 border border-slate-100 text-center">
+        <div class="w-12 h-12 rounded-full bg-green-600 text-white text-sm font-bold flex items-center justify-center mx-auto mb-5">3</div>
+        <h3 class="font-headline font-bold text-slate-900 mb-2">Get paid</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">
+          Payments are processed securely. You earn from weekdays that would otherwise sit empty. Repeat bookings are common.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# ===== FAQ ===== %>
+<section class="bg-white py-16 border-t border-slate-100">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <h2 class="font-headline text-2xl font-bold text-slate-900 text-center mb-12">Common questions</h2>
+
+    <div class="max-w-2xl mx-auto space-y-6">
+      <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+        <h3 class="font-headline font-bold text-slate-900 mb-2">How quickly can I book?</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">About 2 minutes. Search, pick a stay, pay. Done.</p>
+      </div>
+
+      <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+        <h3 class="font-headline font-bold text-slate-900 mb-2">Do I get an invoice?</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">Yes. Every booking generates an automatic invoice with a proper reference number. Send it straight to your accountant.</p>
+      </div>
+
+      <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+        <h3 class="font-headline font-bold text-slate-900 mb-2">Can I book for my whole team?</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">Yes. Set your team size when searching and we'll show properties that can fit your crew.</p>
+      </div>
+
+      <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100">
+        <h3 class="font-headline font-bold text-slate-900 mb-2">What if I need to cancel?</h3>
+        <p class="text-slate-500 text-sm leading-relaxed">Each property has its own cancellation policy, shown before you book. Check the listing for details.</p>
+      </div>
+    </div>
+
+    <div class="text-center mt-10">
+      <%= link_to help_page_path, class: "inline-flex items-center gap-2 text-sm font-semibold text-[#001949] hover:text-[#002d75] transition-colors" do %>
+        More questions? Visit our Help Centre
+        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+      <% end %>
+    </div>
+  </div>
+</section>
+
+<%# ===== CTA ===== %>
+<section class="bg-slate-50 py-16 border-t border-slate-100">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <div class="bg-[#001949] rounded-2xl px-8 py-14 md:px-16 text-center">
+      <h2 class="font-headline text-2xl md:text-3xl font-bold text-white mb-3">
+        Ready to book?
+      </h2>
+      <p class="text-blue-200/60 max-w-md mx-auto mb-8 text-sm">
+        Find crew accommodation near your next job site. Takes 2 minutes.
+      </p>
+      <%= link_to properties_path, class: "bg-white text-[#001949] px-7 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition-colors" do %>
+        Find a stay
+      <% end %>
+    </div>
+  </div>
+</section>

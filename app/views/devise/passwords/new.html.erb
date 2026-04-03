@@ -1,0 +1,48 @@
+<% content_for(:title, "Forgot Password | WorkStays") %>
+
+<div class="min-h-screen bg-surface-container-low flex items-center justify-center py-12 px-4">
+  <div class="w-full max-w-md">
+    <%# Card %>
+    <div class="bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/15 p-8 md:p-10">
+      <%# Header %>
+      <div class="text-center mb-8">
+        <%= link_to root_path, class: "inline-block mb-4" do %>
+          <span class="text-2xl font-extrabold tracking-tighter text-primary-container font-headline">WorkStays</span>
+        <% end %>
+        <h1 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">Forgot your password?</h1>
+        <p class="text-sm text-on-surface-variant mt-2">Enter your email and we'll send you reset instructions</p>
+      </div>
+
+      <%# Error Messages %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <%# Forgot Password Form %>
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "space-y-5" }) do |f| %>
+
+        <%# Email %>
+        <div>
+          <%= f.label :email, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "you@company.com",
+              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+        </div>
+
+        <%# Submit %>
+        <div class="pt-2">
+          <%= f.submit "Send Reset Instructions", class: "w-full bg-primary text-on-primary px-6 py-3.5 rounded-xl font-bold text-sm cursor-pointer hover:bg-primary-container hover:text-on-primary-container active:scale-[0.98] transition-all" %>
+        </div>
+      <% end %>
+
+      <%# Links %>
+      <div class="mt-6 pt-6 border-t border-outline-variant/15 flex flex-col items-center gap-3">
+        <p class="text-sm text-on-surface-variant">
+          Remember your password?
+          <%= link_to "Sign in", new_session_path(resource_name), class: "text-secondary font-semibold hover:underline" %>
+        </p>
+        <p class="text-sm text-on-surface-variant">
+          Don't have an account?
+          <%= link_to "Sign up", new_registration_path(resource_name), class: "text-secondary font-semibold hover:underline" %>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

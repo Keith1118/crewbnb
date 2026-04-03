@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#d8e3fb",
+              "tertiary": "#0c1d30",
+              "on-tertiary-fixed-variant": "#38485d",
+              "background": "#f9f9ff",
+              "tertiary-fixed": "#d3e4fe",
+              "on-primary-fixed-variant": "#0040a1",
+              "on-primary": "#ffffff",
+              "on-secondary-container": "#244885",
+              "surface-container-high": "#dee8ff",
+              "surface-bright": "#f9f9ff",
+              "inverse-surface": "#263143",
+              "on-tertiary-container": "#8a9ab3",
+              "surface-container": "#e7eeff",
+              "secondary": "#3c5d9c",
+              "on-surface-variant": "#434750",
+              "tertiary-fixed-dim": "#b7c8e1",
+              "primary-fixed": "#dae2ff",
+              "primary": "#001949",
+              "surface": "#f9f9ff",
+              "on-primary-fixed": "#001847",
+              "outline": "#747781",
+              "on-error-container": "#93000a",
+              "secondary-fixed-dim": "#aec6ff",
+              "surface-tint": "#0056d2",
+              "surface-container-lowest": "#ffffff",
+              "error": "#ba1a1a",
+              "outline-variant": "#c4c6d2",
+              "on-secondary-fixed-variant": "#224583",
+              "on-tertiary-fixed": "#0b1c30",
+              "secondary-container": "#99b8fe",
+              "on-secondary": "#ffffff",
+              "surface-dim": "#cfdaf2",
+              "on-surface": "#111c2d",
+              "on-background": "#111c2d",
+              "inverse-primary": "#b2c5ff",
+              "surface-container-low": "#f0f3ff",
+              "on-secondary-fixed": "#001a42",
+              "surface-variant": "#d8e3fb",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#d8e2ff",
+              "primary-container": "#002d75",
+              "primary-fixed-dim": "#b2c5ff",
+              "on-tertiary": "#ffffff",
+              "on-error": "#ffffff",
+              "on-primary-container": "#6b96ff",
+              "inverse-on-surface": "#ecf1ff",
+              "tertiary-container": "#223246"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.8);
+      }
+      .hero-gradient {
+        background: linear-gradient(135deg, #001949 0%, #002d75 100%);
+      }
+    </style>
+</head>
+<body class="bg-background font-body text-on-background antialiased">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-extrabold tracking-tighter text-[#002F6C] dark:text-[#6b96ff] font-headline">
+                Executive Sanctuary
+            </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-[#002F6C] dark:text-[#6b96ff] border-b-2 border-[#002F6C] pb-1 font-['Manrope'] font-bold tracking-tight" href="#">Find Stays</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-[#002F6C] transition-colors duration-200" href="#">Team Manager</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-[#002F6C] transition-colors duration-200" href="#">Invoices</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-[#002F6C] transition-colors duration-200" href="#">Reports</a>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex gap-3 mr-4">
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-slate-50 p-2 rounded-full cursor-pointer transition-colors">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-slate-50 p-2 rounded-full cursor-pointer transition-colors">business_center</span>
+</div>
+<button class="bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold active:scale-95 transition-transform">
+                    Book Workspace
+                </button>
+</div>
+</div>
+<div class="bg-slate-100 dark:bg-slate-800 h-[1px] w-full absolute bottom-0"></div>
+</nav>
+<!-- Hero Section -->
+<section class="relative min-h-[921px] flex items-center pt-20 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="Modern high-end corporate office building architectural view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaTapForn16YajLYIKgPRdgg0-CNzYX0BZdb43VoCnKCKqnrh5xvbJRIvvQWSEjO9uQb-1RVaebJbIoNrVLm5VKOli6xtY8kRUNpV7RJyM34ty8rInyad7MSrrsQsdPg2wVScExQMl0Vx7R8-932_GkBoc0IHNMh01kqchtYa_SVC1k8D5iEEJI21wEbAxyK8ST7BaCIdA4sU4E8aLKNRCWcLib8Rkpl7NQ4fxGGoeaS2ldEOJgjM11bDvqEDrQ_SO2tAZZHpyz2o"/>
+<div class="absolute inset-0 hero-gradient opacity-85"></div>
+</div>
+<div class="relative z-10 max-w-screen-2xl mx-auto px-8 w-full">
+<div class="max-w-3xl">
+<h1 class="font-headline text-6xl md:text-7xl font-extrabold text-white leading-tight tracking-tighter mb-8">
+                    The Headquarters <br/> For Your Team.
+                </h1>
+<p class="text-xl text-primary-fixed-dim font-light max-w-xl mb-12">
+                    Premium contractor housing designed for high-performance logistics, tax compliance, and modern comfort.
+                </p>
+</div>
+<!-- Search Component (Architectural Box) -->
+<div class="surface-container-lowest p-2 rounded-[1.5rem] shadow-2xl max-w-5xl mt-12">
+<div class="grid grid-cols-1 md:grid-cols-4 items-center">
+<div class="px-8 py-6 border-r border-outline-variant/20">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Location</label>
+<input class="w-full bg-transparent border-none p-0 focus:ring-0 text-on-surface font-semibold placeholder:text-outline-variant" placeholder="Project City" type="text"/>
+</div>
+<div class="px-8 py-6 border-r border-outline-variant/20">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Check-in/Out</label>
+<input class="w-full bg-transparent border-none p-0 focus:ring-0 text-on-surface font-semibold placeholder:text-outline-variant" placeholder="Add dates" type="text"/>
+</div>
+<div class="px-8 py-6 border-r border-outline-variant/20">
+<label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1">Team Size</label>
+<input class="w-full bg-transparent border-none p-0 focus:ring-0 text-on-surface font-semibold placeholder:text-outline-variant" placeholder="No. of Guests" type="text"/>
+</div>
+<div class="p-4">
+<button class="w-full h-14 bg-primary text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-all">
+<span class="material-symbols-outlined">search</span>
+                            Explore Stays
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Trust Section (Logos) -->
+<section class="py-16 bg-surface-container-low border-b border-outline-variant/10">
+<div class="max-w-screen-2xl mx-auto px-8">
+<p class="text-center font-label text-sm font-bold text-on-surface-variant tracking-[0.2em] uppercase mb-12">Trusted by Global Logistics &amp; Infrastructure Leaders</p>
+<div class="flex flex-wrap justify-center items-center gap-16 opacity-40 grayscale">
+<div class="text-2xl font-black font-headline tracking-tighter">BECHTEL</div>
+<div class="text-2xl font-black font-headline tracking-tighter">MAERSK</div>
+<div class="text-2xl font-black font-headline tracking-tighter">AECOM</div>
+<div class="text-2xl font-black font-headline tracking-tighter">VINCI</div>
+<div class="text-2xl font-black font-headline tracking-tighter">PCL</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Features Section -->
+<section class="py-32 px-8 max-w-screen-2xl mx-auto">
+<div class="mb-20">
+<span class="text-on-primary-fixed-variant font-bold tracking-widest uppercase text-sm block mb-4">Core Infrastructure</span>
+<h2 class="font-headline text-5xl font-extrabold text-primary tracking-tight">Optimized for Professional Performance.</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 h-[800px]">
+<!-- Work-Ready Homes -->
+<div class="md:col-span-7 relative rounded-[2rem] overflow-hidden group">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Luxurious modern minimalist living space with ergonomic workspace" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGqE_sGlbsSxRhZPgU9guBr9kQVeT6lN53Yt99PVn1qrrjfhQMeUeGiNuVZBJVVhW-4i7ze_Wg7q6mIzD7_YeGr39Eh3jxBSbWYhgMOy8k2zBW6vTdYCWq29W3Czm0nUDxxQX1O5bj1o4LLcm7kDRXQZWIVY69gjb0i_0-F0eNgUKF2eqBZwuznn5gOXHvCv9EZ4vveXm8G5Zw9Hfml0w9N3IvK0d-aikpZdySrS3xjjWC_EPJQ8MoTCOW47OH1v8lHt2lRe-Fi5U"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-12 w-full">
+<span class="bg-primary-container text-on-primary-container px-4 py-1 rounded-full text-xs font-bold mb-4 inline-block">Work-Ready Homes</span>
+<h3 class="font-headline text-3xl font-bold text-white mb-4">Productivity and Rest.</h3>
+<p class="text-primary-fixed-dim max-w-md">Every residence features ergonomic workstations, high-speed fiber internet, and premium bedding for maximum recovery.</p>
+</div>
+</div>
+<!-- Flexible Stays -->
+<div class="md:col-span-5 flex flex-col gap-8">
+<div class="h-1/2 bg-surface-container-high rounded-[2rem] p-10 flex flex-col justify-between relative overflow-hidden group">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-primary text-4xl mb-6">event_repeat</span>
+<h3 class="font-headline text-2xl font-bold text-primary mb-2">Flexible Project Stays</h3>
+<p class="text-on-surface-variant font-medium">Extend or modify bookings instantly as project timelines evolve. No rigid contracts.</p>
+</div>
+<div class="absolute -right-8 -bottom-8 opacity-10">
+<span class="material-symbols-outlined text-[12rem]" style="font-variation-settings: 'FILL' 1;">calendar_month</span>
+</div>
+</div>
+<div class="h-1/2 bg-tertiary text-white rounded-[2rem] p-10 flex flex-col justify-between group overflow-hidden">
+<div>
+<span class="material-symbols-outlined text-on-primary-container text-4xl mb-6">receipt_long</span>
+<h3 class="font-headline text-2xl font-bold mb-2">Bulk Invoicing</h3>
+<p class="text-on-tertiary-container font-medium">One consolidated invoice for the entire team. Automated tax compliance and line-item reporting.</p>
+</div>
+<a class="flex items-center gap-2 text-on-primary-container font-bold group-hover:gap-4 transition-all" href="#">
+                        Review Compliance Tools
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Itinerary Timeline Section (Specialized Component) -->
+<section class="bg-surface-container-low py-32 px-8 overflow-hidden">
+<div class="max-w-screen-2xl mx-auto flex flex-col lg:flex-row gap-20 items-center">
+<div class="lg:w-1/2">
+<h2 class="font-headline text-5xl font-extrabold text-primary tracking-tight mb-8">Streamlined Deployment.</h2>
+<p class="text-on-surface-variant text-lg mb-12 max-w-xl">Our proprietary "Productivity Path" ensures your contractors are on-site and operational within hours, not days.</p>
+<!-- High-Density Timeline -->
+<div class="space-y-0 relative">
+<div class="absolute left-4 top-4 bottom-4 w-[2px] bg-primary-container"></div>
+<div class="relative pl-16 pb-12">
+<div class="absolute left-1.5 top-1.5 w-5 h-5 rounded-full bg-primary border-4 border-white"></div>
+<h4 class="font-headline text-xl font-bold text-primary">Team Assignment</h4>
+<p class="text-on-surface-variant text-sm mt-1">Upload your roster. Our system matches team size to optimal housing layouts.</p>
+</div>
+<div class="relative pl-16 pb-12">
+<div class="absolute left-1.5 top-1.5 w-5 h-5 rounded-full bg-primary-container border-4 border-white"></div>
+<h4 class="font-headline text-xl font-bold text-primary">Keyless Induction</h4>
+<p class="text-on-surface-variant text-sm mt-1">Digital access codes sent to every team member simultaneously via encrypted portal.</p>
+</div>
+<div class="relative pl-16">
+<div class="absolute left-1.5 top-1.5 w-5 h-5 rounded-full bg-secondary-container border-4 border-white"></div>
+<h4 class="font-headline text-xl font-bold text-primary">Unified Logistics</h4>
+<p class="text-on-surface-variant text-sm mt-1">Dedicated fleet parking and secure equipment storage verified at every location.</p>
+</div>
+</div>
+</div>
+<div class="lg:w-1/2 relative">
+<div class="aspect-square rounded-[3rem] overflow-hidden shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="Professional logistics team meeting in a clean architectural boardroom" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4bF503pXBLVdopl08Fb4DouLLtRafYHsMmMKbWh3htf_nxclrSW4r7Htb8DEBUdCY8wd9XgmiRk_VwTUgWCHJhnxV6BiPxQHUqAhFrLVvyDEo_8vShhd3yL-VF2A86pHnPK0U9q8sNFXZ9JLEoar2ZrseG9PuaGc5VtiFJCWEZnxZa_MsGZdjEEICxlssbzq4Q9vVYOqjzKTXEMw3dEvHE3PGBAKi7o1ILN0lsJzjeFMNgpYWu2qLc-JeHurhVX6VN4XLg61WXm4"/>
+</div>
+<!-- Glass Floating Stats Card -->
+<div class="absolute -bottom-10 -left-10 glass-effect p-8 rounded-2xl shadow-xl border border-white/40 max-w-xs">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface-variant uppercase">Uptime Ratio</p>
+<p class="text-2xl font-black text-primary">99.8%</p>
+</div>
+</div>
+<p class="text-sm text-on-surface-variant italic">"Executive Sanctuary reduced our relocation lead time by 40%."</p>
+<p class="text-xs font-bold mt-4">— Director of Operations, Logistics Corp</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-slate-50 dark:bg-slate-950 w-full border-t border-slate-200/50 dark:border-slate-800/50">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 px-8 py-16 max-w-screen-2xl mx-auto">
+<div class="col-span-2">
+<div class="text-lg font-bold text-slate-900 dark:text-white mb-6">Executive Sanctuary</div>
+<p class="font-['Inter'] text-sm text-slate-500 dark:text-slate-400 max-w-xs leading-relaxed">
+                    Setting the standard for architectural housing in the infrastructure and energy sectors.
+                </p>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white mb-6 text-sm uppercase tracking-widest">Solutions</h4>
+<div class="space-y-4 font-['Inter'] text-sm text-slate-500 dark:text-slate-400">
+<a class="block hover:text-[#002F6C] transition-colors underline decoration-2 underline-offset-4" href="#">Corporate Solutions</a>
+<a class="block hover:text-[#002F6C] transition-colors" href="#">Contractor Housing</a>
+<a class="block hover:text-[#002F6C] transition-colors" href="#">Project Logistics</a>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white mb-6 text-sm uppercase tracking-widest">Compliance</h4>
+<div class="space-y-4 font-['Inter'] text-sm text-slate-500 dark:text-slate-400">
+<a class="block hover:text-[#002F6C] transition-colors" href="#">Tax Compliance</a>
+<a class="block hover:text-[#002F6C] transition-colors" href="#">API Access</a>
+<a class="block hover:text-[#002F6C] transition-colors" href="#">Sustainability</a>
+</div>
+</div>
+<div class="col-span-2">
+<h4 class="font-bold text-slate-900 dark:text-white mb-6 text-sm uppercase tracking-widest">Executive Support</h4>
+<p class="text-sm text-slate-500 mb-6">Receive project logistics updates and market availability directly to your inbox.</p>
+<div class="flex gap-2">
+<input class="bg-white border border-outline-variant/30 rounded-lg px-4 py-2 w-full text-sm" placeholder="Corporate email" type="email"/>
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold">Join</button>
+</div>
+</div>
+</div>
+<div class="px-8 py-8 border-t border-slate-200/30 max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="font-['Inter'] text-sm text-slate-500 dark:text-slate-400">© 2024 Executive Sanctuary. Corporate HQ Logistics.</p>
+<div class="flex gap-8">
+<span class="material-symbols-outlined text-slate-400 hover:text-primary cursor-pointer transition-colors">language</span>
+<span class="material-symbols-outlined text-slate-400 hover:text-primary cursor-pointer transition-colors">share</span>
+<span class="material-symbols-outlined text-slate-400 hover:text-primary cursor-pointer transition-colors">shield</span>
+</div>
+</div>
+</footer>
+</body></html>

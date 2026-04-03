@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+  <head>
+    <title><%= content_for(:title) || "WorkStays" %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="WorkStays">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="<%= meta_description %>">
+
+    <%# Open Graph / Social Sharing %>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="WorkStays">
+    <meta property="og:title" content="<%= content_for(:title) || 'WorkStays — Crew Accommodation, Booked in Minutes' %>">
+    <meta property="og:description" content="<%= meta_description %>">
+    <meta property="og:image" content="<%= meta_image %>">
+    <meta property="og:url" content="<%= request.original_url %>">
+
+    <%# Twitter Card %>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= content_for(:title) || 'WorkStays' %>">
+    <meta name="twitter:description" content="<%= meta_description %>">
+    <meta name="twitter:image" content="<%= meta_image %>">
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Google Fonts: Manrope, Inter, Material Symbols Outlined %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+  </head>
+
+  <body class="bg-background font-body text-on-background antialiased">
+    <%# ===== Top Navigation Bar ===== %>
+    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200/60">
+      <div class="flex justify-between items-center px-8 py-4 max-w-screen-xl mx-auto">
+        <%# Brand %>
+        <%= link_to root_path, class: "text-xl font-extrabold tracking-tight text-[#001949] font-headline" do %>
+          WorkStays
+        <% end %>
+
+        <%# Desktop Navigation Links %>
+        <div class="hidden md:flex items-center gap-8">
+          <%= link_to "Home", root_path,
+              class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors" %>
+          <%= link_to "Find stays", properties_path,
+              class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors" %>
+          <%= link_to "How it works", how_it_works_path,
+              class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors" %>
+          <%= link_to "List your property", new_user_registration_path(role: "host"),
+              class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors" %>
+          <%= link_to "Contact", contact_path,
+              class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors" %>
+
+          <% if user_signed_in? && (current_user.host? || current_user.admin?) %>
+            <%= link_to "Host dashboard", host_root_path,
+                class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors" %>
+          <% end %>
+
+          <% if user_signed_in? && current_user.admin? %>
+            <%= link_to "Admin", admin_root_path,
+                class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors" %>
+          <% end %>
+        </div>
+
+        <%# Right-side Actions %>
+        <div class="flex items-center gap-4">
+          <% if user_signed_in? %>
+            <%# Notification & Messages Icons %>
+            <div class="flex gap-3 mr-2">
+              <%= link_to conversations_path, class: "text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors" do %>
+                <span class="material-symbols-outlined">chat</span>
+              <% end %>
+            </div>
+
+            <%# User Menu (Stimulus-ready dropdown) %>
+            <div class="relative" data-controller="dropdown">
+              <button data-action="click->dropdown#toggle" class="flex items-center gap-2 hover:bg-surface-container-high px-3 py-2 rounded-xl transition-colors">
+                <% if current_user.avatar.attached? %>
+                  <%= image_tag current_user.avatar, class: "w-8 h-8 rounded-full object-cover" %>
+                <% else %>
+                  <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
+                    <span class="text-on-primary-container text-sm font-bold"><%= current_user.email[0].upcase %></span>
+                  </div>
+                <% end %>
+                <span class="material-symbols-outlined text-on-surface-variant text-lg">expand_more</span>
+              </button>
+
+              <%# Dropdown Menu %>
+              <div data-dropdown-target="menu" class="hidden absolute right-0 top-full mt-2 w-64 bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/20 overflow-hidden z-50">
+                <div class="px-5 py-4 border-b border-outline-variant/15">
+                  <p class="font-headline font-bold text-on-surface text-sm"><%= current_user.email %></p>
+                  <p class="text-xs text-on-surface-variant mt-0.5 capitalize"><%= current_user.role %></p>
+                </div>
+                <div class="py-2">
+                  <%= link_to edit_user_registration_path, class: "flex items-center gap-3 px-5 py-3 text-sm text-on-surface-variant hover:bg-surface-container-high transition-colors" do %>
+                    <span class="material-symbols-outlined text-lg">person</span>
+                    My Profile
+                  <% end %>
+                  <%= link_to bookings_path, class: "flex items-center gap-3 px-5 py-3 text-sm text-on-surface-variant hover:bg-surface-container-high transition-colors" do %>
+                    <span class="material-symbols-outlined text-lg">luggage</span>
+                    My Bookings
+                  <% end %>
+                  <%= link_to properties_path(favorites: true), class: "flex items-center gap-3 px-5 py-3 text-sm text-on-surface-variant hover:bg-surface-container-high transition-colors" do %>
+                    <span class="material-symbols-outlined text-lg">favorite</span>
+                    My Favorites
+                  <% end %>
+                  <%= link_to conversations_path, class: "flex items-center gap-3 px-5 py-3 text-sm text-on-surface-variant hover:bg-surface-container-high transition-colors" do %>
+                    <span class="material-symbols-outlined text-lg">chat</span>
+                    Messages
+                  <% end %>
+                </div>
+                <div class="border-t border-outline-variant/15 py-2">
+                  <%= button_to destroy_user_session_path, method: :delete, class: "flex items-center gap-3 px-5 py-3 text-sm text-error hover:bg-error-container/30 transition-colors w-full" do %>
+                    <span class="material-symbols-outlined text-lg">logout</span>
+                    Sign Out
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% else %>
+            <%# Login / Sign Up %>
+            <%= link_to "Log in", new_user_session_path,
+                class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors px-3 py-2" %>
+            <%= link_to "Sign up", new_user_registration_path,
+                class: "bg-[#001949] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#002d75] transition-colors" %>
+          <% end %>
+        </div>
+
+        <%# Mobile Menu Toggle %>
+        <div class="md:hidden" data-controller="mobile-menu">
+          <button data-action="click->mobile-menu#toggle" class="text-on-surface-variant p-1">
+            <span class="material-symbols-outlined text-2xl" data-mobile-menu-target="openIcon">menu</span>
+            <span class="material-symbols-outlined text-2xl hidden" data-mobile-menu-target="closeIcon">close</span>
+          </button>
+
+          <%# Mobile Menu Panel %>
+          <div data-mobile-menu-target="menu" class="hidden absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-lg">
+            <div class="px-6 py-4 space-y-1">
+              <%= link_to "Home", root_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
+              <%= link_to "Find stays", properties_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
+              <%= link_to "How it works", how_it_works_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
+              <%= link_to "About", about_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
+              <%= link_to "Contact", contact_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
+
+              <% if user_signed_in? && (current_user.host? || current_user.admin?) %>
+                <%= link_to "Host dashboard", host_root_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
+              <% end %>
+
+              <% if user_signed_in? && current_user.admin? %>
+                <%= link_to "Admin", admin_root_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
+              <% end %>
+
+              <% if user_signed_in? %>
+                <%= link_to "My Profile", edit_user_registration_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
+                <%= link_to "My Bookings", bookings_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
+                <%= link_to "My Favorites", properties_path(favorites: true), class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
+                <%= link_to "Messages", conversations_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
+                <div class="pt-2">
+                  <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-left py-3 text-error font-medium text-sm cursor-pointer" %>
+                </div>
+              <% else %>
+                <div class="flex gap-3 pt-3">
+                  <%= link_to "Log in", new_user_session_path, class: "flex-1 text-center py-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors" %>
+                  <%= link_to "Sign up", new_user_registration_path, class: "flex-1 text-center py-2.5 bg-[#001949] text-white rounded-xl text-sm font-semibold hover:bg-[#002d75] transition-colors" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-outline-variant/20 h-px w-full absolute bottom-0"></div>
+    </nav>
+
+    <%# ===== Flash Messages ===== %>
+    <% if notice.present? || alert.present? %>
+      <div class="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4">
+        <% if notice.present? %>
+          <div class="flash-notice mb-3 flex items-center gap-3" data-controller="dismissable" data-dismissable-delay-value="5000">
+            <span class="material-symbols-outlined text-secondary">check_circle</span>
+            <span class="flex-1 text-sm font-medium"><%= notice %></span>
+            <button data-action="click->dismissable#dismiss" class="text-on-surface-variant hover:text-on-surface">
+              <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+          </div>
+        <% end %>
+        <% if alert.present? %>
+          <div class="flash-alert mb-3 flex items-center gap-3" data-controller="dismissable" data-dismissable-delay-value="5000">
+            <span class="material-symbols-outlined text-error">error</span>
+            <span class="flex-1 text-sm font-medium"><%= alert %></span>
+            <button data-action="click->dismissable#dismiss" class="text-on-surface-variant hover:text-on-surface">
+              <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# ===== Main Content ===== %>
+    <main class="pt-[73px]">
+      <%= yield %>
+    </main>
+
+    <%# ===== Footer ===== %>
+    <footer class="bg-slate-50 w-full border-t border-slate-200">
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 px-8 py-16 max-w-screen-xl mx-auto">
+        <div class="col-span-2">
+          <div class="text-lg font-bold text-slate-900 mb-4 font-headline">WorkStays</div>
+          <p class="text-sm text-slate-500 max-w-xs leading-relaxed">
+            Accommodation for contractors, crews, and work teams. Built by hosts who understand what workers actually need.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-slate-900 mb-4 text-sm">Platform</h4>
+          <div class="space-y-3 text-sm text-slate-500">
+            <%= link_to "Find stays", properties_path, class: "block hover:text-slate-900 transition-colors" %>
+            <%= link_to "List a property", new_user_registration_path(role: "host"), class: "block hover:text-slate-900 transition-colors" %>
+            <%= link_to "How it works", how_it_works_path, class: "block hover:text-slate-900 transition-colors" %>
+            <%= link_to "About us", about_path, class: "block hover:text-slate-900 transition-colors" %>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-slate-900 mb-4 text-sm">Support</h4>
+          <div class="space-y-3 text-sm text-slate-500">
+            <%= link_to "Help centre", help_page_path, class: "block hover:text-slate-900 transition-colors" %>
+            <%= link_to "Contact us", contact_path, class: "block hover:text-slate-900 transition-colors" %>
+            <%= link_to "Safety", safety_path, class: "block hover:text-slate-900 transition-colors" %>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-slate-900 mb-4 text-sm">Legal</h4>
+          <div class="space-y-3 text-sm text-slate-500">
+            <%= link_to "Privacy", privacy_path, class: "block hover:text-slate-900 transition-colors" %>
+            <%= link_to "Terms", terms_path, class: "block hover:text-slate-900 transition-colors" %>
+            <%= link_to "Cookies", cookies_policy_path, class: "block hover:text-slate-900 transition-colors" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-8 py-6 border-t border-slate-200 max-w-screen-xl mx-auto">
+        <p class="text-sm text-slate-400">&copy; <%= Date.current.year %> WorkStays</p>
+      </div>
+    </footer>
+  </body>
+</html>

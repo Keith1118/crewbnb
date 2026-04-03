@@ -1,0 +1,18 @@
+<% content_for(:page_title, "List a New Property") %>
+<% content_for(:title, "List a New Property - WorkStays Host") %>
+
+<div class="max-w-3xl">
+  <%# Header %>
+  <div class="mb-8">
+    <div class="flex items-center gap-3 mb-2">
+      <%= link_to host_properties_path, class: "p-2 rounded-lg hover:bg-surface-container transition-colors text-on-surface-variant" do %>
+        <span class="material-symbols-outlined text-xl">arrow_back</span>
+      <% end %>
+      <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">List a New Property</h2>
+    </div>
+    <p class="text-sm text-on-surface-variant ml-12">Fill in the details below to create your property listing.</p>
+  </div>
+
+  <%# Form %>
+  <%= render "form", property: @property %>
+</div>

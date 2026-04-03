@@ -1,0 +1,55 @@
+<% hue = (property.id * 47 + 180) % 360 %>
+<% weekly = (property.price_per_night * 5).to_i %>
+
+<%= link_to property_path(property), class: "group block" do %>
+  <div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-3">
+    <% if property.images.attached? %>
+      <%= image_tag property.images.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" %>
+    <% else %>
+      <div class="w-full h-full" style="background: linear-gradient(145deg, hsl(<%= hue %>, 30%, 45%) 0%, hsl(<%= hue %>, 25%, 30%) 100%);">
+        <div class="w-full h-full flex items-center justify-center">
+          <span class="material-symbols-outlined text-white/15 text-[56px]" style="font-variation-settings: 'FILL' 1;">home</span>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Badges — top left %>
+    <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
+      <span class="bg-white/90 backdrop-blur-sm text-slate-800 text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm">Mon–Fri available</span>
+      <% if property.has_parking %>
+        <span class="bg-white/90 backdrop-blur-sm text-slate-800 text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm">Free parking</span>
+      <% end %>
+      <% if property.bedrooms >= 3 %>
+        <span class="bg-white/90 backdrop-blur-sm text-slate-800 text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm"><%= property.bedrooms %> beds</span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="flex items-start justify-between gap-2">
+    <div class="min-w-0">
+      <h3 class="font-semibold text-slate-900 text-[15px] truncate"><%= property.title %></h3>
+      <p class="text-slate-500 text-sm mt-0.5"><%= [property.city, property.country].compact.join(", ") %></p>
+      <div class="flex items-center gap-3 mt-1.5 text-slate-500 text-sm">
+        <span><%= property.bedrooms %> bed<%= property.bedrooms == 1 ? "" : "s" %></span>
+        <span class="text-slate-300">&middot;</span>
+        <span><%= property.max_guests %> guest<%= property.max_guests == 1 ? "" : "s" %></span>
+        <% if property.has_parking %>
+          <span class="text-slate-300">&middot;</span>
+          <span>Parking</span>
+        <% end %>
+      </div>
+    </div>
+    <% if property.average_rating %>
+      <div class="flex items-center gap-1 flex-shrink-0 mt-0.5">
+        <span class="material-symbols-outlined text-slate-900 text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+        <span class="text-sm font-medium text-slate-900"><%= property.average_rating %></span>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-2">
+    <span class="font-semibold text-slate-900">&euro;<%= weekly %></span>
+    <span class="text-slate-500 text-sm"> / week</span>
+    <span class="text-slate-400 text-sm ml-1">(&euro;<%= property.price_per_night.to_i %>/night)</span>
+  </div>
+<% end %>

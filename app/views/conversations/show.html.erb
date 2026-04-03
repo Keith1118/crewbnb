@@ -1,0 +1,104 @@
+<% other = @conversation.other_participant(current_user) %>
+<% content_for(:title, "Conversation with #{other.first_name.present? ? other.first_name : other.email} - WorkStays") %>
+
+<section class="max-w-screen-lg mx-auto px-6 py-12">
+  <%# Conversation Header %>
+  <div class="bg-surface-container-lowest rounded-t-2xl border border-outline-variant/15 border-b-0 px-6 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <%= link_to conversations_path, class: "text-on-surface-variant hover:text-primary-container transition-colors mr-2" do %>
+          <span class="material-symbols-outlined">arrow_back</span>
+        <% end %>
+
+        <% if other.avatar.attached? %>
+          <%= image_tag other.avatar, class: "w-10 h-10 rounded-full object-cover" %>
+        <% else %>
+          <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
+            <span class="text-on-primary-container font-bold"><%= other.email[0].upcase %></span>
+          </div>
+        <% end %>
+
+        <div>
+          <h1 class="font-headline font-bold text-on-surface">
+            <%= other.first_name.present? ? "#{other.first_name} #{other.last_name}" : other.email %>
+          </h1>
+          <p class="text-xs text-on-surface-variant flex items-center gap-1">
+            <span class="material-symbols-outlined text-xs">apartment</span>
+            <%= link_to @conversation.property.title, property_path(@conversation.property),
+                class: "hover:text-primary-container transition-colors" %>
+          </p>
+        </div>
+      </div>
+
+      <%= link_to property_path(@conversation.property),
+          class: "hidden md:flex items-center gap-2 text-sm text-on-surface-variant hover:text-primary-container transition-colors border border-outline-variant/30 px-4 py-2 rounded-xl" do %>
+        <span class="material-symbols-outlined text-base">visibility</span>
+        View Property
+      <% end %>
+    </div>
+  </div>
+
+  <%# Message Thread %>
+  <div class="bg-surface-container/30 border-x border-outline-variant/15 px-6 py-8 min-h-[400px] max-h-[600px] overflow-y-auto flex flex-col gap-4" id="message-thread">
+    <% if @messages.empty? %>
+      <div class="text-center py-12">
+        <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-2">chat_bubble_outline</span>
+        <p class="text-sm text-on-surface-variant">No messages yet. Send the first message below.</p>
+      </div>
+    <% else %>
+      <% @messages.each do |message| %>
+        <% is_mine = message.user == current_user %>
+        <div class="flex <%= is_mine ? 'justify-end' : 'justify-start' %>">
+          <div class="max-w-[75%] space-y-1">
+            <%# Sender name (only for other participant) %>
+            <% unless is_mine %>
+              <p class="text-xs font-medium text-on-surface-variant px-1">
+                <%= message.user.first_name.present? ? message.user.first_name : message.user.email.split("@").first %>
+              </p>
+            <% end %>
+
+            <%# Message bubble %>
+            <div class="<%= is_mine ? 'bg-primary-container/20 text-on-surface rounded-2xl rounded-br-md' : 'bg-surface-container-lowest text-on-surface border border-outline-variant/15 rounded-2xl rounded-bl-md' %> px-4 py-3">
+              <p class="text-sm leading-relaxed whitespace-pre-wrap"><%= message.body %></p>
+            </div>
+
+            <%# Timestamp & Read Status %>
+            <div class="flex items-center gap-1.5 px-1 <%= is_mine ? 'justify-end' : 'justify-start' %>">
+              <span class="text-[10px] text-on-surface-variant/60"><%= message.created_at.strftime("%b %d, %I:%M %p") %></span>
+              <% if is_mine %>
+                <span class="material-symbols-outlined text-xs <%= message.read? ? 'text-primary-container' : 'text-on-surface-variant/40' %>">
+                  <%= message.read? ? "done_all" : "done" %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# New Message Form %>
+  <div class="bg-surface-container-lowest rounded-b-2xl border border-outline-variant/15 border-t-0 px-6 py-4">
+    <%= form_with(model: Message.new, url: conversation_messages_path(@conversation), class: "flex items-end gap-3") do |f| %>
+      <div class="flex-1">
+        <%= f.text_area :body,
+            rows: 1,
+            class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors resize-none text-sm",
+            placeholder: "Type a message...",
+            required: true %>
+      </div>
+      <%= f.submit class: "hidden" %>
+      <button type="submit" class="bg-primary-container text-on-primary-container p-3 rounded-xl active:scale-95 transition-transform hover:shadow-md">
+        <span class="material-symbols-outlined">send</span>
+      </button>
+    <% end %>
+  </div>
+</section>
+
+<%# Auto-scroll to bottom of message thread %>
+<script>
+  document.addEventListener("turbo:load", function() {
+    const thread = document.getElementById("message-thread");
+    if (thread) thread.scrollTop = thread.scrollHeight;
+  });
+</script>

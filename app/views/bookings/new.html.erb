@@ -1,0 +1,135 @@
+<% content_for(:title, "Confirm Your Booking - WorkStays") %>
+
+<section class="max-w-screen-lg mx-auto px-6 py-12">
+  <h1 class="font-headline text-3xl font-extrabold text-on-surface tracking-tight mb-8">Confirm Your Booking</h1>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <%# Booking Form %>
+    <div class="lg:col-span-2">
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-8">
+        <%= form_with(model: @booking, url: property_bookings_path(@property), class: "space-y-6") do |f| %>
+          <%# Error Messages %>
+          <% if @booking.errors.any? %>
+            <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-red-600">error</span>
+                <h3 class="text-sm font-bold text-red-800">Please fix the following errors:</h3>
+              </div>
+              <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+                <% @booking.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+
+          <%# Dates %>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <%= f.label :check_in, class: "block text-sm font-medium text-on-surface mb-2" do %>
+                <span class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-base">calendar_today</span>
+                  Check-in Date
+                </span>
+              <% end %>
+              <%= f.date_field :check_in,
+                  class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors",
+                  min: Date.current,
+                  value: @booking.check_in || params[:check_in] %>
+            </div>
+            <div>
+              <%= f.label :check_out, class: "block text-sm font-medium text-on-surface mb-2" do %>
+                <span class="flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-base">calendar_today</span>
+                  Check-out Date
+                </span>
+              <% end %>
+              <%= f.date_field :check_out,
+                  class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors",
+                  min: Date.current + 1,
+                  value: @booking.check_out || params[:check_out] %>
+            </div>
+          </div>
+
+          <%# Guests %>
+          <div>
+            <%= f.label :guests_count, class: "block text-sm font-medium text-on-surface mb-2" do %>
+              <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-base">group</span>
+                Number of Guests
+              </span>
+            <% end %>
+            <%= f.number_field :guests_count,
+                class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors",
+                min: 1,
+                max: @property.max_guests,
+                value: @booking.guests_count || 1,
+                placeholder: "Max #{@property.max_guests} guests" %>
+            <p class="text-xs text-on-surface-variant mt-1">Maximum <%= pluralize(@property.max_guests, "guest") %></p>
+          </div>
+
+          <%# Special Requests %>
+          <div>
+            <%= f.label :special_requests, class: "block text-sm font-medium text-on-surface mb-2" do %>
+              <span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-base">edit_note</span>
+                Special Requests
+              </span>
+            <% end %>
+            <%= f.text_area :special_requests,
+                rows: 4,
+                class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors resize-none",
+                placeholder: "Any special requests or notes for the host..." %>
+          </div>
+
+          <%# Submit %>
+          <div class="pt-4">
+            <% submit_label = @property.instant_book? ? "Book Now" : "Request to Book" %>
+            <%= f.submit submit_label,
+                class: "w-full bg-primary-container text-on-primary-container px-8 py-4 rounded-xl font-headline font-bold text-lg active:scale-[0.98] transition-transform cursor-pointer flex items-center justify-center gap-2" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Sidebar: Property Summary & Price Breakdown %>
+    <div class="space-y-6">
+      <%# Property Summary %>
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+        <% if @property.images.attached? %>
+          <%= image_tag @property.images.first, class: "w-full h-40 object-cover" %>
+        <% else %>
+          <div class="w-full h-40 bg-surface-container flex items-center justify-center">
+            <span class="material-symbols-outlined text-4xl text-on-surface-variant/30">apartment</span>
+          </div>
+        <% end %>
+
+        <div class="p-6">
+          <h3 class="font-headline font-bold text-on-surface mb-1"><%= @property.title %></h3>
+          <p class="text-sm text-on-surface-variant flex items-center gap-1">
+            <span class="material-symbols-outlined text-base">location_on</span>
+            <%= @property.city %>, <%= @property.country %>
+          </p>
+
+          <div class="mt-4 pt-4 border-t border-outline-variant/15">
+            <div class="flex justify-between items-baseline">
+              <span class="text-sm text-on-surface-variant">Price per night</span>
+              <span class="font-headline font-bold text-on-surface">&euro;<%= number_with_delimiter(@property.price_per_night, delimiter: ",") %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%# Price Breakdown Placeholder %>
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+        <h3 class="font-headline font-bold text-on-surface mb-4">Price Breakdown</h3>
+        <div class="space-y-3 text-sm text-on-surface-variant">
+          <p class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-base">info</span>
+            Select dates to see the price breakdown.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

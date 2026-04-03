@@ -1,0 +1,64 @@
+<% content_for(:page_title, "Properties") %>
+
+<%# Header %>
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">Properties</h2>
+    <p class="text-on-surface-variant mt-1">Manage all platform properties.</p>
+  </div>
+</div>
+
+<%# Properties Table %>
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-outline-variant/15 text-left">
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Title</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Host</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">City</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Status</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Price/Night</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-outline-variant/10">
+        <% @properties.each do |property| %>
+          <tr class="hover:bg-surface-container/30 transition-colors">
+            <td class="px-6 py-4">
+              <span class="font-medium text-on-surface"><%= truncate(property.title, length: 35) %></span>
+            </td>
+            <td class="px-6 py-4 text-on-surface-variant">
+              <%= property.user.first_name.present? ? "#{property.user.first_name} #{property.user.last_name}" : property.user.email %>
+            </td>
+            <td class="px-6 py-4 text-on-surface-variant whitespace-nowrap">
+              <%= property.city %><%= property.country.present? ? ", #{property.country}" : "" %>
+            </td>
+            <td class="px-6 py-4">
+              <% status_classes = case property.status
+                 when "published" then "bg-green-100 text-green-800"
+                 when "draft" then "bg-yellow-100 text-yellow-800"
+                 when "archived" then "bg-gray-100 text-gray-800"
+                 end %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold <%= status_classes %>">
+                <%= property.status.capitalize %>
+              </span>
+            </td>
+            <td class="px-6 py-4 font-medium text-on-surface whitespace-nowrap">&euro;<%= number_with_delimiter(property.price_per_night) %></td>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <%= link_to "View", admin_property_path(property), class: "text-primary-container hover:underline font-medium text-xs" %>
+                <%= link_to "Site", property_path(property), target: "_blank", class: "text-on-surface-variant hover:text-primary-container font-medium text-xs" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%# Pagination %>
+<div class="mt-8 flex justify-center">
+  <%== pagy_nav(@pagy) %>
+</div>

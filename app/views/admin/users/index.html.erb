@@ -1,0 +1,69 @@
+<% content_for(:page_title, "Users") %>
+
+<%# Header %>
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">Users</h2>
+    <p class="text-on-surface-variant mt-1">Manage all platform users.</p>
+  </div>
+</div>
+
+<%# Users Table %>
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-outline-variant/15 text-left">
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">User</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Email</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Role</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Joined</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-outline-variant/10">
+        <% @users.each do |user| %>
+          <tr class="hover:bg-surface-container/30 transition-colors">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <% if user.avatar.attached? %>
+                  <%= image_tag user.avatar, class: "w-9 h-9 rounded-full object-cover" %>
+                <% else %>
+                  <div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center">
+                    <span class="text-on-primary-container text-xs font-bold"><%= user.email[0].upcase %></span>
+                  </div>
+                <% end %>
+                <span class="font-medium text-on-surface">
+                  <%= user.first_name.present? ? "#{user.first_name} #{user.last_name}" : user.email.split("@").first %>
+                </span>
+              </div>
+            </td>
+            <td class="px-6 py-4 text-on-surface-variant"><%= user.email %></td>
+            <td class="px-6 py-4">
+              <% role_classes = case user.role
+                 when "admin" then "bg-purple-100 text-purple-800"
+                 when "host" then "bg-blue-100 text-blue-800"
+                 else "bg-gray-100 text-gray-800"
+                 end %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold <%= role_classes %>">
+                <%= user.role.capitalize %>
+              </span>
+            </td>
+            <td class="px-6 py-4 text-on-surface-variant whitespace-nowrap"><%= user.created_at.strftime("%b %d, %Y") %></td>
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <%= link_to "View", admin_user_path(user), class: "text-primary-container hover:underline font-medium text-xs" %>
+                <%= link_to "Edit", edit_admin_user_path(user), class: "text-on-surface-variant hover:text-primary-container font-medium text-xs" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%# Pagination %>
+<div class="mt-8 flex justify-center">
+  <%== pagy_nav(@pagy) %>
+</div>

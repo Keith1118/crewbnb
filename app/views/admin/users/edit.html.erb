@@ -1,0 +1,90 @@
+<% content_for(:page_title, "Edit User") %>
+
+<%# Breadcrumb %>
+<nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-8">
+  <%= link_to "Users", admin_users_path, class: "hover:text-primary-container transition-colors" %>
+  <span class="material-symbols-outlined text-base">chevron_right</span>
+  <%= link_to @user.email, admin_user_path(@user), class: "hover:text-primary-container transition-colors" %>
+  <span class="material-symbols-outlined text-base">chevron_right</span>
+  <span class="text-on-surface font-medium">Edit</span>
+</nav>
+
+<div class="max-w-screen-md">
+  <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight mb-8">Edit User</h2>
+
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-8">
+    <%= form_with(model: @user, url: admin_user_path(@user), method: :patch, class: "space-y-6") do |f| %>
+      <%# Error Messages %>
+      <% if @user.errors.any? %>
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="material-symbols-outlined text-red-600">error</span>
+            <h3 class="text-sm font-bold text-red-800">Please fix the following errors:</h3>
+          </div>
+          <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+            <% @user.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <%# Name Fields %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <%= f.label :first_name, class: "block text-sm font-medium text-on-surface mb-2" %>
+          <%= f.text_field :first_name,
+              class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors",
+              placeholder: "First name" %>
+        </div>
+        <div>
+          <%= f.label :last_name, class: "block text-sm font-medium text-on-surface mb-2" %>
+          <%= f.text_field :last_name,
+              class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors",
+              placeholder: "Last name" %>
+        </div>
+      </div>
+
+      <%# Email %>
+      <div>
+        <%= f.label :email, class: "block text-sm font-medium text-on-surface mb-2" %>
+        <%= f.email_field :email,
+            class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors",
+            placeholder: "user@example.com" %>
+      </div>
+
+      <%# Phone %>
+      <div>
+        <%= f.label :phone, class: "block text-sm font-medium text-on-surface mb-2" %>
+        <%= f.text_field :phone,
+            class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors",
+            placeholder: "+353 1 234 5678" %>
+      </div>
+
+      <%# Bio %>
+      <div>
+        <%= f.label :bio, class: "block text-sm font-medium text-on-surface mb-2" %>
+        <%= f.text_area :bio,
+            rows: 4,
+            class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors resize-none",
+            placeholder: "User bio..." %>
+      </div>
+
+      <%# Role %>
+      <div>
+        <%= f.label :role, class: "block text-sm font-medium text-on-surface mb-2" %>
+        <%= f.select :role, User.roles.keys.map { |r| [r.capitalize, r] },
+            { selected: @user.role },
+            class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+      </div>
+
+      <%# Actions %>
+      <div class="flex items-center gap-4 pt-4">
+        <%= f.submit "Update User",
+            class: "bg-primary-container text-on-primary-container px-8 py-3 rounded-xl font-bold active:scale-95 transition-transform cursor-pointer" %>
+        <%= link_to "Cancel", admin_user_path(@user),
+            class: "text-sm text-on-surface-variant hover:text-on-surface transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+</div>

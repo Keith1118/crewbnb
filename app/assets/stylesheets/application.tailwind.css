@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+/* ===== MD3 Design Tokens (Tailwind v4 @theme) ===== */
+@theme {
+  /* Colors - Material Design 3 Palette */
+  --color-surface-container-highest: #d8e3fb;
+  --color-tertiary: #0c1d30;
+  --color-on-tertiary-fixed-variant: #38485d;
+  --color-background: #f9f9ff;
+  --color-tertiary-fixed: #d3e4fe;
+  --color-on-primary-fixed-variant: #0040a1;
+  --color-on-primary: #ffffff;
+  --color-on-secondary-container: #244885;
+  --color-surface-container-high: #dee8ff;
+  --color-surface-bright: #f9f9ff;
+  --color-inverse-surface: #263143;
+  --color-on-tertiary-container: #8a9ab3;
+  --color-surface-container: #e7eeff;
+  --color-secondary: #3c5d9c;
+  --color-on-surface-variant: #434750;
+  --color-tertiary-fixed-dim: #b7c8e1;
+  --color-primary-fixed: #dae2ff;
+  --color-primary: #001949;
+  --color-surface: #f9f9ff;
+  --color-on-primary-fixed: #001847;
+  --color-outline: #747781;
+  --color-on-error-container: #93000a;
+  --color-secondary-fixed-dim: #aec6ff;
+  --color-surface-tint: #0056d2;
+  --color-surface-container-lowest: #ffffff;
+  --color-error: #ba1a1a;
+  --color-outline-variant: #c4c6d2;
+  --color-on-secondary-fixed-variant: #224583;
+  --color-on-tertiary-fixed: #0b1c30;
+  --color-secondary-container: #99b8fe;
+  --color-on-secondary: #ffffff;
+  --color-surface-dim: #cfdaf2;
+  --color-on-surface: #111c2d;
+  --color-on-background: #111c2d;
+  --color-inverse-primary: #b2c5ff;
+  --color-surface-container-low: #f0f3ff;
+  --color-on-secondary-fixed: #001a42;
+  --color-surface-variant: #d8e3fb;
+  --color-error-container: #ffdad6;
+  --color-secondary-fixed: #d8e2ff;
+  --color-primary-container: #002d75;
+  --color-primary-fixed-dim: #b2c5ff;
+  --color-on-tertiary: #ffffff;
+  --color-on-error: #ffffff;
+  --color-on-primary-container: #6b96ff;
+  --color-inverse-on-surface: #ecf1ff;
+  --color-tertiary-container: #223246;
+
+  /* Font Families */
+  --font-headline: "Manrope", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+
+  /* Border Radius */
+  --radius: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+}
+
+/* ===== Material Symbols ===== */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ===== Glassmorphism ===== */
+.glass-effect {
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* ===== Hero Gradient ===== */
+.hero-gradient {
+  background: linear-gradient(135deg, #001949 0%, #002d75 100%);
+}
+
+/* ===== Flash Messages ===== */
+.flash-notice {
+  @apply bg-surface-container-high text-on-secondary-container border border-outline-variant/30 px-6 py-4 rounded-xl;
+}
+
+.flash-alert {
+  @apply bg-error-container text-on-error-container border border-error/20 px-6 py-4 rounded-xl;
+}
+
+/* ===== Sidebar Active State ===== */
+.sidebar-link {
+  @apply flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant font-medium transition-colors duration-200;
+}
+
+.sidebar-link:hover {
+  @apply bg-surface-container-high text-on-surface;
+}
+
+.sidebar-link.active {
+  @apply bg-primary-container text-on-primary-container font-bold;
+}
+
+/* ===== Hide scrollbar for category row ===== */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

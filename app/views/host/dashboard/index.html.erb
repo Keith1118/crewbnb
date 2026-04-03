@@ -1,0 +1,125 @@
+<% content_for(:page_title, "Dashboard") %>
+
+<%# Welcome %>
+<div class="mb-8">
+  <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">
+    Welcome back<%= current_user.first_name.present? ? ", #{current_user.first_name}" : "" %>
+  </h2>
+  <p class="text-on-surface-variant mt-1">Here's an overview of your hosting activity.</p>
+</div>
+
+<%# Stats Cards %>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+  <%# Total Properties %>
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+    <div class="flex items-center justify-between mb-3">
+      <span class="material-symbols-outlined text-2xl text-primary-container">apartment</span>
+      <%= link_to host_properties_path, class: "text-xs text-on-surface-variant hover:text-primary-container transition-colors" do %>
+        View all
+      <% end %>
+    </div>
+    <p class="font-headline text-3xl font-extrabold text-on-surface"><%= @property_count %></p>
+    <p class="text-sm text-on-surface-variant mt-1">Total Properties</p>
+  </div>
+
+  <%# Active Bookings %>
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+    <div class="flex items-center justify-between mb-3">
+      <span class="material-symbols-outlined text-2xl text-green-600">calendar_month</span>
+      <%= link_to host_bookings_path, class: "text-xs text-on-surface-variant hover:text-primary-container transition-colors" do %>
+        View all
+      <% end %>
+    </div>
+    <p class="font-headline text-3xl font-extrabold text-on-surface"><%= @booking_count %></p>
+    <p class="text-sm text-on-surface-variant mt-1">Active Bookings</p>
+  </div>
+
+  <%# Total Earnings %>
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+    <div class="flex items-center justify-between mb-3">
+      <span class="material-symbols-outlined text-2xl text-yellow-600">payments</span>
+    </div>
+    <p class="font-headline text-3xl font-extrabold text-on-surface">&euro;<%= number_with_delimiter(@earnings, delimiter: ",") %></p>
+    <p class="text-sm text-on-surface-variant mt-1">Total Earnings</p>
+  </div>
+
+  <%# Average Rating %>
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+    <div class="flex items-center justify-between mb-3">
+      <span class="material-symbols-outlined text-2xl text-yellow-500" style="font-variation-settings: 'FILL' 1;">star</span>
+    </div>
+    <% avg_rating = Review.joins(booking: :property).where(properties: { user_id: current_user.id }).average(:rating) %>
+    <p class="font-headline text-3xl font-extrabold text-on-surface">
+      <%= avg_rating.present? ? sprintf("%.1f", avg_rating) : "--" %>
+    </p>
+    <p class="text-sm text-on-surface-variant mt-1">Average Rating</p>
+  </div>
+</div>
+
+<%# Recent Bookings Table %>
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden mb-8">
+  <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/15">
+    <h3 class="font-headline font-bold text-on-surface">Recent Bookings</h3>
+    <%= link_to "View All", host_bookings_path, class: "text-sm text-primary-container hover:underline font-medium" %>
+  </div>
+
+  <% if @recent_bookings.any? %>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-outline-variant/15 text-left">
+            <th class="px-6 py-3 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Guest</th>
+            <th class="px-6 py-3 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Property</th>
+            <th class="px-6 py-3 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Dates</th>
+            <th class="px-6 py-3 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Status</th>
+            <th class="px-6 py-3 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant/10">
+          <% @recent_bookings.each do |booking| %>
+            <tr class="hover:bg-surface-container/30 transition-colors">
+              <td class="px-6 py-4">
+                <span class="font-medium text-on-surface">
+                  <%= booking.user.first_name.present? ? "#{booking.user.first_name} #{booking.user.last_name}" : booking.user.email %>
+                </span>
+              </td>
+              <td class="px-6 py-4 text-on-surface-variant"><%= truncate(booking.property.title, length: 30) %></td>
+              <td class="px-6 py-4 text-on-surface-variant">
+                <%= booking.check_in.strftime("%b %d") %> &mdash; <%= booking.check_out.strftime("%b %d") %>
+              </td>
+              <td class="px-6 py-4">
+                <% badge_classes = case booking.status
+                   when "pending" then "bg-yellow-100 text-yellow-800"
+                   when "confirmed" then "bg-green-100 text-green-800"
+                   when "cancelled" then "bg-red-100 text-red-800"
+                   when "completed" then "bg-blue-100 text-blue-800"
+                   end %>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold <%= badge_classes %>">
+                  <%= booking.status.capitalize %>
+                </span>
+              </td>
+              <td class="px-6 py-4">
+                <%= link_to "View", host_booking_path(booking),
+                    class: "text-primary-container hover:underline font-medium" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="px-6 py-12 text-center">
+      <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-2">calendar_month</span>
+      <p class="text-sm text-on-surface-variant">No bookings yet. List a property to start receiving bookings.</p>
+    </div>
+  <% end %>
+</div>
+
+<%# Quick Actions %>
+<div class="flex items-center gap-4">
+  <%= link_to new_host_property_path,
+      class: "inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold active:scale-95 transition-transform" do %>
+    <span class="material-symbols-outlined text-lg">add</span>
+    New Property
+  <% end %>
+</div>

@@ -1,0 +1,78 @@
+<% content_for(:title, "Messages - WorkStays") %>
+
+<section class="max-w-screen-lg mx-auto px-6 py-12">
+  <h1 class="font-headline text-3xl font-extrabold text-on-surface tracking-tight mb-8">Messages</h1>
+
+  <% if @conversations.any? %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden divide-y divide-outline-variant/15">
+      <% @conversations.each do |conversation| %>
+        <% other = conversation.other_participant(current_user) %>
+        <% last_msg = conversation.last_message %>
+        <% unread_count = conversation.messages.where.not(user: current_user).unread.count %>
+
+        <%= link_to conversation_path(conversation), class: "block hover:bg-surface-container/50 transition-colors" do %>
+          <div class="flex items-center gap-4 px-6 py-5">
+            <%# Avatar %>
+            <div class="relative flex-shrink-0">
+              <% if other.avatar.attached? %>
+                <%= image_tag other.avatar, class: "w-12 h-12 rounded-full object-cover" %>
+              <% else %>
+                <div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center">
+                  <span class="text-on-primary-container text-lg font-bold"><%= other.email[0].upcase %></span>
+                </div>
+              <% end %>
+
+              <%# Unread indicator %>
+              <% if unread_count > 0 %>
+                <span class="absolute -top-1 -right-1 w-5 h-5 bg-primary-container text-on-primary-container text-[10px] font-bold rounded-full flex items-center justify-center">
+                  <%= unread_count > 9 ? "9+" : unread_count %>
+                </span>
+              <% end %>
+            </div>
+
+            <%# Content %>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="font-headline font-bold text-on-surface text-sm truncate <%= 'text-primary-container' if unread_count > 0 %>">
+                  <%= other.first_name.present? ? "#{other.first_name} #{other.last_name}" : other.email %>
+                </h3>
+                <% if last_msg.present? %>
+                  <span class="text-xs text-on-surface-variant flex-shrink-0 ml-4">
+                    <%= time_ago_in_words(last_msg.created_at) %> ago
+                  </span>
+                <% end %>
+              </div>
+
+              <p class="text-xs text-on-surface-variant flex items-center gap-1 mb-1">
+                <span class="material-symbols-outlined text-xs">apartment</span>
+                <%= conversation.property.title %>
+              </p>
+
+              <% if last_msg.present? %>
+                <p class="text-sm truncate <%= unread_count > 0 ? 'text-on-surface font-medium' : 'text-on-surface-variant' %>">
+                  <% if last_msg.user == current_user %>
+                    <span class="text-on-surface-variant">You: </span>
+                  <% end %>
+                  <%= truncate(last_msg.body, length: 80) %>
+                </p>
+              <% else %>
+                <p class="text-sm text-on-surface-variant italic">No messages yet</p>
+              <% end %>
+            </div>
+
+            <%# Arrow %>
+            <span class="material-symbols-outlined text-on-surface-variant/40 flex-shrink-0">chevron_right</span>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-20">
+      <span class="material-symbols-outlined text-6xl text-on-surface-variant/30 mb-4">chat</span>
+      <h3 class="font-headline text-xl font-bold text-on-surface mb-2">No conversations yet</h3>
+      <p class="text-on-surface-variant mb-6">Start a conversation by messaging a host from a property listing.</p>
+      <%= link_to "Browse Properties", properties_path,
+          class: "inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold active:scale-95 transition-transform" %>
+    </div>
+  <% end %>
+</section>

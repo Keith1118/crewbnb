@@ -1,0 +1,125 @@
+<% content_for(:title, "Terms of Service - WorkStays") %>
+<% meta_description "WorkStays terms of service. Rules and guidelines for guests and hosts using the WorkStays marketplace." %>
+
+<%# ===== HERO ===== %>
+<section class="bg-[#001949] pt-10 pb-16">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <p class="text-blue-200/60 text-sm font-medium mb-2">Legal</p>
+    <h1 class="font-headline text-3xl md:text-[2.75rem] font-extrabold text-white leading-[1.1] tracking-tight mb-4 max-w-2xl">
+      Terms of Service
+    </h1>
+    <p class="text-blue-200/80 text-base md:text-lg max-w-lg">
+      Last updated: <%= Date.current.strftime("%d %B %Y") %>
+    </p>
+  </div>
+</section>
+
+<section class="bg-white py-16">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <div class="max-w-3xl mx-auto">
+
+      <div class="space-y-10">
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">1. What WorkStays is</h2>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            WorkStays is a marketplace that connects guests (workers, contractors, and companies looking for accommodation) with hosts (property owners who list their places). We provide the site — the actual accommodation agreement is between the guest and the host.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">2. Using the site</h2>
+          <div class="text-slate-600 text-sm leading-relaxed space-y-3">
+            <p>By using WorkStays, you agree to:</p>
+            <ul class="list-disc list-inside space-y-1 ml-2">
+              <li>Provide accurate information when creating your account</li>
+              <li>Keep your login details secure</li>
+              <li>Not use the site for anything illegal or harmful</li>
+              <li>Treat other users with respect</li>
+              <li>Not create fake listings, reviews, or accounts</li>
+            </ul>
+            <p>You must be at least 18 years old to use WorkStays.</p>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">3. For guests</h2>
+          <div class="text-slate-600 text-sm leading-relaxed space-y-3">
+            <p>When you book a property:</p>
+            <ul class="list-disc list-inside space-y-1 ml-2">
+              <li>You agree to pay the full amount shown at the time of booking</li>
+              <li>You agree to the host's house rules and cancellation policy</li>
+              <li>You're responsible for leaving the property in a reasonable state</li>
+              <li>Any damage should be reported and resolved with the host through WorkStays</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">4. For hosts</h2>
+          <div class="text-slate-600 text-sm leading-relaxed space-y-3">
+            <p>When you list a property:</p>
+            <ul class="list-disc list-inside space-y-1 ml-2">
+              <li>You must have the legal right to rent the property</li>
+              <li>Your listing must be accurate — photos, descriptions, amenities, and pricing</li>
+              <li>You must honour confirmed bookings</li>
+              <li>You're responsible for complying with local laws, regulations, and tax obligations</li>
+              <li>You must ensure the property meets basic safety standards (smoke detectors, etc.)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">5. Payments</h2>
+          <div class="text-slate-600 text-sm leading-relaxed space-y-3">
+            <p>All payments are processed through WorkStays using secure payment providers. Guests pay at the time of booking. Hosts receive payment after guest check-in.</p>
+            <p>Every booking generates an automatic invoice with a unique reference number for accounting purposes.</p>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">6. Cancellations</h2>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Cancellation terms are set by each host and displayed on the listing before you book. Refund amounts depend on the cancellation policy and timing. If a host cancels, the guest receives a full refund.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">7. Reviews</h2>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Only guests who've completed a stay can leave a review. Reviews must be honest and based on your actual experience. We reserve the right to remove reviews that are fake, abusive, or violate these terms.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">8. Our role</h2>
+          <div class="text-slate-600 text-sm leading-relaxed space-y-3">
+            <p>WorkStays is a marketplace. We connect guests and hosts but we're not a party to the accommodation agreement between them. We don't own, manage, or control any of the properties listed.</p>
+            <p>We do our best to verify listings and maintain quality, but we can't guarantee every detail of every property.</p>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">9. Account termination</h2>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            We reserve the right to suspend or terminate accounts that violate these terms, create fake listings, leave fraudulent reviews, or behave in a way that harms other users or the platform.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">10. Changes to these terms</h2>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            We may update these terms from time to time. If we make significant changes, we'll let you know by email or through the website. Continued use of WorkStays after changes means you accept the updated terms.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">11. Contact</h2>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Questions about these terms? <%= link_to "Get in touch", contact_path, class: "text-[#001949] font-medium underline hover:text-[#002d75]" %>.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

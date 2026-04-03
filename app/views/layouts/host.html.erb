@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en">
+  <head>
+    <title><%= content_for(:title) || "Host Dashboard - WorkStays" %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="WorkStays">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Google Fonts: Manrope, Inter, Material Symbols Outlined %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+  </head>
+
+  <body class="bg-background font-body text-on-background antialiased">
+    <div class="flex min-h-screen">
+      <%# ===== Host Sidebar ===== %>
+      <aside class="fixed top-0 left-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col z-40">
+        <%# Brand %>
+        <div class="px-6 py-5 border-b border-outline-variant/15">
+          <%= link_to root_path, class: "text-xl font-extrabold tracking-tighter text-primary-container font-headline" do %>
+            WorkStays
+          <% end %>
+          <p class="text-xs text-on-surface-variant font-label font-medium mt-1 uppercase tracking-widest">Host Dashboard</p>
+        </div>
+
+        <%# Navigation %>
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+          <%= link_to host_root_path, class: "sidebar-link #{'active' if current_page?(host_root_path)}" do %>
+            <span class="material-symbols-outlined text-xl">dashboard</span>
+            <span class="text-sm">Dashboard</span>
+          <% end %>
+
+          <%= link_to host_properties_path, class: "sidebar-link #{'active' if request.path.start_with?('/host/properties')}" do %>
+            <span class="material-symbols-outlined text-xl">apartment</span>
+            <span class="text-sm">My Properties</span>
+          <% end %>
+
+          <%= link_to host_bookings_path, class: "sidebar-link #{'active' if request.path.start_with?('/host/bookings')}" do %>
+            <span class="material-symbols-outlined text-xl">calendar_month</span>
+            <span class="text-sm">Bookings</span>
+          <% end %>
+
+          <%= link_to conversations_path, class: "sidebar-link #{'active' if request.path.start_with?('/conversations')}" do %>
+            <span class="material-symbols-outlined text-xl">chat</span>
+            <span class="text-sm">Messages</span>
+          <% end %>
+        </nav>
+
+        <%# User Info / Back to Site %>
+        <div class="px-4 py-4 border-t border-outline-variant/15 space-y-2">
+          <%= link_to root_path, class: "sidebar-link" do %>
+            <span class="material-symbols-outlined text-xl">arrow_back</span>
+            <span class="text-sm">Back to Site</span>
+          <% end %>
+
+          <%= button_to destroy_user_session_path, method: :delete, class: "sidebar-link w-full text-error" do %>
+            <span class="material-symbols-outlined text-xl">logout</span>
+            <span class="text-sm">Sign Out</span>
+          <% end %>
+        </div>
+      </aside>
+
+      <%# ===== Main Content Area ===== %>
+      <div class="flex-1 ml-64">
+        <%# Top Bar %>
+        <header class="sticky top-0 z-30 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-outline-variant/15">
+          <div class="flex items-center justify-between px-8 py-4">
+            <h1 class="font-headline text-lg font-bold text-on-surface">
+              <%= content_for?(:page_title) ? yield(:page_title) : "Dashboard" %>
+            </h1>
+
+            <div class="flex items-center gap-4">
+              <%= link_to new_host_property_path, class: "bg-primary-container text-on-primary-container px-5 py-2.5 rounded-xl font-bold text-sm active:scale-95 transition-transform flex items-center gap-2" do %>
+                <span class="material-symbols-outlined text-lg">add</span>
+                New Property
+              <% end %>
+
+              <%# User Avatar %>
+              <div class="flex items-center gap-3">
+                <% if current_user.avatar.attached? %>
+                  <%= image_tag current_user.avatar, class: "w-8 h-8 rounded-full object-cover" %>
+                <% else %>
+                  <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
+                    <span class="text-on-primary-container text-sm font-bold"><%= current_user.email[0].upcase %></span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <%# Flash Messages %>
+        <% if notice.present? || alert.present? %>
+          <div class="px-8 pt-4">
+            <% if notice.present? %>
+              <div class="flash-notice mb-3 flex items-center gap-3">
+                <span class="material-symbols-outlined text-secondary">check_circle</span>
+                <span class="flex-1 text-sm font-medium"><%= notice %></span>
+              </div>
+            <% end %>
+            <% if alert.present? %>
+              <div class="flash-alert mb-3 flex items-center gap-3">
+                <span class="material-symbols-outlined text-error">error</span>
+                <span class="flex-1 text-sm font-medium"><%= alert %></span>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <%# Page Content %>
+        <main class="p-8">
+          <%= yield %>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

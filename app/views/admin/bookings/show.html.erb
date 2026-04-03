@@ -1,0 +1,153 @@
+<% content_for(:page_title, "Booking Details") %>
+
+<%# Breadcrumb %>
+<nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-8">
+  <%= link_to "Bookings", admin_bookings_path, class: "hover:text-primary-container transition-colors" %>
+  <span class="material-symbols-outlined text-base">chevron_right</span>
+  <span class="text-on-surface font-medium"><%= @booking.invoice_reference %></span>
+</nav>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <%# Main Detail %>
+  <div class="lg:col-span-2 space-y-6">
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-8">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h2 class="font-headline text-xl font-extrabold text-on-surface tracking-tight mb-1">
+            <%= @booking.property.title %>
+          </h2>
+          <p class="text-sm text-on-surface-variant">
+            <span class="font-mono"><%= @booking.invoice_reference %></span>
+            &middot; Created <%= @booking.created_at.strftime("%b %d, %Y at %I:%M %p") %>
+          </p>
+        </div>
+
+        <% badge_classes = case @booking.status
+           when "pending" then "bg-yellow-100 text-yellow-800 border-yellow-200"
+           when "confirmed" then "bg-green-100 text-green-800 border-green-200"
+           when "cancelled" then "bg-red-100 text-red-800 border-red-200"
+           when "completed" then "bg-blue-100 text-blue-800 border-blue-200"
+           end %>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border <%= badge_classes %>">
+          <%= @booking.status.capitalize %>
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-sm">
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Check-in</p>
+          <p class="font-headline font-bold text-on-surface"><%= @booking.check_in.strftime("%a, %b %d, %Y") %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Check-out</p>
+          <p class="font-headline font-bold text-on-surface"><%= @booking.check_out.strftime("%a, %b %d, %Y") %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Duration</p>
+          <p class="font-headline font-bold text-on-surface"><%= pluralize(@booking.nights, "night") %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Guests</p>
+          <p class="font-headline font-bold text-on-surface"><%= pluralize(@booking.guests_count, "guest") %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Total Price</p>
+          <p class="font-headline text-xl font-extrabold text-on-surface">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Invoice Ref</p>
+          <p class="font-headline font-bold text-on-surface font-mono"><%= @booking.invoice_reference %></p>
+        </div>
+      </div>
+
+      <% if @booking.special_requests.present? %>
+        <div class="mt-6 pt-6 border-t border-outline-variant/15">
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2">Special Requests</p>
+          <p class="text-on-surface text-sm leading-relaxed"><%= @booking.special_requests %></p>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Payments %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+      <div class="px-6 py-4 border-b border-outline-variant/15">
+        <h3 class="font-headline font-bold text-on-surface">Payments (<%= @booking.payments.count %>)</h3>
+      </div>
+      <% if @booking.payments.any? %>
+        <div class="divide-y divide-outline-variant/10">
+          <% @booking.payments.each do |payment| %>
+            <div class="flex items-center justify-between px-6 py-4">
+              <div>
+                <p class="text-sm font-medium text-on-surface">&euro;<%= number_with_delimiter(payment.amount) %> <%= payment.currency %></p>
+                <p class="text-xs text-on-surface-variant"><%= payment.created_at.strftime("%b %d, %Y at %I:%M %p") %></p>
+              </div>
+              <% payment_badge = case payment.status
+                 when "succeeded" then "bg-green-100 text-green-800"
+                 when "pending" then "bg-yellow-100 text-yellow-800"
+                 when "failed" then "bg-red-100 text-red-800"
+                 when "refunded" then "bg-purple-100 text-purple-800"
+                 end %>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold <%= payment_badge %>">
+                <%= payment.status.capitalize %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="px-6 py-6 text-center text-sm text-on-surface-variant">No payments recorded.</div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Sidebar: Guest & Property Links %>
+  <div class="space-y-6">
+    <%# Guest Info %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+      <h3 class="font-headline font-bold text-on-surface mb-4">Guest</h3>
+      <div class="flex items-center gap-3 mb-3">
+        <% guest = @booking.user %>
+        <% if guest.avatar.attached? %>
+          <%= image_tag guest.avatar, class: "w-10 h-10 rounded-full object-cover" %>
+        <% else %>
+          <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
+            <span class="text-on-primary-container font-bold text-sm"><%= guest.email[0].upcase %></span>
+          </div>
+        <% end %>
+        <div>
+          <p class="text-sm font-medium text-on-surface">
+            <%= guest.first_name.present? ? "#{guest.first_name} #{guest.last_name}" : guest.email %>
+          </p>
+          <p class="text-xs text-on-surface-variant"><%= guest.email %></p>
+        </div>
+      </div>
+      <%= link_to "View User", admin_user_path(guest), class: "text-xs text-primary-container hover:underline font-medium" %>
+    </div>
+
+    <%# Property Info %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+      <h3 class="font-headline font-bold text-on-surface mb-4">Property</h3>
+      <p class="text-sm font-medium text-on-surface mb-1"><%= @booking.property.title %></p>
+      <p class="text-xs text-on-surface-variant mb-3">
+        <%= @booking.property.city %>, <%= @booking.property.country %>
+        &middot; &euro;<%= number_with_delimiter(@booking.property.price_per_night) %>/night
+      </p>
+      <div class="flex items-center gap-3">
+        <%= link_to "View Property", admin_property_path(@booking.property), class: "text-xs text-primary-container hover:underline font-medium" %>
+        <% if @booking.property.published? %>
+          <%= link_to "View on Site", property_path(@booking.property), target: "_blank", class: "text-xs text-on-surface-variant hover:text-primary-container font-medium" %>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Host Info %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+      <h3 class="font-headline font-bold text-on-surface mb-4">Host</h3>
+      <% host = @booking.property.user %>
+      <p class="text-sm font-medium text-on-surface mb-1">
+        <%= host.first_name.present? ? "#{host.first_name} #{host.last_name}" : host.email %>
+      </p>
+      <p class="text-xs text-on-surface-variant mb-3"><%= host.email %></p>
+      <%= link_to "View User", admin_user_path(host), class: "text-xs text-primary-container hover:underline font-medium" %>
+    </div>
+  </div>
+</div>

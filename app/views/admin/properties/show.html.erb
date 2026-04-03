@@ -1,0 +1,159 @@
+<% content_for(:page_title, "Property Details") %>
+
+<%# Breadcrumb %>
+<nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-8">
+  <%= link_to "Properties", admin_properties_path, class: "hover:text-primary-container transition-colors" %>
+  <span class="material-symbols-outlined text-base">chevron_right</span>
+  <span class="text-on-surface font-medium"><%= truncate(@property.title, length: 40) %></span>
+</nav>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <%# Main Property Detail %>
+  <div class="lg:col-span-2 space-y-6">
+    <%# Property Card %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+      <%# Image %>
+      <% if @property.images.attached? %>
+        <%= image_tag @property.images.first, class: "w-full h-56 object-cover" %>
+      <% else %>
+        <div class="w-full h-56 bg-surface-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-5xl text-on-surface-variant/30">apartment</span>
+        </div>
+      <% end %>
+
+      <div class="p-8">
+        <div class="flex items-start justify-between mb-6">
+          <div>
+            <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight mb-1"><%= @property.title %></h2>
+            <p class="text-sm text-on-surface-variant flex items-center gap-1">
+              <span class="material-symbols-outlined text-base">location_on</span>
+              <%= @property.full_address %>
+            </p>
+          </div>
+
+          <% status_classes = case @property.status
+             when "published" then "bg-green-100 text-green-800 border-green-200"
+             when "draft" then "bg-yellow-100 text-yellow-800 border-yellow-200"
+             when "archived" then "bg-gray-100 text-gray-800 border-gray-200"
+             end %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border <%= status_classes %>">
+            <%= @property.status.capitalize %>
+          </span>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+          <div>
+            <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Price/Night</p>
+            <p class="font-headline font-bold text-on-surface">&euro;<%= number_with_delimiter(@property.price_per_night) %></p>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Max Guests</p>
+            <p class="font-headline font-bold text-on-surface"><%= @property.max_guests %></p>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Bedrooms</p>
+            <p class="font-headline font-bold text-on-surface"><%= @property.bedrooms %></p>
+          </div>
+          <div>
+            <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Bathrooms</p>
+            <p class="font-headline font-bold text-on-surface"><%= @property.bathrooms %></p>
+          </div>
+        </div>
+
+        <% if @property.description.present? %>
+          <div class="mt-6 pt-6 border-t border-outline-variant/15">
+            <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2">Description</p>
+            <p class="text-on-surface text-sm leading-relaxed"><%= @property.description %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Host Info %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+      <h3 class="font-headline font-bold text-on-surface mb-4">Host</h3>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <% host = @property.user %>
+          <% if host.avatar.attached? %>
+            <%= image_tag host.avatar, class: "w-10 h-10 rounded-full object-cover" %>
+          <% else %>
+            <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
+              <span class="text-on-primary-container font-bold text-sm"><%= host.email[0].upcase %></span>
+            </div>
+          <% end %>
+          <div>
+            <p class="text-sm font-medium text-on-surface">
+              <%= host.first_name.present? ? "#{host.first_name} #{host.last_name}" : host.email %>
+            </p>
+            <p class="text-xs text-on-surface-variant"><%= host.email %></p>
+          </div>
+        </div>
+        <%= link_to "View User", admin_user_path(host), class: "text-xs text-primary-container hover:underline font-medium" %>
+      </div>
+    </div>
+  </div>
+
+  <%# Sidebar: Moderation Actions %>
+  <div class="space-y-6">
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+      <h3 class="font-headline font-bold text-on-surface mb-4">Moderation Actions</h3>
+      <div class="space-y-3">
+        <%# Approve (publish) %>
+        <% unless @property.published? %>
+          <%= button_to admin_property_path(@property),
+              method: :patch,
+              params: { property: { status: "published" } },
+              class: "flex items-center gap-2 w-full bg-green-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold active:scale-95 transition-transform" do %>
+            <span class="material-symbols-outlined text-lg">check_circle</span>
+            Approve & Publish
+          <% end %>
+        <% end %>
+
+        <%# Archive %>
+        <% unless @property.archived? %>
+          <%= button_to admin_property_path(@property),
+              method: :patch,
+              params: { property: { status: "archived" } },
+              class: "flex items-center gap-2 w-full border border-outline-variant/30 text-on-surface-variant px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-surface-container transition-colors" do %>
+            <span class="material-symbols-outlined text-lg">archive</span>
+            Archive Property
+          <% end %>
+        <% end %>
+
+        <%# Set to Draft %>
+        <% unless @property.draft? %>
+          <%= button_to admin_property_path(@property),
+              method: :patch,
+              params: { property: { status: "draft" } },
+              class: "flex items-center gap-2 w-full border border-outline-variant/30 text-on-surface-variant px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-surface-container transition-colors" do %>
+            <span class="material-symbols-outlined text-lg">edit_note</span>
+            Revert to Draft
+          <% end %>
+        <% end %>
+
+        <div class="border-t border-outline-variant/15 pt-3">
+          <%= button_to admin_property_path(@property), method: :delete,
+              class: "flex items-center gap-2 w-full border border-red-300 text-red-700 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-red-50 transition-colors",
+              data: { turbo_confirm: "Are you sure you want to permanently delete this property? This action cannot be undone." } do %>
+            <span class="material-symbols-outlined text-lg">delete_forever</span>
+            Delete Property
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <%# View on Site %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+      <% if @property.published? %>
+        <%= link_to property_path(@property), target: "_blank",
+            class: "flex items-center justify-center gap-2 w-full border border-outline-variant/30 text-on-surface-variant px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-surface-container transition-colors" do %>
+          <span class="material-symbols-outlined text-lg">open_in_new</span>
+          View on Site
+        <% end %>
+      <% else %>
+        <p class="text-sm text-on-surface-variant text-center">Property is not published.</p>
+      <% end %>
+    </div>
+  </div>
+</div>

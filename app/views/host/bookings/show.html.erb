@@ -1,0 +1,129 @@
+<% content_for(:page_title, "Booking Details") %>
+
+<%# Breadcrumb %>
+<nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-8">
+  <%= link_to "Bookings", host_bookings_path, class: "hover:text-primary-container transition-colors" %>
+  <span class="material-symbols-outlined text-base">chevron_right</span>
+  <span class="text-on-surface font-medium"><%= @booking.invoice_reference %></span>
+</nav>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <%# Main Detail %>
+  <div class="lg:col-span-2 space-y-6">
+    <%# Booking Info Card %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-8">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h2 class="font-headline text-xl font-extrabold text-on-surface tracking-tight mb-1">
+            <%= @booking.property.title %>
+          </h2>
+          <p class="text-sm text-on-surface-variant font-mono"><%= @booking.invoice_reference %></p>
+        </div>
+
+        <% badge_classes = case @booking.status
+           when "pending" then "bg-yellow-100 text-yellow-800 border-yellow-200"
+           when "confirmed" then "bg-green-100 text-green-800 border-green-200"
+           when "cancelled" then "bg-red-100 text-red-800 border-red-200"
+           when "completed" then "bg-blue-100 text-blue-800 border-blue-200"
+           end %>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border <%= badge_classes %>">
+          <%= @booking.status.capitalize %>
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Check-in</p>
+          <p class="font-headline font-bold text-on-surface"><%= @booking.check_in.strftime("%a, %b %d, %Y") %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Check-out</p>
+          <p class="font-headline font-bold text-on-surface"><%= @booking.check_out.strftime("%a, %b %d, %Y") %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Duration</p>
+          <p class="font-headline font-bold text-on-surface"><%= pluralize(@booking.nights, "night") %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Guests</p>
+          <p class="font-headline font-bold text-on-surface"><%= pluralize(@booking.guests_count, "guest") %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Total Price</p>
+          <p class="font-headline text-xl font-extrabold text-on-surface">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></p>
+        </div>
+      </div>
+
+      <% if @booking.special_requests.present? %>
+        <div class="mt-6 pt-6 border-t border-outline-variant/15">
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2">Special Requests</p>
+          <p class="text-on-surface text-sm leading-relaxed"><%= @booking.special_requests %></p>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Action Buttons for Pending Bookings %>
+    <% if @booking.pending? %>
+      <div class="flex items-center gap-3">
+        <%= button_to host_booking_path(@booking),
+            method: :patch,
+            params: { booking: { status: "confirmed" } },
+            class: "inline-flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-xl font-bold active:scale-95 transition-transform" do %>
+          <span class="material-symbols-outlined text-lg">check_circle</span>
+          Approve Booking
+        <% end %>
+
+        <%= button_to host_booking_path(@booking),
+            method: :patch,
+            params: { booking: { status: "cancelled" } },
+            class: "inline-flex items-center gap-2 border border-red-300 text-red-700 px-6 py-3 rounded-xl font-bold hover:bg-red-50 active:scale-95 transition-all",
+            data: { turbo_confirm: "Are you sure you want to reject this booking?" } do %>
+          <span class="material-symbols-outlined text-lg">cancel</span>
+          Reject Booking
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Sidebar: Guest Info %>
+  <div class="space-y-6">
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+      <h3 class="font-headline font-bold text-on-surface mb-4">Guest Information</h3>
+      <div class="flex items-center gap-4 mb-4">
+        <% guest = @booking.user %>
+        <% if guest.avatar.attached? %>
+          <%= image_tag guest.avatar, class: "w-14 h-14 rounded-full object-cover" %>
+        <% else %>
+          <div class="w-14 h-14 rounded-full bg-primary-container flex items-center justify-center">
+            <span class="text-on-primary-container text-xl font-bold"><%= guest.email[0].upcase %></span>
+          </div>
+        <% end %>
+        <div>
+          <p class="font-headline font-bold text-on-surface">
+            <%= guest.first_name.present? ? "#{guest.first_name} #{guest.last_name}" : guest.email %>
+          </p>
+          <p class="text-sm text-on-surface-variant"><%= guest.email %></p>
+        </div>
+      </div>
+
+      <% if guest.phone.present? %>
+        <div class="flex items-center gap-2 text-sm text-on-surface-variant mb-3">
+          <span class="material-symbols-outlined text-base">phone</span>
+          <%= guest.phone %>
+        </div>
+      <% end %>
+
+      <p class="text-xs text-on-surface-variant">
+        Member since <%= guest.created_at.strftime("%B %Y") %>
+      </p>
+
+      <div class="mt-4 pt-4 border-t border-outline-variant/15">
+        <%= link_to conversations_path(recipient_id: guest.id, property_id: @booking.property.id),
+            class: "flex items-center justify-center gap-2 w-full border border-outline-variant/30 text-on-surface-variant px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-surface-container transition-colors" do %>
+          <span class="material-symbols-outlined text-lg">chat</span>
+          Message Guest
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

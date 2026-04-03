@@ -1,0 +1,321 @@
+<% content_for(:title, "#{@property.title} - WorkStays") %>
+<% meta_description "#{@property.title} in #{@property.city}, #{@property.country}. #{@property.bedrooms} beds, #{@property.max_guests} guests. From EUR #{@property.price_per_night.to_i}/night. Book on WorkStays." %>
+
+<%# Deterministic gradient for placeholders %>
+<% hue_1 = (@property.id * 37) % 360 %>
+<% hue_2 = (hue_1 + 40) % 360 %>
+<% hue_3 = (hue_1 + 80) % 360 %>
+
+<div class="max-w-screen-2xl mx-auto px-6 md:px-8 py-8">
+  <%# Breadcrumb %>
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-6">
+    <%= link_to "Properties", properties_path, class: "hover:text-primary-container transition-colors" %>
+    <span class="material-symbols-outlined text-base">chevron_right</span>
+    <span class="text-on-surface font-medium truncate"><%= @property.title %></span>
+  </nav>
+
+  <%# Property Header %>
+  <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+    <div>
+      <h1 class="font-headline text-2xl md:text-3xl font-extrabold text-on-surface tracking-tight">
+        <%= @property.title %>
+      </h1>
+      <div class="flex items-center gap-2 mt-2">
+        <span class="material-symbols-outlined text-on-surface-variant text-lg">location_on</span>
+        <p class="text-on-surface-variant font-medium"><%= [@property.city, @property.country].compact.join(", ") %></p>
+      </div>
+      <div class="flex items-center gap-2 mt-2">
+        <span class="material-symbols-outlined text-on-surface-variant text-lg">person</span>
+        <p class="text-on-surface-variant">
+          Hosted by <span class="font-semibold text-on-surface"><%= @property.user.first_name || @property.user.email.split("@").first %></span>
+        </p>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-primary-container/20 text-primary-container">
+          <%= @property.user.role %>
+        </span>
+      </div>
+    </div>
+
+    <%# Favorite Button (header) %>
+    <div class="flex items-center gap-3">
+      <% if user_signed_in? %>
+        <% if @is_favorited %>
+          <%= button_to unfavorite_property_path(@property), method: :delete, class: "inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-error/30 text-error hover:bg-error-container/20 transition-colors text-sm font-bold cursor-pointer" do %>
+            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">favorite</span>
+            Saved
+          <% end %>
+        <% else %>
+          <%= button_to favorite_property_path(@property), method: :post, class: "inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition-colors text-sm font-bold cursor-pointer" do %>
+            <span class="material-symbols-outlined text-lg">favorite</span>
+            Save
+          <% end %>
+        <% end %>
+      <% else %>
+        <%= link_to new_user_session_path, class: "inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-outline-variant/30 text-on-surface-variant hover:bg-surface-container transition-colors text-sm font-bold" do %>
+          <span class="material-symbols-outlined text-lg">favorite</span>
+          Save
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Image Gallery %>
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-3 rounded-2xl overflow-hidden mb-10">
+    <% if @property.images.attached? %>
+      <%# Main Image %>
+      <div class="md:col-span-2 md:row-span-2 aspect-[4/3] md:aspect-auto">
+        <%= image_tag @property.images.first, class: "w-full h-full object-cover" %>
+      </div>
+      <%# Secondary Images %>
+      <% @property.images.drop(1).first(4).each_with_index do |image, index| %>
+        <div class="hidden md:block aspect-[4/3]">
+          <%= image_tag image, class: "w-full h-full object-cover" %>
+        </div>
+      <% end %>
+      <%# Fill remaining slots with gradient placeholders %>
+      <% remaining = 4 - [@property.images.drop(1).size, 4].min %>
+      <% remaining.times do |i| %>
+        <div class="hidden md:block aspect-[4/3]"
+             style="background: linear-gradient(135deg, hsl(<%= (hue_1 + i * 30) % 360 %>, 40%, 40%) 0%, hsl(<%= (hue_2 + i * 30) % 360 %>, 50%, 30%) 100%);">
+        </div>
+      <% end %>
+    <% else %>
+      <%# All gradient placeholders %>
+      <div class="md:col-span-2 md:row-span-2 aspect-[4/3] md:aspect-auto"
+           style="background: linear-gradient(135deg, hsl(<%= hue_1 %>, 45%, 35%) 0%, hsl(<%= hue_2 %>, 55%, 25%) 100%);">
+        <div class="flex items-center justify-center h-full">
+          <span class="material-symbols-outlined text-white/30 text-6xl">image</span>
+        </div>
+      </div>
+      <% 4.times do |i| %>
+        <div class="hidden md:block aspect-[4/3]"
+             style="background: linear-gradient(135deg, hsl(<%= (hue_1 + (i + 1) * 25) % 360 %>, 40%, 40%) 0%, hsl(<%= (hue_3 + i * 25) % 360 %>, 50%, 30%) 100%);">
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# Property Specs Bar %>
+  <div class="flex flex-wrap items-center gap-6 bg-surface-container rounded-2xl p-5 mb-10">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary-container text-xl">apartment</span>
+      <span class="text-sm font-medium text-on-surface"><%= @property.property_type || "Property" %></span>
+    </div>
+    <div class="w-px h-5 bg-outline-variant/30 hidden sm:block"></div>
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary-container text-xl">bed</span>
+      <span class="text-sm font-medium text-on-surface"><%= @property.bedrooms %> Bedroom<%= @property.bedrooms == 1 ? "" : "s" %></span>
+    </div>
+    <div class="w-px h-5 bg-outline-variant/30 hidden sm:block"></div>
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary-container text-xl">bathroom</span>
+      <span class="text-sm font-medium text-on-surface"><%= @property.bathrooms %> Bathroom<%= @property.bathrooms == 1 ? "" : "s" %></span>
+    </div>
+    <div class="w-px h-5 bg-outline-variant/30 hidden sm:block"></div>
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary-container text-xl">group</span>
+      <span class="text-sm font-medium text-on-surface">Up to <%= @property.max_guests %> Guest<%= @property.max_guests == 1 ? "" : "s" %></span>
+    </div>
+    <% if @property.average_rating %>
+      <div class="w-px h-5 bg-outline-variant/30 hidden sm:block"></div>
+      <div class="flex items-center gap-1">
+        <span class="material-symbols-outlined text-amber-500 text-xl" style="font-variation-settings: 'FILL' 1;">star</span>
+        <span class="text-sm font-bold text-on-surface"><%= @property.average_rating %></span>
+        <span class="text-sm text-on-surface-variant">(<%= @property.reviews.count %> review<%= @property.reviews.count == 1 ? "" : "s" %>)</span>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Main Content: Details + Booking Card %>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+    <%# Left Column: Description, Amenities, Work Features %>
+    <div class="lg:col-span-2 space-y-10">
+      <%# Description %>
+      <section>
+        <h2 class="font-headline text-xl font-bold text-on-surface mb-4">About this property</h2>
+        <div class="text-on-surface-variant leading-relaxed whitespace-pre-line"><%= @property.description %></div>
+      </section>
+
+      <%# Work Features %>
+      <section>
+        <h2 class="font-headline text-xl font-bold text-on-surface mb-4">
+          <span class="material-symbols-outlined text-primary-container align-middle mr-1">work</span>
+          Work Features
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10">
+            <span class="material-symbols-outlined text-xl <%= @property.has_desk? ? 'text-primary-container' : 'text-outline-variant' %>">desk</span>
+            <div>
+              <p class="text-sm font-semibold text-on-surface">Dedicated Desk</p>
+              <p class="text-xs text-on-surface-variant"><%= @property.has_desk? ? "Available" : "Not available" %></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10">
+            <span class="material-symbols-outlined text-xl <%= @property.has_meeting_room? ? 'text-primary-container' : 'text-outline-variant' %>">meeting_room</span>
+            <div>
+              <p class="text-sm font-semibold text-on-surface">Meeting Room</p>
+              <p class="text-xs text-on-surface-variant"><%= @property.has_meeting_room? ? "Available" : "Not available" %></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10">
+            <span class="material-symbols-outlined text-xl <%= @property.has_printer? ? 'text-primary-container' : 'text-outline-variant' %>">print</span>
+            <div>
+              <p class="text-sm font-semibold text-on-surface">Printer</p>
+              <p class="text-xs text-on-surface-variant"><%= @property.has_printer? ? "Available" : "Not available" %></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10">
+            <span class="material-symbols-outlined text-xl <%= @property.wifi_speed.present? ? 'text-primary-container' : 'text-outline-variant' %>">wifi</span>
+            <div>
+              <p class="text-sm font-semibold text-on-surface">Wi-Fi</p>
+              <p class="text-xs text-on-surface-variant"><%= @property.wifi_speed.present? ? @property.wifi_speed : "Not specified" %></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10">
+            <span class="material-symbols-outlined text-xl <%= @property.has_parking? ? 'text-primary-container' : 'text-outline-variant' %>">local_parking</span>
+            <div>
+              <p class="text-sm font-semibold text-on-surface">Parking</p>
+              <p class="text-xs text-on-surface-variant"><%= @property.has_parking? ? "Available" : "Not available" %></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <%# Amenities %>
+      <% if @property.amenities.any? %>
+        <section>
+          <h2 class="font-headline text-xl font-bold text-on-surface mb-4">Amenities</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <% @property.amenities.each do |amenity| %>
+              <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low border border-outline-variant/10">
+                <span class="material-symbols-outlined text-primary-container text-xl"><%= amenity.icon.present? ? amenity.icon : "check_circle" %></span>
+                <span class="text-sm font-medium text-on-surface"><%= amenity.name %></span>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      <% end %>
+    </div>
+
+    <%# Right Column: Booking Card %>
+    <div class="lg:col-span-1">
+      <div class="sticky top-24 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 shadow-lg p-6 space-y-5">
+        <%# Price Display %>
+        <div class="flex items-baseline gap-1">
+          <span class="font-headline text-2xl font-extrabold text-on-surface"><%= number_to_currency(@property.price_per_night) %></span>
+          <span class="text-on-surface-variant text-sm font-medium">/ night</span>
+        </div>
+
+        <%# Booking Form %>
+        <%= form_with model: @booking, url: property_bookings_path(@property), class: "space-y-4" do |f| %>
+          <%# Check-in / Check-out %>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Check-in</label>
+              <%= f.date_field :check_in,
+                  value: params[:check_in],
+                  class: "w-full px-3 py-2.5 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Check-out</label>
+              <%= f.date_field :check_out,
+                  value: params[:check_out],
+                  class: "w-full px-3 py-2.5 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+            </div>
+          </div>
+
+          <%# Guests %>
+          <div>
+            <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Guests</label>
+            <%= f.number_field :guests_count, min: 1, max: @property.max_guests,
+                value: params[:guests] || 1,
+                class: "w-full px-3 py-2.5 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+          </div>
+
+          <%# Price Calculation Area %>
+          <div class="border-t border-outline-variant/15 pt-4 space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-on-surface-variant"><%= number_to_currency(@property.price_per_night) %> x <span data-nights>--</span> nights</span>
+              <span class="text-on-surface font-medium" data-subtotal>--</span>
+            </div>
+            <div class="flex justify-between text-base font-bold pt-2 border-t border-outline-variant/15">
+              <span class="text-on-surface">Total</span>
+              <span class="text-on-surface font-headline" data-total>--</span>
+            </div>
+          </div>
+
+          <%# Submit %>
+          <% if @property.instant_book? %>
+            <%= f.submit "Book Now",
+                class: "w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform cursor-pointer" %>
+          <% else %>
+            <%= f.submit "Request to Book",
+                class: "w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform cursor-pointer" %>
+          <% end %>
+        <% end %>
+
+        <%# Instant Book Badge %>
+        <% if @property.instant_book? %>
+          <div class="flex items-center gap-2 text-xs text-on-surface-variant">
+            <span class="material-symbols-outlined text-primary-container text-base">bolt</span>
+            <span>Instant booking - no approval needed</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# Reviews Section %>
+  <section class="mt-16 border-t border-outline-variant/20 pt-10">
+    <div class="flex items-center gap-3 mb-8">
+      <h2 class="font-headline text-xl font-bold text-on-surface">Reviews</h2>
+      <% if @property.average_rating %>
+        <div class="flex items-center gap-1 bg-surface-container px-3 py-1.5 rounded-xl">
+          <span class="material-symbols-outlined text-amber-500 text-lg" style="font-variation-settings: 'FILL' 1;">star</span>
+          <span class="text-sm font-bold text-on-surface"><%= @property.average_rating %></span>
+          <span class="text-sm text-on-surface-variant">(<%= @reviews.count %>)</span>
+        </div>
+      <% end %>
+    </div>
+
+    <% if @reviews.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <% @reviews.each do |review| %>
+          <div class="bg-surface-container-low rounded-2xl p-5 border border-outline-variant/10">
+            <%# Reviewer Info %>
+            <div class="flex items-center gap-3 mb-3">
+              <% if review.reviewer.avatar.attached? %>
+                <%= image_tag review.reviewer.avatar, class: "w-10 h-10 rounded-full object-cover" %>
+              <% else %>
+                <div class="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center">
+                  <span class="text-primary-container text-sm font-bold"><%= review.reviewer.first_name&.first&.upcase || review.reviewer.email[0].upcase %></span>
+                </div>
+              <% end %>
+              <div>
+                <p class="text-sm font-semibold text-on-surface"><%= review.reviewer.first_name || review.reviewer.email.split("@").first %></p>
+                <p class="text-xs text-on-surface-variant"><%= review.created_at.strftime("%B %Y") %></p>
+              </div>
+            </div>
+
+            <%# Star Rating %>
+            <div class="flex items-center gap-0.5 mb-3">
+              <% review.rating.times do %>
+                <span class="material-symbols-outlined text-amber-500 text-base" style="font-variation-settings: 'FILL' 1;">star</span>
+              <% end %>
+              <% (5 - review.rating).times do %>
+                <span class="material-symbols-outlined text-outline-variant text-base">star</span>
+              <% end %>
+            </div>
+
+            <%# Comment %>
+            <p class="text-sm text-on-surface-variant leading-relaxed"><%= review.comment %></p>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-12 bg-surface-container-low rounded-2xl">
+        <span class="material-symbols-outlined text-4xl text-outline-variant/40">rate_review</span>
+        <p class="text-on-surface-variant mt-3">No reviews yet. Be the first to stay and review!</p>
+      </div>
+    <% end %>
+  </section>
+</div>

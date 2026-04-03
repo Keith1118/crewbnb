@@ -1,0 +1,179 @@
+<% content_for(:page_title, "Admin Dashboard") %>
+
+<%# Stats Cards %>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+  <%# Total Users %>
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+    <div class="flex items-center justify-between mb-3">
+      <span class="material-symbols-outlined text-2xl text-primary-container">group</span>
+      <%= link_to admin_users_path, class: "text-xs text-on-surface-variant hover:text-primary-container transition-colors" do %>
+        View all
+      <% end %>
+    </div>
+    <p class="font-headline text-3xl font-extrabold text-on-surface"><%= number_with_delimiter(@total_users) %></p>
+    <p class="text-sm text-on-surface-variant mt-1">Total Users</p>
+  </div>
+
+  <%# Total Properties %>
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+    <div class="flex items-center justify-between mb-3">
+      <span class="material-symbols-outlined text-2xl text-green-600">apartment</span>
+      <%= link_to admin_properties_path, class: "text-xs text-on-surface-variant hover:text-primary-container transition-colors" do %>
+        View all
+      <% end %>
+    </div>
+    <p class="font-headline text-3xl font-extrabold text-on-surface"><%= number_with_delimiter(@total_properties) %></p>
+    <p class="text-sm text-on-surface-variant mt-1">Total Properties</p>
+  </div>
+
+  <%# Total Bookings %>
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+    <div class="flex items-center justify-between mb-3">
+      <span class="material-symbols-outlined text-2xl text-yellow-600">calendar_month</span>
+      <%= link_to admin_bookings_path, class: "text-xs text-on-surface-variant hover:text-primary-container transition-colors" do %>
+        View all
+      <% end %>
+    </div>
+    <p class="font-headline text-3xl font-extrabold text-on-surface"><%= number_with_delimiter(@total_bookings) %></p>
+    <p class="text-sm text-on-surface-variant mt-1">Total Bookings</p>
+  </div>
+
+  <%# Total Revenue %>
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+    <div class="flex items-center justify-between mb-3">
+      <span class="material-symbols-outlined text-2xl text-emerald-600">payments</span>
+    </div>
+    <p class="font-headline text-3xl font-extrabold text-on-surface">&euro;<%= number_with_delimiter(@total_revenue, delimiter: ",") %></p>
+    <p class="text-sm text-on-surface-variant mt-1">Total Revenue</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+  <%# Recent Users %>
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/15">
+      <h3 class="font-headline font-bold text-on-surface">Recent Users</h3>
+      <%= link_to "View All", admin_users_path, class: "text-sm text-primary-container hover:underline font-medium" %>
+    </div>
+
+    <% if @recent_users.any? %>
+      <div class="divide-y divide-outline-variant/10">
+        <% @recent_users.each do |user| %>
+          <div class="flex items-center justify-between px-6 py-4 hover:bg-surface-container/30 transition-colors">
+            <div class="flex items-center gap-3">
+              <% if user.avatar.attached? %>
+                <%= image_tag user.avatar, class: "w-9 h-9 rounded-full object-cover" %>
+              <% else %>
+                <div class="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center">
+                  <span class="text-on-primary-container text-xs font-bold"><%= user.email[0].upcase %></span>
+                </div>
+              <% end %>
+              <div>
+                <p class="text-sm font-medium text-on-surface">
+                  <%= user.first_name.present? ? "#{user.first_name} #{user.last_name}" : user.email %>
+                </p>
+                <p class="text-xs text-on-surface-variant"><%= user.email %></p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <% role_classes = case user.role
+                 when "admin" then "bg-purple-100 text-purple-800"
+                 when "host" then "bg-blue-100 text-blue-800"
+                 else "bg-gray-100 text-gray-800"
+                 end %>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold <%= role_classes %>">
+                <%= user.role.capitalize %>
+              </span>
+              <%= link_to "View", admin_user_path(user), class: "text-xs text-primary-container hover:underline font-medium" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="px-6 py-8 text-center text-sm text-on-surface-variant">No users yet.</div>
+    <% end %>
+  </div>
+
+  <%# Recent Bookings %>
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/15">
+      <h3 class="font-headline font-bold text-on-surface">Recent Bookings</h3>
+      <%= link_to "View All", admin_bookings_path, class: "text-sm text-primary-container hover:underline font-medium" %>
+    </div>
+
+    <% if @recent_bookings.any? %>
+      <div class="divide-y divide-outline-variant/10">
+        <% @recent_bookings.first(5).each do |booking| %>
+          <div class="flex items-center justify-between px-6 py-4 hover:bg-surface-container/30 transition-colors">
+            <div class="space-y-1">
+              <p class="text-sm font-medium text-on-surface"><%= truncate(booking.property.title, length: 30) %></p>
+              <p class="text-xs text-on-surface-variant">
+                <%= booking.user.first_name.present? ? "#{booking.user.first_name} #{booking.user.last_name}" : booking.user.email %>
+                &middot; <%= booking.check_in.strftime("%b %d") %> &mdash; <%= booking.check_out.strftime("%b %d") %>
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <% badge_classes = case booking.status
+                 when "pending" then "bg-yellow-100 text-yellow-800"
+                 when "confirmed" then "bg-green-100 text-green-800"
+                 when "cancelled" then "bg-red-100 text-red-800"
+                 when "completed" then "bg-blue-100 text-blue-800"
+                 end %>
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold <%= badge_classes %>">
+                <%= booking.status.capitalize %>
+              </span>
+              <%= link_to "View", admin_booking_path(booking), class: "text-xs text-primary-container hover:underline font-medium" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="px-6 py-8 text-center text-sm text-on-surface-variant">No bookings yet.</div>
+    <% end %>
+  </div>
+</div>
+
+<%# Moderation Queue: Pending Properties %>
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+  <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/15">
+    <div class="flex items-center gap-2">
+      <h3 class="font-headline font-bold text-on-surface">Moderation Queue</h3>
+      <% pending_count = @recent_properties.select { |p| p.draft? }.count %>
+      <% if pending_count > 0 %>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+          <%= pending_count %> pending
+        </span>
+      <% end %>
+    </div>
+    <%= link_to "All Properties", admin_properties_path, class: "text-sm text-primary-container hover:underline font-medium" %>
+  </div>
+
+  <% draft_properties = @recent_properties.select { |p| p.draft? } %>
+  <% if draft_properties.any? %>
+    <div class="divide-y divide-outline-variant/10">
+      <% draft_properties.each do |property| %>
+        <div class="flex items-center justify-between px-6 py-4 hover:bg-surface-container/30 transition-colors">
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-on-surface"><%= property.title %></p>
+            <p class="text-xs text-on-surface-variant">
+              by <%= property.user.first_name.present? ? "#{property.user.first_name} #{property.user.last_name}" : property.user.email %>
+              &middot; <%= property.city %>, <%= property.country %>
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">
+              Draft
+            </span>
+            <%= link_to "Review", admin_property_path(property),
+                class: "inline-flex items-center gap-1 text-xs text-primary-container hover:underline font-medium" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="px-6 py-8 text-center text-sm text-on-surface-variant">
+      <span class="material-symbols-outlined text-2xl text-on-surface-variant/30 block mb-2">verified</span>
+      No properties awaiting moderation.
+    </div>
+  <% end %>
+</div>

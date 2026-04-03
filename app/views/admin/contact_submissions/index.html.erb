@@ -1,0 +1,78 @@
+<% content_for(:page_title, "Contact Submissions") %>
+
+<%# Header %>
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">Contact Submissions</h2>
+    <p class="text-on-surface-variant mt-1">Messages from the contact form.</p>
+  </div>
+  <div class="flex items-center gap-2 text-sm">
+    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-semibold text-xs">
+      <%= ContactSubmission.pending.count %> unread
+    </span>
+  </div>
+</div>
+
+<% if @contact_submissions.any? %>
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-outline-variant/15 text-left">
+            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Status</th>
+            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Name</th>
+            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Email</th>
+            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Subject</th>
+            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Date</th>
+            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant/10">
+          <% @contact_submissions.each do |submission| %>
+            <tr class="hover:bg-surface-container/30 transition-colors <%= submission.pending? ? 'bg-yellow-50/30' : '' %>">
+              <td class="px-6 py-4">
+                <% if submission.pending? %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-200">New</span>
+                <% elsif submission.read? %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">Read</span>
+                <% else %>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-200">Replied</span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 font-medium text-on-surface <%= submission.pending? ? 'font-bold' : '' %>">
+                <%= submission.name %>
+              </td>
+              <td class="px-6 py-4 text-on-surface-variant"><%= submission.email %></td>
+              <td class="px-6 py-4 text-on-surface-variant"><%= submission.subject %></td>
+              <td class="px-6 py-4 text-on-surface-variant whitespace-nowrap"><%= submission.created_at.strftime("%b %d, %Y %H:%M") %></td>
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-3">
+                  <%= link_to admin_contact_submission_path(submission), class: "inline-flex items-center gap-1 text-primary-container hover:underline font-medium text-xs" do %>
+                    <span class="material-symbols-outlined text-sm">visibility</span>
+                    View
+                  <% end %>
+                  <%= button_to admin_contact_submission_path(submission), method: :delete,
+                      class: "inline-flex items-center gap-1 text-red-600 hover:text-red-800 font-medium text-xs",
+                      data: { turbo_confirm: "Delete this submission?" } do %>
+                    <span class="material-symbols-outlined text-sm">delete</span>
+                    Delete
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-8 flex justify-center">
+    <%== pagy_nav(@pagy) %>
+  </div>
+<% else %>
+  <div class="text-center py-20 bg-surface-container-lowest rounded-2xl border border-outline-variant/15">
+    <span class="material-symbols-outlined text-6xl text-on-surface-variant/30 mb-4">mail</span>
+    <h3 class="font-headline text-xl font-bold text-on-surface mb-2">No messages yet</h3>
+    <p class="text-on-surface-variant">Contact form submissions will appear here.</p>
+  </div>
+<% end %>

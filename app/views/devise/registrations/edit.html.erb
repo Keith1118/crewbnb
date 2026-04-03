@@ -1,0 +1,122 @@
+<% content_for(:title, "Edit Profile | WorkStays") %>
+
+<div class="min-h-screen bg-surface-container-low flex items-center justify-center py-12 px-4">
+  <div class="w-full max-w-lg">
+    <%# Card %>
+    <div class="bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/15 p-8 md:p-10">
+      <%# Header %>
+      <div class="text-center mb-8">
+        <h1 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">Edit Profile</h1>
+        <p class="text-sm text-on-surface-variant mt-2">Update your personal information</p>
+      </div>
+
+      <%# Error Messages %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <%# Edit Form %>
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, multipart: true, class: "space-y-5" }) do |f| %>
+
+        <%# Avatar Upload %>
+        <div class="flex flex-col items-center gap-4 mb-2">
+          <div class="relative">
+            <% if resource.avatar.attached? %>
+              <%= image_tag resource.avatar, class: "w-20 h-20 rounded-full object-cover border-2 border-outline-variant/20" %>
+            <% else %>
+              <div class="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center border-2 border-outline-variant/20">
+                <span class="text-on-primary-container text-2xl font-bold"><%= resource.email[0].upcase %></span>
+              </div>
+            <% end %>
+            <label for="user_avatar" class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer hover:bg-primary-container transition-colors shadow-md">
+              <span class="material-symbols-outlined text-on-primary text-sm">photo_camera</span>
+            </label>
+          </div>
+          <%= f.file_field :avatar, accept: "image/*", class: "hidden", id: "user_avatar" %>
+          <p class="text-xs text-on-surface-variant">Click the camera icon to upload a photo</p>
+        </div>
+
+        <%# Name Fields %>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <%= f.label :first_name, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+            <%= f.text_field :first_name, autofocus: true, autocomplete: "given-name", placeholder: "First name",
+                class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+          </div>
+          <div>
+            <%= f.label :last_name, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+            <%= f.text_field :last_name, autocomplete: "family-name", placeholder: "Last name",
+                class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+          </div>
+        </div>
+
+        <%# Email %>
+        <div>
+          <%= f.label :email, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+          <%= f.email_field :email, autocomplete: "email",
+              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+        </div>
+
+        <%# Phone %>
+        <div>
+          <%= f.label :phone, "Phone (optional)", class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+          <%= f.telephone_field :phone, autocomplete: "tel", placeholder: "+1 (555) 000-0000",
+              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+        </div>
+
+        <%# Bio %>
+        <div>
+          <%= f.label :bio, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+          <%= f.text_area :bio, rows: 4, placeholder: "Tell us a bit about yourself...",
+              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all resize-none" %>
+        </div>
+
+        <%# Current Password (required to update) %>
+        <div class="pt-2 border-t border-outline-variant/15">
+          <p class="text-xs text-on-surface-variant mb-4 mt-4">We need your current password to confirm changes</p>
+          <%= f.label :current_password, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+          <%= f.password_field :current_password, autocomplete: "current-password", placeholder: "Enter current password",
+              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+        </div>
+
+        <%# New Password (optional) %>
+        <div>
+          <%= f.label :password, "New password (leave blank to keep current)", class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+          <% if @minimum_password_length %>
+            <p class="text-xs text-on-surface-variant mb-1.5"><%= @minimum_password_length %> characters minimum</p>
+          <% end %>
+          <%= f.password_field :password, autocomplete: "new-password", placeholder: "New password",
+              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+        </div>
+
+        <%# Password Confirmation %>
+        <div>
+          <%= f.label :password_confirmation, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "Confirm new password",
+              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+        </div>
+
+        <%# Submit %>
+        <div class="pt-2">
+          <%= f.submit "Update Profile", class: "w-full bg-primary text-on-primary px-6 py-3.5 rounded-xl font-bold text-sm cursor-pointer hover:bg-primary-container hover:text-on-primary-container active:scale-[0.98] transition-all" %>
+        </div>
+      <% end %>
+
+      <%# Back Link %>
+      <div class="mt-4 text-center">
+        <%= link_to "Back", :back, class: "text-sm text-on-surface-variant hover:text-on-surface transition-colors" %>
+      </div>
+
+      <%# Cancel Account %>
+      <div class="mt-8 pt-6 border-t border-outline-variant/15">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-error">Cancel my account</h3>
+            <p class="text-xs text-on-surface-variant mt-1">This action is irreversible</p>
+          </div>
+          <%= button_to "Delete Account", registration_path(resource_name), method: :delete,
+              data: { turbo_confirm: "Are you sure you want to delete your account? This cannot be undone." },
+              class: "text-sm font-semibold text-error border border-error/30 rounded-xl px-4 py-2 hover:bg-error-container/20 transition-colors cursor-pointer" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

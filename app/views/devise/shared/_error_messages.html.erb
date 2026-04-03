@@ -1,0 +1,17 @@
+<% if resource.errors.any? %>
+  <div class="bg-error-container/30 border border-error/20 rounded-xl p-4 mb-6">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="material-symbols-outlined text-error text-lg">error</span>
+      <h3 class="text-sm font-bold text-error">
+        <%= I18n.t("errors.messages.not_saved",
+              count: resource.errors.count,
+              resource: resource.class.model_name.human.downcase) %>
+      </h3>
+    </div>
+    <ul class="list-disc list-inside space-y-1 pl-1">
+      <% resource.errors.full_messages.each do |message| %>
+        <li class="text-sm text-on-surface-variant"><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

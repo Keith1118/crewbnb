@@ -1,0 +1,30 @@
+<h1>New Contact Form Submission</h1>
+
+<div class="detail-box">
+  <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 14px;">
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Name</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right;"><%= @contact.name %></td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Email</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right;"><%= @contact.email %></td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Subject</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right;"><%= @contact.subject %></td>
+    </tr>
+    <tr>
+      <td colspan="2" style="padding: 12px 0 6px; color: #6b7280; font-size: 12px;">Message:</td>
+    </tr>
+    <tr>
+      <td colspan="2" style="padding: 6px 0; color: #111c2d; font-size: 14px; white-space: pre-wrap;"><%= @contact.message %></td>
+    </tr>
+  </table>
+</div>
+
+<p style="text-align: center; margin: 24px 0;">
+  <a href="<%= admin_contact_submissions_url %>" class="btn">View in Admin</a>
+  &nbsp;&nbsp;
+  <a href="mailto:<%= @contact.email %>?subject=Re: <%= @contact.subject %>" class="btn btn-outline">Reply via Email</a>
+</p>

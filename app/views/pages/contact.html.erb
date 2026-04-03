@@ -1,0 +1,131 @@
+<% content_for(:title, "Contact Us - WorkStays") %>
+<% meta_description "Got a question about WorkStays? Send us a message and we'll get back to you within 24 hours. Usually quicker." %>
+
+<%# ===== HERO ===== %>
+<section class="bg-[#001949] pt-10 pb-16">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <p class="text-blue-200/60 text-sm font-medium mb-2">Get in touch</p>
+    <h1 class="font-headline text-3xl md:text-[2.75rem] font-extrabold text-white leading-[1.1] tracking-tight mb-4 max-w-2xl">
+      Got a question? We'll sort it.
+    </h1>
+    <p class="text-blue-200/80 text-base md:text-lg max-w-lg">
+      Drop us a message and we'll get back to you within 24 hours. Usually quicker.
+    </p>
+  </div>
+</section>
+
+<section class="bg-white py-16">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
+
+      <%# Contact Form %>
+      <div class="lg:col-span-3">
+        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-8">
+          <h2 class="font-headline text-xl font-bold text-slate-900 mb-6">Send us a message</h2>
+
+          <%= form_with(model: @contact, url: contact_path, class: "space-y-5") do |f| %>
+            <% if @contact.errors.any? %>
+              <div class="bg-error-container/30 border border-error/20 rounded-xl p-4">
+                <p class="text-sm font-medium text-error mb-2">Please fix the following:</p>
+                <ul class="list-disc list-inside text-sm text-error/80 space-y-1">
+                  <% @contact.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">Your name</label>
+                <%= f.text_field :name, placeholder: "John Murphy",
+                    class: "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-[#001949]/20 focus:border-[#001949] transition-colors" %>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1.5">Email address</label>
+                <%= f.email_field :email, placeholder: "john@company.com",
+                    class: "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-[#001949]/20 focus:border-[#001949] transition-colors" %>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">Subject</label>
+              <%= f.select :subject,
+                  options_for_select([
+                    "General enquiry",
+                    "Booking question",
+                    "I want to list a property",
+                    "Payment issue",
+                    "Report a problem",
+                    "Partnership enquiry",
+                    "Other"
+                  ], @contact.subject),
+                  {},
+                  class: "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-[#001949]/20 focus:border-[#001949] transition-colors bg-white" %>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-slate-700 mb-1.5">Message</label>
+              <%= f.text_area :message, rows: 6, placeholder: "Tell us what you need help with...",
+                  class: "w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-[#001949]/20 focus:border-[#001949] transition-colors resize-none" %>
+            </div>
+
+            <div>
+              <%= f.submit "Send message",
+                  class: "bg-[#001949] text-white px-8 py-3 rounded-xl font-semibold text-sm hover:bg-[#002d75] transition-colors cursor-pointer" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Contact Info Sidebar %>
+      <div class="lg:col-span-2 space-y-6">
+        <div class="bg-slate-50 rounded-2xl p-8 border border-slate-100">
+          <h3 class="font-headline font-bold text-slate-900 mb-5">Other ways to reach us</h3>
+
+          <div class="space-y-5">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-[#001949] flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-white text-lg">mail</span>
+              </div>
+              <div>
+                <p class="font-medium text-slate-900 text-sm">Email</p>
+                <p class="text-slate-500 text-sm">hello@workstays.com</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-[#001949] flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-white text-lg">schedule</span>
+              </div>
+              <div>
+                <p class="font-medium text-slate-900 text-sm">Response time</p>
+                <p class="text-slate-500 text-sm">Within 24 hours, usually quicker</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-[#001949] flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-white text-lg">location_on</span>
+              </div>
+              <div>
+                <p class="font-medium text-slate-900 text-sm">Location</p>
+                <p class="text-slate-500 text-sm">Tulfarris, Wicklow, Ireland</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-green-50 rounded-2xl p-8 border border-green-100">
+          <h3 class="font-headline font-bold text-slate-900 mb-3">Quick answers</h3>
+          <p class="text-slate-600 text-sm mb-4">Before you write, check if your question is already answered.</p>
+          <%= link_to help_page_path, class: "inline-flex items-center gap-1.5 text-sm font-semibold text-green-700 hover:text-green-900 transition-colors" do %>
+            Visit our Help Centre
+            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+          <% end %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

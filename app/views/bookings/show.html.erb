@@ -1,0 +1,172 @@
+<% content_for(:title, "Booking ##{@booking.invoice_reference} - WorkStays") %>
+
+<section class="max-w-screen-lg mx-auto px-6 py-12">
+  <%# Breadcrumb %>
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-8">
+    <%= link_to "My Bookings", bookings_path, class: "hover:text-primary-container transition-colors" %>
+    <span class="material-symbols-outlined text-base">chevron_right</span>
+    <span class="text-on-surface font-medium"><%= @booking.invoice_reference %></span>
+  </nav>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <%# Main Booking Detail Card %>
+    <div class="lg:col-span-2 space-y-6">
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-8">
+        <%# Header %>
+        <div class="flex items-start justify-between mb-6">
+          <div>
+            <h1 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight mb-1">
+              <%= link_to @booking.property.title, property_path(@booking.property),
+                  class: "hover:text-primary-container transition-colors" %>
+            </h1>
+            <p class="text-sm text-on-surface-variant flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-base">location_on</span>
+              <%= @booking.property.city %>, <%= @booking.property.country %>
+            </p>
+          </div>
+
+          <%# Status Badge %>
+          <% badge_classes = case @booking.status
+             when "pending" then "bg-yellow-100 text-yellow-800 border-yellow-200"
+             when "confirmed" then "bg-green-100 text-green-800 border-green-200"
+             when "cancelled" then "bg-red-100 text-red-800 border-red-200"
+             when "completed" then "bg-blue-100 text-blue-800 border-blue-200"
+             end %>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border <%= badge_classes %>">
+            <span class="material-symbols-outlined text-base mr-1.5">
+              <%= case @booking.status
+                  when "pending" then "schedule"
+                  when "confirmed" then "check_circle"
+                  when "cancelled" then "cancel"
+                  when "completed" then "task_alt"
+                  end %>
+            </span>
+            <%= @booking.status.capitalize %>
+          </span>
+        </div>
+
+        <%# Details Grid %>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+          <%# Check-in %>
+          <div>
+            <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Check-in</p>
+            <p class="font-headline font-bold text-on-surface"><%= @booking.check_in.strftime("%a, %b %d, %Y") %></p>
+          </div>
+
+          <%# Check-out %>
+          <div>
+            <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Check-out</p>
+            <p class="font-headline font-bold text-on-surface"><%= @booking.check_out.strftime("%a, %b %d, %Y") %></p>
+          </div>
+
+          <%# Nights %>
+          <div>
+            <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Duration</p>
+            <p class="font-headline font-bold text-on-surface"><%= pluralize(@booking.nights, "night") %></p>
+          </div>
+
+          <%# Guests %>
+          <div>
+            <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Guests</p>
+            <p class="font-headline font-bold text-on-surface"><%= pluralize(@booking.guests_count, "guest") %></p>
+          </div>
+
+          <%# Total Price %>
+          <div>
+            <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Total Price</p>
+            <p class="font-headline text-xl font-extrabold text-on-surface">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></p>
+          </div>
+
+          <%# Invoice Reference %>
+          <div>
+            <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Invoice Ref</p>
+            <p class="font-headline font-bold text-on-surface font-mono"><%= @booking.invoice_reference %></p>
+          </div>
+        </div>
+
+        <%# Special Requests %>
+        <% if @booking.special_requests.present? %>
+          <div class="mt-6 pt-6 border-t border-outline-variant/15">
+            <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2">Special Requests</p>
+            <p class="text-on-surface text-sm leading-relaxed"><%= @booking.special_requests %></p>
+          </div>
+        <% end %>
+      </div>
+
+      <%# Actions %>
+      <div class="flex flex-wrap gap-3">
+        <% if @booking.pending? %>
+          <%= link_to new_booking_payment_path(@booking),
+              class: "inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold active:scale-95 transition-transform" do %>
+            <span class="material-symbols-outlined text-lg">payment</span>
+            Pay Now
+          <% end %>
+        <% end %>
+
+        <% if @booking.pending? || @booking.confirmed? %>
+          <%= button_to booking_path(@booking), method: :patch,
+              params: { booking: { status: "cancelled" } },
+              class: "inline-flex items-center gap-2 border border-red-300 text-red-700 px-6 py-3 rounded-xl font-bold hover:bg-red-50 active:scale-95 transition-all",
+              data: { turbo_confirm: "Are you sure you want to cancel this booking?" } do %>
+            <span class="material-symbols-outlined text-lg">close</span>
+            Cancel Booking
+          <% end %>
+        <% end %>
+
+        <% if @booking.completed? && @booking.review.blank? %>
+          <%= link_to new_booking_review_path(@booking),
+              class: "inline-flex items-center gap-2 border border-primary-container text-primary-container px-6 py-3 rounded-xl font-bold hover:bg-primary-container/10 active:scale-95 transition-all" do %>
+            <span class="material-symbols-outlined text-lg">rate_review</span>
+            Write a Review
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Sidebar: Host Info %>
+    <div class="space-y-6">
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+        <h3 class="font-headline font-bold text-on-surface mb-4">Your Host</h3>
+        <div class="flex items-center gap-4">
+          <% host = @booking.property.user %>
+          <% if host.avatar.attached? %>
+            <%= image_tag host.avatar, class: "w-12 h-12 rounded-full object-cover" %>
+          <% else %>
+            <div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center">
+              <span class="text-on-primary-container text-lg font-bold"><%= host.email[0].upcase %></span>
+            </div>
+          <% end %>
+          <div>
+            <p class="font-headline font-bold text-on-surface">
+              <%= host.first_name.present? ? "#{host.first_name} #{host.last_name}" : host.email %>
+            </p>
+            <p class="text-sm text-on-surface-variant">Host</p>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <%= link_to conversations_path(recipient_id: host.id, property_id: @booking.property.id),
+              class: "flex items-center justify-center gap-2 w-full border border-outline-variant/30 text-on-surface-variant px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-surface-container transition-colors" do %>
+            <span class="material-symbols-outlined text-lg">chat</span>
+            Message Host
+          <% end %>
+        </div>
+      </div>
+
+      <%# Price Breakdown %>
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+        <h3 class="font-headline font-bold text-on-surface mb-4">Price Breakdown</h3>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between">
+            <span class="text-on-surface-variant">&euro;<%= number_with_delimiter(@booking.property.price_per_night, delimiter: ",") %> &times; <%= pluralize(@booking.nights, "night") %></span>
+            <span class="font-medium text-on-surface">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></span>
+          </div>
+          <div class="border-t border-outline-variant/15 pt-3 flex justify-between">
+            <span class="font-bold text-on-surface">Total</span>
+            <span class="font-headline font-extrabold text-on-surface">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

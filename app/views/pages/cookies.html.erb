@@ -1,0 +1,94 @@
+<% content_for(:title, "Cookie Policy - WorkStays") %>
+<% meta_description "WorkStays cookie policy. What cookies we use and how to manage them." %>
+
+<%# ===== HERO ===== %>
+<section class="bg-[#001949] pt-10 pb-16">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <p class="text-blue-200/60 text-sm font-medium mb-2">Legal</p>
+    <h1 class="font-headline text-3xl md:text-[2.75rem] font-extrabold text-white leading-[1.1] tracking-tight mb-4 max-w-2xl">
+      Cookie Policy
+    </h1>
+    <p class="text-blue-200/80 text-base md:text-lg max-w-lg">
+      Last updated: <%= Date.current.strftime("%d %B %Y") %>
+    </p>
+  </div>
+</section>
+
+<section class="bg-white py-16">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <div class="max-w-3xl mx-auto">
+
+      <div class="space-y-10">
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">What are cookies?</h2>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Cookies are small text files stored on your device when you visit a website. They help the site work properly and remember things like whether you're logged in.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">Cookies we use</h2>
+          <div class="space-y-4">
+            <div class="bg-slate-50 rounded-xl p-6 border border-slate-100">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">Essential</span>
+                <h3 class="font-semibold text-slate-900">Session cookies</h3>
+              </div>
+              <p class="text-slate-500 text-sm leading-relaxed">Keep you logged in as you browse the site. These are deleted when you close your browser or log out. The site can't work without these.</p>
+            </div>
+
+            <div class="bg-slate-50 rounded-xl p-6 border border-slate-100">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="bg-green-100 text-green-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">Essential</span>
+                <h3 class="font-semibold text-slate-900">Security cookies</h3>
+              </div>
+              <p class="text-slate-500 text-sm leading-relaxed">Protect against cross-site request forgery (CSRF) attacks. These make sure form submissions come from our site, not a malicious third party.</p>
+            </div>
+
+            <div class="bg-slate-50 rounded-xl p-6 border border-slate-100">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">Functional</span>
+                <h3 class="font-semibold text-slate-900">Preference cookies</h3>
+              </div>
+              <p class="text-slate-500 text-sm leading-relaxed">Remember your preferences like search filters or display settings. These make your experience smoother but the site will work without them.</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">Third-party cookies</h2>
+          <div class="text-slate-600 text-sm leading-relaxed space-y-3">
+            <p><strong class="text-slate-900">Payment processing:</strong> When you make a payment, our payment provider may set cookies to process the transaction securely.</p>
+            <p><strong class="text-slate-900">Fonts:</strong> We load fonts from Google Fonts, which may set cookies to serve font files efficiently.</p>
+            <p>We don't use advertising cookies or tracking cookies from ad networks.</p>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">Managing cookies</h2>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            You can control cookies through your browser settings. Most browsers let you block or delete cookies. Keep in mind that blocking essential cookies will prevent you from logging in and using key features of the site.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">Changes to this policy</h2>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            We may update this cookie policy if we start using new types of cookies. Any changes will be reflected on this page with an updated date.
+          </p>
+        </div>
+
+        <div>
+          <h2 class="font-headline text-lg font-bold text-slate-900 mb-3">Questions</h2>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Got questions about our use of cookies? <%= link_to "Contact us", contact_path, class: "text-[#001949] font-medium underline hover:text-[#002d75]" %>.
+          </p>
+          <p class="text-slate-600 text-sm leading-relaxed mt-2">
+            For more about how we handle your data, see our <%= link_to "Privacy Policy", privacy_path, class: "text-[#001949] font-medium underline hover:text-[#002d75]" %>.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>

@@ -1,0 +1,171 @@
+<% content_for(:page_title, "User Details") %>
+
+<%# Breadcrumb %>
+<nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-8">
+  <%= link_to "Users", admin_users_path, class: "hover:text-primary-container transition-colors" %>
+  <span class="material-symbols-outlined text-base">chevron_right</span>
+  <span class="text-on-surface font-medium"><%= @user.email %></span>
+</nav>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <%# Main User Info %>
+  <div class="lg:col-span-2 space-y-6">
+    <%# Profile Card %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-8">
+      <div class="flex items-start justify-between mb-6">
+        <div class="flex items-center gap-4">
+          <% if @user.avatar.attached? %>
+            <%= image_tag @user.avatar, class: "w-16 h-16 rounded-full object-cover" %>
+          <% else %>
+            <div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center">
+              <span class="text-on-primary-container text-2xl font-bold"><%= @user.email[0].upcase %></span>
+            </div>
+          <% end %>
+          <div>
+            <h2 class="font-headline text-xl font-extrabold text-on-surface">
+              <%= @user.first_name.present? ? "#{@user.first_name} #{@user.last_name}" : @user.email %>
+            </h2>
+            <p class="text-sm text-on-surface-variant"><%= @user.email %></p>
+          </div>
+        </div>
+
+        <% role_classes = case @user.role
+           when "admin" then "bg-purple-100 text-purple-800 border-purple-200"
+           when "host" then "bg-blue-100 text-blue-800 border-blue-200"
+           else "bg-gray-100 text-gray-800 border-gray-200"
+           end %>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border <%= role_classes %>">
+          <%= @user.role.capitalize %>
+        </span>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-sm">
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">First Name</p>
+          <p class="font-medium text-on-surface"><%= @user.first_name.present? ? @user.first_name : "--" %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Last Name</p>
+          <p class="font-medium text-on-surface"><%= @user.last_name.present? ? @user.last_name : "--" %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Phone</p>
+          <p class="font-medium text-on-surface"><%= @user.phone.present? ? @user.phone : "--" %></p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Joined</p>
+          <p class="font-medium text-on-surface"><%= @user.created_at.strftime("%b %d, %Y") %></p>
+        </div>
+        <div class="col-span-2">
+          <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Bio</p>
+          <p class="font-medium text-on-surface"><%= @user.bio.present? ? @user.bio : "--" %></p>
+        </div>
+      </div>
+    </div>
+
+    <%# Properties (if host) %>
+    <% if @user.host? || @user.admin? %>
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+        <div class="px-6 py-4 border-b border-outline-variant/15">
+          <h3 class="font-headline font-bold text-on-surface">Properties (<%= @user.properties.count %>)</h3>
+        </div>
+        <% if @user.properties.any? %>
+          <div class="divide-y divide-outline-variant/10">
+            <% @user.properties.each do |property| %>
+              <div class="flex items-center justify-between px-6 py-4 hover:bg-surface-container/30 transition-colors">
+                <div>
+                  <p class="text-sm font-medium text-on-surface"><%= property.title %></p>
+                  <p class="text-xs text-on-surface-variant"><%= property.city %>, <%= property.country %> &middot; &euro;<%= number_with_delimiter(property.price_per_night) %>/night</p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <% status_classes = case property.status
+                     when "published" then "bg-green-100 text-green-800"
+                     when "draft" then "bg-yellow-100 text-yellow-800"
+                     when "archived" then "bg-gray-100 text-gray-800"
+                     end %>
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold <%= status_classes %>">
+                    <%= property.status.capitalize %>
+                  </span>
+                  <%= link_to "View", admin_property_path(property), class: "text-xs text-primary-container hover:underline font-medium" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="px-6 py-6 text-center text-sm text-on-surface-variant">No properties.</div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%# Bookings (if guest) %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+      <div class="px-6 py-4 border-b border-outline-variant/15">
+        <h3 class="font-headline font-bold text-on-surface">Bookings (<%= @user.bookings.count %>)</h3>
+      </div>
+      <% if @user.bookings.any? %>
+        <div class="divide-y divide-outline-variant/10">
+          <% @user.bookings.includes(:property).order(created_at: :desc).limit(10).each do |booking| %>
+            <div class="flex items-center justify-between px-6 py-4 hover:bg-surface-container/30 transition-colors">
+              <div>
+                <p class="text-sm font-medium text-on-surface"><%= booking.property.title %></p>
+                <p class="text-xs text-on-surface-variant">
+                  <%= booking.check_in.strftime("%b %d") %> &mdash; <%= booking.check_out.strftime("%b %d, %Y") %>
+                  &middot; &euro;<%= number_with_delimiter(booking.total_price) %>
+                </p>
+              </div>
+              <div class="flex items-center gap-3">
+                <% badge_classes = case booking.status
+                   when "pending" then "bg-yellow-100 text-yellow-800"
+                   when "confirmed" then "bg-green-100 text-green-800"
+                   when "cancelled" then "bg-red-100 text-red-800"
+                   when "completed" then "bg-blue-100 text-blue-800"
+                   end %>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold <%= badge_classes %>">
+                  <%= booking.status.capitalize %>
+                </span>
+                <%= link_to "View", admin_booking_path(booking), class: "text-xs text-primary-container hover:underline font-medium" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="px-6 py-6 text-center text-sm text-on-surface-variant">No bookings.</div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Sidebar: Actions %>
+  <div class="space-y-6">
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+      <h3 class="font-headline font-bold text-on-surface mb-4">Actions</h3>
+      <div class="space-y-3">
+        <%= link_to edit_admin_user_path(@user),
+            class: "flex items-center gap-2 w-full border border-outline-variant/30 text-on-surface-variant px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-surface-container transition-colors" do %>
+          <span class="material-symbols-outlined text-lg">edit</span>
+          Edit User
+        <% end %>
+
+        <%# Inline Role Update %>
+        <%= form_with(model: @user, url: admin_user_path(@user), method: :patch, class: "space-y-3") do |f| %>
+          <div>
+            <label class="block text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Change Role</label>
+            <%= f.select :role, User.roles.keys.map { |r| [r.capitalize, r] },
+                { selected: @user.role },
+                class: "w-full border border-outline-variant/30 rounded-xl px-4 py-2.5 text-sm text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container" %>
+          </div>
+          <%= f.submit "Update Role",
+              class: "w-full bg-primary-container text-on-primary-container px-4 py-2.5 rounded-xl text-sm font-bold active:scale-95 transition-transform cursor-pointer" %>
+        <% end %>
+
+        <div class="border-t border-outline-variant/15 pt-3">
+          <%= button_to admin_user_path(@user), method: :delete,
+              class: "flex items-center gap-2 w-full border border-red-300 text-red-700 px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-red-50 transition-colors",
+              data: { turbo_confirm: "Are you sure you want to delete this user? This action cannot be undone." } do %>
+            <span class="material-symbols-outlined text-lg">delete</span>
+            Delete User
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,139 @@
+<% content_for(:title, "Find Your Perfect Work Stay - WorkStays") %>
+<% meta_description "Search crew accommodation near your job site. Weekday pricing, parking, fast WiFi, and proper invoices. Filter by location, team size, and dates." %>
+
+<section class="bg-surface-container-low border-b border-outline-variant/20">
+  <div class="max-w-screen-2xl mx-auto px-6 md:px-8 py-10">
+    <%# Page Header %>
+    <h1 class="font-headline text-3xl md:text-4xl font-extrabold text-on-surface tracking-tight mb-8">
+      Find Your Perfect Work Stay
+    </h1>
+
+    <%# Search & Filter Bar %>
+    <%= form_with url: properties_path, method: :get, local: true, class: "space-y-4" do |f| %>
+      <%# Row 1: Primary search inputs %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <%# Text Search %>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
+          <input type="text" name="query" value="<%= params[:query] %>"
+                 placeholder="Search properties..."
+                 class="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors">
+        </div>
+
+        <%# City %>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">location_on</span>
+          <input type="text" name="city" value="<%= params[:city] %>"
+                 placeholder="City"
+                 class="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors">
+        </div>
+
+        <%# Property Type %>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">apartment</span>
+          <select name="property_type"
+                  class="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-sm font-body appearance-none focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors">
+            <option value="">All Types</option>
+            <% %w[Apartment House Studio Shared\ Room].each do |type| %>
+              <option value="<%= type %>" <%= "selected" if params[:property_type] == type %>><%= type %></option>
+            <% end %>
+          </select>
+        </div>
+
+        <%# Guest Count %>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">group</span>
+          <input type="number" name="guests" value="<%= params[:guests] %>" min="1"
+                 placeholder="Guests"
+                 class="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors">
+        </div>
+      </div>
+
+      <%# Row 2: Date, price, sort %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+        <%# Check-in Date %>
+        <div class="relative">
+          <label class="absolute left-3 top-1 text-[10px] text-on-surface-variant font-medium uppercase tracking-wider">Check-in</label>
+          <input type="date" name="check_in" value="<%= params[:check_in] %>"
+                 class="w-full px-3 pt-5 pb-2 rounded-xl bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors">
+        </div>
+
+        <%# Check-out Date %>
+        <div class="relative">
+          <label class="absolute left-3 top-1 text-[10px] text-on-surface-variant font-medium uppercase tracking-wider">Check-out</label>
+          <input type="date" name="check_out" value="<%= params[:check_out] %>"
+                 class="w-full px-3 pt-5 pb-2 rounded-xl bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors">
+        </div>
+
+        <%# Min Price %>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">payments</span>
+          <input type="number" name="min_price" value="<%= params[:min_price] %>" min="0" step="1"
+                 placeholder="Min price"
+                 class="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors">
+        </div>
+
+        <%# Max Price %>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">payments</span>
+          <input type="number" name="max_price" value="<%= params[:max_price] %>" min="0" step="1"
+                 placeholder="Max price"
+                 class="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors">
+        </div>
+
+        <%# Sort %>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">sort</span>
+          <select name="sort"
+                  class="w-full pl-10 pr-4 py-3 rounded-xl bg-surface-container-lowest border border-outline-variant/30 text-on-surface text-sm font-body appearance-none focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors">
+            <option value="newest" <%= "selected" if params[:sort] == "newest" %>>Newest</option>
+            <option value="price_asc" <%= "selected" if params[:sort] == "price_asc" %>>Price Low-High</option>
+            <option value="price_desc" <%= "selected" if params[:sort] == "price_desc" %>>Price High-Low</option>
+          </select>
+        </div>
+
+        <%# Submit %>
+        <button type="submit"
+                class="bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold text-sm font-headline active:scale-95 transition-transform flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-lg">search</span>
+          Search
+        </button>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<%# Results Section %>
+<section class="max-w-screen-2xl mx-auto px-6 md:px-8 py-8">
+  <%# Results Count %>
+  <div class="flex items-center justify-between mb-6">
+    <p class="text-sm text-on-surface-variant font-medium">
+      <span class="text-on-surface font-bold"><%= @properties.size %></span> properties found
+    </p>
+  </div>
+
+  <% if @properties.any? %>
+    <%# Property Grid %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <%= render partial: "property_card", collection: @properties, as: :property %>
+    </div>
+
+    <%# Pagination %>
+    <div class="mt-10 flex justify-center">
+      <nav class="inline-flex items-center gap-1 text-sm font-medium">
+        <%== pagy_nav(@pagy) %>
+      </nav>
+    </div>
+  <% else %>
+    <%# Empty State %>
+    <div class="text-center py-20">
+      <span class="material-symbols-outlined text-6xl text-outline-variant/40 mb-4">search_off</span>
+      <h2 class="font-headline text-xl font-bold text-on-surface mt-4">No properties found</h2>
+      <p class="text-on-surface-variant mt-2 max-w-md mx-auto">
+        Try adjusting your search filters or exploring a different location.
+      </p>
+      <%= link_to "Clear Filters", properties_path,
+          class: "inline-flex items-center gap-2 mt-6 bg-surface-container text-on-surface px-6 py-3 rounded-xl font-bold text-sm hover:bg-surface-container-high transition-colors" %>
+    </div>
+  <% end %>
+</section>

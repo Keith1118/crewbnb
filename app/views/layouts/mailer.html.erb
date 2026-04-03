@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa;
+        font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+        color: #111c2d;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      .email-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 24px 16px;
+      }
+      .email-header {
+        text-align: center;
+        padding: 24px 0;
+      }
+      .email-header a {
+        font-family: 'Manrope', -apple-system, sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        color: #001949;
+        text-decoration: none;
+        letter-spacing: -0.5px;
+      }
+      .email-body {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 32px;
+        border: 1px solid #e5e7eb;
+      }
+      .email-body h1 {
+        font-family: 'Manrope', -apple-system, sans-serif;
+        font-size: 20px;
+        font-weight: 800;
+        color: #111c2d;
+        margin: 0 0 16px;
+      }
+      .email-body p {
+        font-size: 14px;
+        color: #4b5563;
+        margin: 0 0 16px;
+      }
+      .email-body .detail-box {
+        background: #f3f4f6;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .email-body .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        font-size: 14px;
+      }
+      .email-body .detail-label {
+        color: #6b7280;
+      }
+      .email-body .detail-value {
+        color: #111c2d;
+        font-weight: 600;
+      }
+      .email-body .btn {
+        display: inline-block;
+        background: #001949;
+        color: #ffffff !important;
+        text-decoration: none;
+        padding: 12px 28px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        margin: 8px 0;
+      }
+      .email-body .btn:hover {
+        background: #002d75;
+      }
+      .email-body .btn-outline {
+        background: transparent;
+        color: #001949 !important;
+        border: 2px solid #001949;
+      }
+      .email-footer {
+        text-align: center;
+        padding: 24px 0;
+        font-size: 12px;
+        color: #9ca3af;
+      }
+      .email-footer a {
+        color: #6b7280;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="email-wrapper">
+      <div class="email-header">
+        <a href="<%= root_url %>">WorkStays</a>
+      </div>
+
+      <div class="email-body">
+        <%= yield %>
+      </div>
+
+      <div class="email-footer">
+        <p>&copy; <%= Date.current.year %> WorkStays &middot; Tulfarris, Wicklow, Ireland</p>
+        <p>
+          <a href="<%= help_page_url %>">Help</a> &middot;
+          <a href="<%= contact_url %>">Contact</a> &middot;
+          <a href="<%= privacy_url %>">Privacy</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
