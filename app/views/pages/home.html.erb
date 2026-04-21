@@ -1,52 +1,22 @@
-<% content_for(:title, "WorkStays — Book crew accommodation in minutes") %>
+<% content_for(:title, "Crewbnb — Book crew accommodation in minutes") %>
 <% meta_description "Book accommodation for your crew near job sites. Weekday pricing, automatic invoices, and stays built for workers. Save 30-40% vs Airbnb." %>
 
 <%# ===== HERO ===== %>
 <section class="bg-[#001949] pt-8 pb-14">
   <div class="max-w-screen-xl mx-auto px-6">
-    <div class="flex flex-wrap items-center gap-2 mb-6">
-      <span class="bg-green-500/20 text-green-300 text-xs font-semibold px-3 py-1 rounded-full">Properties available this week</span>
-    </div>
-
-    <h1 class="font-headline text-3xl md:text-[2.75rem] font-extrabold text-white leading-[1.1] tracking-tight mb-3 max-w-2xl">
+    <h1 class="font-headline text-3xl md:text-4xl font-extrabold text-white leading-[1.1] tracking-tight mb-3 max-w-2xl">
       Book crew accommodation near your job site.
     </h1>
     <p class="text-blue-200/80 text-base md:text-lg max-w-lg mb-8">
       Weekday pricing. Automatic invoices. Stays ideal for workers.
     </p>
 
-    <%# Search box %>
-    <%= form_tag properties_path, method: :get, class: "bg-white rounded-2xl shadow-xl max-w-3xl" do %>
-      <div class="grid grid-cols-1 md:grid-cols-5 items-end">
-        <div class="px-4 py-3.5 md:border-r border-slate-100">
-          <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Project Location</label>
-          <%= text_field_tag :location, params[:location], placeholder: "e.g. where your team is working",
-              class: "w-full bg-transparent border-none p-0 focus:ring-0 text-slate-900 text-sm font-medium placeholder:text-slate-300" %>
-        </div>
-        <div class="px-4 py-3.5 md:border-r border-slate-100">
-          <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Check in</label>
-          <%= date_field_tag :check_in, params[:check_in],
-              class: "w-full bg-transparent border-none p-0 focus:ring-0 text-slate-900 text-sm font-medium" %>
-        </div>
-        <div class="px-4 py-3.5 md:border-r border-slate-100">
-          <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Check out</label>
-          <%= date_field_tag :check_out, params[:check_out],
-              class: "w-full bg-transparent border-none p-0 focus:ring-0 text-slate-900 text-sm font-medium" %>
-        </div>
-        <div class="px-4 py-3.5 md:border-r border-slate-100">
-          <label class="block text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Team size</label>
-          <%= number_field_tag :guests, params[:guests], min: 1, placeholder: "Guests",
-              class: "w-full bg-transparent border-none p-0 focus:ring-0 text-slate-900 text-sm font-medium placeholder:text-slate-300" %>
-        </div>
-        <div class="p-2">
-          <button type="submit" class="w-full h-11 bg-[#001949] text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-1.5 hover:bg-[#002d75] transition-colors cursor-pointer">
-            <span class="material-symbols-outlined text-[18px]">search</span>
-            Find stays
-          </button>
-        </div>
-      </div>
-    <% end %>
-    <p class="text-blue-200/40 text-xs mt-3">Takes 2 minutes to book</p>
+    <div class="flex flex-wrap gap-3 mb-6">
+      <%= link_to properties_path, class: "inline-flex items-center gap-2 bg-white text-[#001949] px-6 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition-colors" do %>
+        See our properties
+        <span class="material-symbols-outlined text-lg">arrow_forward</span>
+      <% end %>
+    </div>
 
     <%# Stop paying line %>
     <p class="text-white font-semibold text-sm mt-6 mb-4">Stop paying weekend rates for weekday work.</p>
@@ -69,91 +39,36 @@
 <section class="bg-green-50 border-b border-green-100">
   <div class="max-w-screen-xl mx-auto px-6 py-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
     <div class="flex items-center gap-1.5 text-green-800 font-semibold">
-      <span class="material-symbols-outlined text-[18px]">savings</span>
+      <span class="material-symbols-outlined text-lg">savings</span>
       Save 30–40% with weekday-only pricing
     </div>
     <span class="hidden md:inline text-green-300">|</span>
     <div class="flex items-center gap-1.5 text-green-800 font-medium">
-      <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+      <span class="material-symbols-outlined text-lg">receipt_long</span>
       Automatic invoices, no admin
     </div>
     <span class="hidden md:inline text-green-300">|</span>
     <div class="flex items-center gap-1.5 text-green-800 font-medium">
-      <span class="material-symbols-outlined text-[18px]">bolt</span>
+      <span class="material-symbols-outlined text-lg">bolt</span>
       Book in under 2 minutes
     </div>
   </div>
 </section>
 
-<%# ===== QUICK FILTERS ===== %>
-<section class="bg-white border-b border-slate-100 sticky top-[65px] z-40">
+<%# ===== OUR PROPERTIES ===== %>
+<section id="our-properties" class="bg-white py-16 scroll-mt-20">
   <div class="max-w-screen-xl mx-auto px-6">
-    <div class="flex items-center gap-8 overflow-x-auto py-4 text-sm no-scrollbar">
-      <%= link_to properties_path, class: "flex flex-col items-center gap-1 text-slate-900 font-medium border-b-2 border-slate-900 pb-2 px-1 flex-shrink-0" do %>
-        <span class="material-symbols-outlined text-[22px]">apartment</span>
-        <span>All stays</span>
-      <% end %>
-      <%= link_to properties_path(property_type: "House"), class: "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-700 pb-2 px-1 flex-shrink-0 transition-colors" do %>
-        <span class="material-symbols-outlined text-[22px]">house</span>
-        <span>Houses</span>
-      <% end %>
-      <%= link_to properties_path(property_type: "Apartment"), class: "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-700 pb-2 px-1 flex-shrink-0 transition-colors" do %>
-        <span class="material-symbols-outlined text-[22px]">location_city</span>
-        <span>Apartments</span>
-      <% end %>
-      <%= link_to properties_path(guests: 3), class: "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-700 pb-2 px-1 flex-shrink-0 transition-colors" do %>
-        <span class="material-symbols-outlined text-[22px]">bed</span>
-        <span>3+ beds</span>
-      <% end %>
-      <%= link_to properties_path(has_parking: true), class: "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-700 pb-2 px-1 flex-shrink-0 transition-colors" do %>
-        <span class="material-symbols-outlined text-[22px]">local_parking</span>
-        <span>Parking</span>
-      <% end %>
-    </div>
-  </div>
-</section>
-
-<%# ===== PROPERTY CAROUSEL ===== %>
-<section class="bg-white py-10" data-controller="carousel">
-  <div class="max-w-screen-xl mx-auto px-6">
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h2 class="font-headline text-lg font-bold text-slate-900">Available this week</h2>
-        <p class="text-xs text-amber-600 font-medium mt-0.5">Limited weekday availability</p>
-      </div>
-      <div class="flex items-center gap-3">
-        <button data-action="click->carousel#prev" class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer">
-          <span class="material-symbols-outlined text-slate-600 text-[18px]">arrow_back</span>
-        </button>
-        <span class="text-xs text-slate-400 font-medium" data-carousel-target="counter"></span>
-        <button data-action="click->carousel#next" class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer">
-          <span class="material-symbols-outlined text-slate-600 text-[18px]">arrow_forward</span>
-        </button>
-      </div>
-    </div>
+    <h2 class="font-headline text-2xl font-bold text-slate-900 mb-8">Our properties</h2>
 
     <% if @properties.present? %>
-      <div class="relative overflow-hidden">
-        <% @properties.in_groups_of(3, false).each_with_index do |group, i| %>
-          <div class="carousel-page <%= i == 0 ? '' : 'hidden' %>" data-carousel-target="page">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
-              <% group.each do |property| %>
-                <%= render "properties/property_card", property: property %>
-              <% end %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-
-      <div class="text-center mt-10">
-        <%= link_to properties_path, class: "inline-flex items-center gap-2 border border-slate-900 text-slate-900 px-6 py-3 rounded-xl font-semibold text-sm hover:bg-slate-900 hover:text-white transition-colors" do %>
-          Show all properties
-          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @properties.each do |property| %>
+          <%= render "properties/property_card", property: property %>
         <% end %>
       </div>
     <% else %>
       <div class="text-center py-20">
-        <span class="material-symbols-outlined text-slate-300 text-[48px] mb-4">search_off</span>
+        <span class="material-symbols-outlined text-slate-300 text-5xl mb-4">search_off</span>
         <p class="text-slate-500">No properties listed yet. Check back soon.</p>
       </div>
     <% end %>
@@ -247,7 +162,7 @@
           <div class="absolute -top-3 left-1/2 -translate-x-1/2">
             <span class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full">Save &euro;410/week</span>
           </div>
-          <p class="text-xs font-semibold text-green-700 uppercase tracking-wider mb-3">WorkStays</p>
+          <p class="text-xs font-semibold text-green-700 uppercase tracking-wider mb-3">Crewbnb</p>
           <p class="text-3xl font-bold text-green-700">&euro;640</p>
           <div class="mt-3 space-y-1">
             <p class="text-sm text-green-700 font-medium">Mon–Fri pricing</p>
@@ -268,7 +183,7 @@
 
       <%# Businesses %>
       <div class="bg-white rounded-2xl p-8 border border-slate-100">
-        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-4">Booking for a team?</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Booking for a team?</p>
         <h2 class="font-headline text-xl font-bold text-slate-900 mb-5">Stop booking work trips on Airbnb.</h2>
         <div class="space-y-4">
           <div class="flex gap-3 items-start">
@@ -291,14 +206,14 @@
         <div class="mt-6">
           <%= link_to properties_path, class: "inline-flex items-center gap-1.5 bg-[#001949] text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-[#002d75] transition-colors" do %>
             Find a stay now
-            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            <span class="material-symbols-outlined text-base">arrow_forward</span>
           <% end %>
         </div>
       </div>
 
       <%# Hosts %>
       <div class="bg-white rounded-2xl p-8 border border-slate-100">
-        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-4">Got a spare property?</p>
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Got a spare property?</p>
         <h2 class="font-headline text-xl font-bold text-slate-900 mb-5">Your place sits empty Mon–Fri. Fix that.</h2>
         <div class="space-y-4">
           <div class="flex gap-3 items-start">
@@ -321,7 +236,7 @@
         <div class="mt-6">
           <%= link_to new_user_registration_path(role: "host"), class: "inline-flex items-center gap-1.5 border border-slate-900 text-slate-900 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-slate-900 hover:text-white transition-colors" do %>
             List your property
-            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+            <span class="material-symbols-outlined text-base">arrow_forward</span>
           <% end %>
         </div>
       </div>
@@ -331,18 +246,18 @@
 </section>
 
 <%# ===== TRUST — real, not corporate ===== %>
-<section class="bg-white py-14 border-t border-slate-100">
+<section class="bg-white py-16 border-t border-slate-100">
   <div class="max-w-screen-xl mx-auto px-6">
     <div class="max-w-2xl mx-auto text-center">
       <div class="inline-flex items-center gap-2 bg-slate-100 rounded-full px-4 py-1.5 text-xs font-semibold text-slate-600 mb-6">
-        <span class="material-symbols-outlined text-[16px]">location_on</span>
+        <span class="material-symbols-outlined text-base">location_on</span>
         Made in Tulfarris, Wicklow
       </div>
       <p class="text-slate-700 text-lg leading-relaxed mb-4">
         We started this because we <em>are</em> the hosts.
       </p>
       <p class="text-slate-500 text-sm leading-relaxed max-w-lg mx-auto">
-        We've housed contractors ourselves and dealt with every problem — guests who need invoices, accountants who need receipts, workers who just need a bed near site and somewhere to park the van. We built WorkStays because nothing else was built for this.
+        We've housed contractors ourselves and dealt with every problem — guests who need invoices, accountants who need receipts, workers who just need a bed near site and somewhere to park the van. We built Crewbnb because nothing else was built for this.
       </p>
     </div>
   </div>
@@ -352,11 +267,6 @@
 <section class="bg-slate-50 py-16 border-t border-slate-100">
   <div class="max-w-screen-xl mx-auto px-6">
     <div class="bg-[#001949] rounded-2xl px-8 py-14 md:px-16 text-center relative overflow-hidden">
-      <%# Urgency badge %>
-      <div class="flex justify-center mb-6">
-        <span class="bg-green-500/20 text-green-300 text-xs font-semibold px-3 py-1 rounded-full">Limited weekday availability — book early</span>
-      </div>
-
       <h2 class="font-headline text-2xl md:text-3xl font-bold text-white mb-3">
         Your crew needs somewhere to stay.<br>Book it now.
       </h2>
