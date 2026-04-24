@@ -1,4 +1,8 @@
-<% content_for(:title, "Complete Payment - WorkStays") %>
+<% content_for(:title, "Complete Payment - Crewbnb") %>
+
+<% content_for(:head) do %>
+  <script src="https://js.stripe.com/v3/"></script>
+<% end %>
 
 <section class="max-w-screen-md mx-auto px-6 py-12">
   <div class="flex items-center gap-3 mb-8">
@@ -76,72 +80,26 @@
     </div>
 
     <%# Payment Form %>
-    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6" data-controller="payment-form">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="font-headline font-bold text-on-surface">Payment Details</h2>
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">Visa</span>
-          <span class="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded">Mastercard</span>
-          <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">Amex</span>
-        </div>
-      </div>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6"
+         data-controller="payment-form"
+         data-payment-form-client-secret-value="<%= @client_secret %>"
+         data-payment-form-publishable-key-value="<%= @stripe_publishable_key %>"
+         data-payment-form-return-url-value="<%= complete_booking_payment_url(@booking) %>">
+      <h2 class="font-headline font-bold text-on-surface mb-6">Payment Details</h2>
 
-      <%= form_with(model: @payment, url: booking_payment_path(@booking), class: "space-y-5", data: { action: "submit->payment-form#submit" }) do |f| %>
-        <%# Card Number %>
-        <div>
-          <label class="block text-sm font-medium text-on-surface mb-1.5">Card number</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <span class="material-symbols-outlined text-on-surface-variant text-lg">credit_card</span>
-            </div>
-            <input type="text" placeholder="1234 5678 9012 3456" autocomplete="cc-number" inputmode="numeric"
-                   data-payment-form-target="cardNumber"
-                   data-action="input->payment-form#formatCardNumber"
-                   class="w-full pl-11 pr-16 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-[#001949]/20 focus:border-[#001949] transition-colors font-mono tracking-wider" />
-            <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
-              <span data-payment-form-target="cardIcon"></span>
-            </div>
-          </div>
-        </div>
+      <form id="payment-form" class="space-y-5" data-action="submit->payment-form#submit">
+        <%# Stripe Payment Element %>
+        <div id="payment-element" class="min-h-[200px]"></div>
 
-        <%# Expiry & CVV %>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-on-surface mb-1.5">Expiry date</label>
-            <input type="text" placeholder="MM / YY" autocomplete="cc-exp" inputmode="numeric"
-                   data-payment-form-target="expiry"
-                   data-action="input->payment-form#formatExpiry"
-                   class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-[#001949]/20 focus:border-[#001949] transition-colors font-mono tracking-wider" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-on-surface mb-1.5">CVV</label>
-            <div class="relative">
-              <input type="text" placeholder="123" autocomplete="cc-csc" inputmode="numeric"
-                     data-payment-form-target="cvv"
-                     data-action="input->payment-form#formatCvv"
-                     class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-[#001949]/20 focus:border-[#001949] transition-colors font-mono tracking-wider" />
-              <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                <span class="material-symbols-outlined text-on-surface-variant text-lg">lock</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <%# Cardholder Name %>
-        <div>
-          <label class="block text-sm font-medium text-on-surface mb-1.5">Name on card</label>
-          <input type="text" placeholder="John Murphy" autocomplete="cc-name"
-                 class="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-[#001949]/20 focus:border-[#001949] transition-colors" />
-        </div>
-
-        <%= f.hidden_field :stripe_payment_intent_id, value: "pi_#{SecureRandom.hex(12)}" %>
+        <%# Error Messages %>
+        <div id="payment-errors" class="text-sm text-red-600 font-medium" role="alert"></div>
 
         <%# Security Badge %>
         <div class="bg-green-50 rounded-xl p-4 flex items-center gap-3 border border-green-100">
           <span class="material-symbols-outlined text-green-600 text-xl">verified_user</span>
           <div>
             <p class="text-sm font-medium text-green-800">Secure payment</p>
-            <p class="text-xs text-green-600">Your payment details are encrypted and processed securely. We never store your card details.</p>
+            <p class="text-xs text-green-600">Your payment details are encrypted and processed securely by Stripe. We never store your card details.</p>
           </div>
         </div>
 
@@ -162,7 +120,7 @@
             </span>
           </button>
         </div>
-      <% end %>
+      </form>
     </div>
 
     <%# Back link %>

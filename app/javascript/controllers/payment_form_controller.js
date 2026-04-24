@@ -1,62 +1,66 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["cardNumber", "expiry", "cvv", "cardIcon", "submitButton", "submitText", "submitSpinner"]
-
-  formatCardNumber(event) {
-    let value = event.target.value.replace(/\D/g, "")
-    if (value.length > 16) value = value.substring(0, 16)
-    // Add spaces every 4 digits
-    value = value.replace(/(\d{4})(?=\d)/g, "$1 ")
-    event.target.value = value
-
-    this.updateCardIcon(value.replace(/\s/g, ""))
+  static targets = ["submitButton", "submitText", "submitSpinner"]
+  static values = {
+    clientSecret: String,
+    publishableKey: String,
+    returnUrl: String
   }
 
-  formatExpiry(event) {
-    let value = event.target.value.replace(/\D/g, "")
-    if (value.length > 4) value = value.substring(0, 4)
-    if (value.length >= 2) {
-      value = value.substring(0, 2) + " / " + value.substring(2)
-    }
-    event.target.value = value
+  connect() {
+    this.stripe = Stripe(this.publishableKeyValue)
+    this.elements = this.stripe.elements({
+      clientSecret: this.clientSecretValue,
+      appearance: {
+        theme: "stripe",
+        variables: {
+          colorPrimary: "#001949",
+          borderRadius: "12px",
+          fontFamily: "Inter, system-ui, sans-serif"
+        }
+      }
+    })
+
+    this.paymentElement = this.elements.create("payment")
+    this.paymentElement.mount("#payment-element")
   }
 
-  formatCvv(event) {
-    let value = event.target.value.replace(/\D/g, "")
-    if (value.length > 4) value = value.substring(0, 4)
-    event.target.value = value
-  }
-
-  updateCardIcon(number) {
-    if (!this.hasCardIconTarget) return
-
-    if (number.startsWith("4")) {
-      this.cardIconTarget.textContent = "Visa"
-      this.cardIconTarget.className = "text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded"
-    } else if (number.startsWith("5") || number.startsWith("2")) {
-      this.cardIconTarget.textContent = "Mastercard"
-      this.cardIconTarget.className = "text-xs font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded"
-    } else if (number.startsWith("3")) {
-      this.cardIconTarget.textContent = "Amex"
-      this.cardIconTarget.className = "text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded"
-    } else {
-      this.cardIconTarget.textContent = ""
-      this.cardIconTarget.className = ""
-    }
-  }
-
-  submit(event) {
+  async submit(event) {
     event.preventDefault()
+    this.setLoading(true)
 
-    // Show processing state
-    this.submitButtonTarget.disabled = true
-    this.submitTextTarget.classList.add("hidden")
-    this.submitSpinnerTarget.classList.remove("hidden")
+    // Clear previous errors
+    const errorEl = document.getElementById("payment-errors")
+    errorEl.textContent = ""
 
-    // Simulate processing delay for realism
-    setTimeout(() => {
-      event.target.closest("form").submit()
-    }, 1500)
+    const { error } = await this.stripe.confirmPayment({
+      elements: this.elements,
+      confirmParams: {
+        return_url: this.returnUrlValue
+      }
+    })
+
+    // This point is only reached if there is an immediate error.
+    // On success, the customer is redirected to the return_url.
+    if (error) {
+      if (error.type === "card_error" || error.type === "validation_error") {
+        errorEl.textContent = error.message
+      } else {
+        errorEl.textContent = "An unexpected error occurred. Please try again."
+      }
+      this.setLoading(false)
+    }
+  }
+
+  setLoading(loading) {
+    this.submitButtonTarget.disabled = loading
+    if (loading) {
+      this.submitTextTarget.classList.add("hidden")
+      this.submitSpinnerTarget.classList.remove("hidden")
+    } else {
+      this.submitTextTarget.classList.remove("hidden")
+      this.submitSpinnerTarget.classList.add("hidden")
+    }
   }
 }

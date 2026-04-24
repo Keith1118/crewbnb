@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
   <head>
-    <title><%= content_for(:title) || "Host Dashboard - WorkStays" %></title>
+    <title><%= content_for(:title) || "Host Dashboard - Crewbnb" %></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="WorkStays">
+    <meta name="application-name" content="Crewbnb">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -27,13 +27,16 @@
   </head>
 
   <body class="bg-background font-body text-on-background antialiased">
-    <div class="flex min-h-screen">
+    <div class="flex min-h-screen" data-controller="sidebar">
+      <%# Mobile Overlay %>
+      <div data-sidebar-target="overlay" class="fixed inset-0 bg-black/40 z-30 hidden lg:hidden" data-action="click->sidebar#close"></div>
+
       <%# ===== Host Sidebar ===== %>
-      <aside class="fixed top-0 left-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col z-40">
+      <aside data-sidebar-target="sidebar" class="fixed top-0 left-0 h-screen w-64 bg-surface-container-lowest border-r border-outline-variant/20 flex flex-col z-40 -translate-x-full lg:translate-x-0 transition-transform duration-300">
         <%# Brand %>
         <div class="px-6 py-5 border-b border-outline-variant/15">
           <%= link_to root_path, class: "text-xl font-extrabold tracking-tighter text-primary-container font-headline" do %>
-            WorkStays
+            Crewbnb
           <% end %>
           <p class="text-xs text-on-surface-variant font-label font-medium mt-1 uppercase tracking-widest">Host Dashboard</p>
         </div>
@@ -76,13 +79,18 @@
       </aside>
 
       <%# ===== Main Content Area ===== %>
-      <div class="flex-1 ml-64">
+      <div class="flex-1 lg:ml-64">
         <%# Top Bar %>
         <header class="sticky top-0 z-30 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-outline-variant/15">
           <div class="flex items-center justify-between px-8 py-4">
-            <h1 class="font-headline text-lg font-bold text-on-surface">
-              <%= content_for?(:page_title) ? yield(:page_title) : "Dashboard" %>
-            </h1>
+            <div class="flex items-center gap-3">
+              <button data-action="click->sidebar#toggle" class="lg:hidden text-on-surface-variant p-1 cursor-pointer">
+                <span class="material-symbols-outlined text-2xl">menu</span>
+              </button>
+              <h1 class="font-headline text-lg font-bold text-on-surface">
+                <%= content_for?(:page_title) ? yield(:page_title) : "Dashboard" %>
+              </h1>
+            </div>
 
             <div class="flex items-center gap-4">
               <%= link_to new_host_property_path, class: "bg-primary-container text-on-primary-container px-5 py-2.5 rounded-xl font-bold text-sm active:scale-95 transition-transform flex items-center gap-2" do %>

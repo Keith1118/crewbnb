@@ -27,7 +27,9 @@ Rails.application.routes.draw do
   end
 
   resources :bookings, only: [:index, :show, :update] do
-    resource :payment, only: [:new, :create]
+    resource :payment, only: [:new, :create] do
+      get :complete
+    end
     resources :reviews, only: [:new, :create]
   end
 
@@ -48,6 +50,10 @@ Rails.application.routes.draw do
     resources :bookings, only: [:index, :show]
     resources :reviews, only: [:index, :destroy]
     resources :contact_submissions, only: [:index, :show, :destroy]
+  end
+
+  namespace :webhooks do
+    resource :stripe, only: [:create], controller: "stripe"
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

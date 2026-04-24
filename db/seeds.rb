@@ -43,7 +43,7 @@ end
 # Create admin
 puts "Creating admin user..."
 admin = User.create!(
-  email: "admin@workstays.com",
+  email: "admin@crewbnb.com",
   password: "password123",
   first_name: "Admin",
   last_name: "User",
@@ -56,7 +56,7 @@ admin = User.create!(
 puts "Creating hosts..."
 hosts = 5.times.map do |i|
   User.create!(
-    email: "host#{i+1}@workstays.com",
+    email: "host#{i+1}@crewbnb.com",
     password: "password123",
     first_name: Faker::Name.first_name,
     last_name: Faker::Name.last_name,
@@ -70,7 +70,7 @@ end
 puts "Creating guests..."
 guests = 8.times.map do |i|
   User.create!(
-    email: "guest#{i+1}@workstays.com",
+    email: "guest#{i+1}@crewbnb.com",
     password: "password123",
     first_name: Faker::Name.first_name,
     last_name: Faker::Name.last_name,
@@ -132,7 +132,7 @@ end
 puts "Downloading property images (this may take a minute)..."
 properties.each_with_index do |property, i|
   3.times do |j|
-    seed = "workstays-prop-#{i}-img-#{j}"
+    seed = "crewbnb-prop-#{i}-img-#{j}"
     begin
       image = URI.open("https://picsum.photos/seed/#{seed}/800/600", open_timeout: 10, read_timeout: 10)
       property.images.attach(
@@ -223,7 +223,7 @@ puts "Creating conversations..."
 end
 
 puts "Seeding complete!"
-puts "Admin: admin@workstays.com / password123"
-puts "Hosts: host1@workstays.com through host5@workstays.com / password123"
-puts "Guests: guest1@workstays.com through guest8@workstays.com / password123"
+puts "Admin: admin@crewbnb.com / password123"
+puts "Hosts: host1@crewbnb.com through host5@crewbnb.com / password123"
+puts "Guests: guest1@crewbnb.com through guest8@crewbnb.com / password123"
 puts "#{Property.count} properties, #{Booking.count} bookings, #{Review.count} reviews"

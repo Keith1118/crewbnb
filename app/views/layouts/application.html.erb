@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
   <head>
-    <title><%= content_for(:title) || "WorkStays" %></title>
+    <title><%= content_for(:title) || "Crewbnb" %></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="WorkStays">
+    <meta name="application-name" content="Crewbnb">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="description" content="<%= meta_description %>">
 
     <%# Open Graph / Social Sharing %>
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="WorkStays">
-    <meta property="og:title" content="<%= content_for(:title) || 'WorkStays — Crew Accommodation, Booked in Minutes' %>">
+    <meta property="og:site_name" content="Crewbnb">
+    <meta property="og:title" content="<%= content_for(:title) || 'Crewbnb — Crew Accommodation, Booked in Minutes' %>">
     <meta property="og:description" content="<%= meta_description %>">
     <meta property="og:image" content="<%= meta_image %>">
     <meta property="og:url" content="<%= request.original_url %>">
 
     <%# Twitter Card %>
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<%= content_for(:title) || 'WorkStays' %>">
+    <meta name="twitter:title" content="<%= content_for(:title) || 'Crewbnb' %>">
     <meta name="twitter:description" content="<%= meta_description %>">
     <meta name="twitter:image" content="<%= meta_image %>">
 
@@ -45,11 +45,11 @@
 
   <body class="bg-background font-body text-on-background antialiased">
     <%# ===== Top Navigation Bar ===== %>
-    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200/60">
-      <div class="flex justify-between items-center px-8 py-4 max-w-screen-xl mx-auto">
+    <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200/60 h-16">
+      <div class="flex justify-between items-center px-8 py-3 max-w-screen-xl mx-auto h-full">
         <%# Brand %>
         <%= link_to root_path, class: "text-xl font-extrabold tracking-tight text-[#001949] font-headline" do %>
-          WorkStays
+          Crewbnb
         <% end %>
 
         <%# Desktop Navigation Links %>
@@ -210,7 +210,7 @@
     <% end %>
 
     <%# ===== Main Content ===== %>
-    <main class="pt-[73px]">
+    <main class="pt-16">
       <%= yield %>
     </main>
 
@@ -218,7 +218,7 @@
     <footer class="bg-slate-50 w-full border-t border-slate-200">
       <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 px-8 py-16 max-w-screen-xl mx-auto">
         <div class="col-span-2">
-          <div class="text-lg font-bold text-slate-900 mb-4 font-headline">WorkStays</div>
+          <div class="text-lg font-bold text-slate-900 mb-4 font-headline">Crewbnb</div>
           <p class="text-sm text-slate-500 max-w-xs leading-relaxed">
             Accommodation for contractors, crews, and work teams. Built by hosts who understand what workers actually need.
           </p>
@@ -254,7 +254,7 @@
       </div>
 
       <div class="px-8 py-6 border-t border-slate-200 max-w-screen-xl mx-auto">
-        <p class="text-sm text-slate-400">&copy; <%= Date.current.year %> WorkStays</p>
+        <p class="text-sm text-slate-400">&copy; <%= Date.current.year %> Crewbnb</p>
       </div>
     </footer>
   </body>

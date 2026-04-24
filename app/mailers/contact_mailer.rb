@@ -4,7 +4,7 @@ class ContactMailer < ApplicationMailer
 
     mail(
       to: @contact.email,
-      subject: "We got your message - WorkStays"
+      subject: "We got your message - Crewbnb"
     )
   end
 
@@ -12,7 +12,7 @@ class ContactMailer < ApplicationMailer
     @contact = contact_submission
 
     mail(
-      to: "admin@workstays.com",
+      to: "admin@crewbnb.ie",
       subject: "New contact form submission: #{@contact.subject}"
     )
   end

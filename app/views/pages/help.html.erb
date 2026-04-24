@@ -1,11 +1,11 @@
-<% content_for(:title, "Help Centre - WorkStays") %>
-<% meta_description "Find answers to common questions about booking, hosting, payments, and your WorkStays account." %>
+<% content_for(:title, "Help Centre - Crewbnb") %>
+<% meta_description "Find answers to common questions about booking, hosting, payments, and your Crewbnb account." %>
 
 <%# ===== HERO ===== %>
 <section class="bg-[#001949] pt-10 pb-16">
   <div class="max-w-screen-xl mx-auto px-6">
     <p class="text-blue-200/60 text-sm font-medium mb-2">Help Centre</p>
-    <h1 class="font-headline text-3xl md:text-[2.75rem] font-extrabold text-white leading-[1.1] tracking-tight mb-4 max-w-2xl">
+    <h1 class="font-headline text-3xl md:text-4xl font-extrabold text-white leading-[1.1] tracking-tight mb-4 max-w-2xl">
       How can we help?
     </h1>
     <p class="text-blue-200/80 text-base md:text-lg max-w-lg">
@@ -15,7 +15,7 @@
 </section>
 
 <%# ===== QUICK LINKS ===== %>
-<section class="bg-white py-12 border-b border-slate-100">
+<section class="bg-white py-16 border-b border-slate-100">
   <div class="max-w-screen-xl mx-auto px-6">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <a href="#booking" class="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:border-slate-200 transition-colors text-center">
@@ -39,7 +39,7 @@
 </section>
 
 <%# ===== BOOKING FAQ ===== %>
-<section id="booking" class="bg-white py-14 border-b border-slate-100 scroll-mt-20">
+<section id="booking" class="bg-white py-16 border-b border-slate-100 scroll-mt-20">
   <div class="max-w-screen-xl mx-auto px-6">
     <div class="max-w-3xl mx-auto">
       <div class="flex items-center gap-3 mb-8">
@@ -70,7 +70,7 @@
 
         <div class="bg-slate-50 rounded-xl p-6 border border-slate-100">
           <h3 class="font-semibold text-slate-900 mb-2">How do I contact my host?</h3>
-          <p class="text-slate-500 text-sm leading-relaxed">Use the messaging feature on WorkStays. Go to your booking and click "Message host", or find your conversations under Messages in the menu.</p>
+          <p class="text-slate-500 text-sm leading-relaxed">Use the messaging feature on Crewbnb. Go to your booking and click "Message host", or find your conversations under Messages in the menu.</p>
         </div>
       </div>
     </div>
@@ -78,7 +78,7 @@
 </section>
 
 <%# ===== HOSTING FAQ ===== %>
-<section id="hosting" class="bg-slate-50 py-14 border-b border-slate-100 scroll-mt-20">
+<section id="hosting" class="bg-slate-50 py-16 border-b border-slate-100 scroll-mt-20">
   <div class="max-w-screen-xl mx-auto px-6">
     <div class="max-w-3xl mx-auto">
       <div class="flex items-center gap-3 mb-8">
@@ -112,7 +112,7 @@
 </section>
 
 <%# ===== PAYMENTS FAQ ===== %>
-<section id="payments" class="bg-white py-14 border-b border-slate-100 scroll-mt-20">
+<section id="payments" class="bg-white py-16 border-b border-slate-100 scroll-mt-20">
   <div class="max-w-screen-xl mx-auto px-6">
     <div class="max-w-3xl mx-auto">
       <div class="flex items-center gap-3 mb-8">
@@ -146,7 +146,7 @@
 </section>
 
 <%# ===== ACCOUNT FAQ ===== %>
-<section id="account" class="bg-slate-50 py-14 scroll-mt-20">
+<section id="account" class="bg-slate-50 py-16 scroll-mt-20">
   <div class="max-w-screen-xl mx-auto px-6">
     <div class="max-w-3xl mx-auto">
       <div class="flex items-center gap-3 mb-8">
@@ -180,7 +180,7 @@
     <h2 class="font-headline text-xl font-bold text-slate-900 mb-3">Still need help?</h2>
     <p class="text-slate-500 text-sm mb-6">Can't find what you're looking for? Get in touch and we'll sort it.</p>
     <%= link_to contact_path, class: "inline-flex items-center gap-2 bg-[#001949] text-white px-7 py-3 rounded-xl font-semibold text-sm hover:bg-[#002d75] transition-colors" do %>
-      <span class="material-symbols-outlined text-[18px]">mail</span>
+      <span class="material-symbols-outlined text-lg">mail</span>
       Contact us
     <% end %>
   </div>
