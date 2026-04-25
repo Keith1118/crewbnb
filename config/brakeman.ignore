@@ -1,0 +1,14 @@
+{
+  "ignored_warnings": [
+    {
+      "fingerprint": "0f75981ebfb55e0e6e16ca49c2fe34d70db7dc0a06fa926d3b406fa8b6c6c091",
+      "warning_type": "Mass Assignment",
+      "check_name": "PermitAttributes",
+      "file": "app/controllers/admin/users_controller.rb",
+      "line": 43,
+      "note": "Admin-only endpoint (require_admin before_action). Role assignment is the intended behavior."
+    }
+  ],
+  "updated": "2026-04-25",
+  "brakeman_version": "8.0.4"
+}
