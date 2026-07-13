@@ -104,3 +104,20 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ===== Pagy pagination ===== */
+nav.pagy {
+  @apply flex items-center gap-1;
+}
+
+nav.pagy a {
+  @apply inline-flex items-center justify-center min-w-9 h-9 px-2 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-surface-container transition-colors;
+}
+
+nav.pagy a.current {
+  @apply bg-primary-container text-on-primary-container font-bold;
+}
+
+nav.pagy a:not([href]) {
+  @apply text-outline-variant cursor-default hover:bg-transparent;
+}

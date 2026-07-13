@@ -1,9 +1,14 @@
 class PropertiesController < ApplicationController
-  before_action :authenticate_user!, only: [:favorite, :unfavorite]
-  before_action :set_property, only: [:show, :favorite, :unfavorite]
+  before_action :authenticate_user!, only: [ :favorite, :unfavorite ]
+  before_action :set_property, only: [ :show, :favorite, :unfavorite ]
 
   def index
     properties = Property.published
+
+    # "My favorites" filter from the account menu
+    if params[:favorites].present? && user_signed_in?
+      properties = properties.where(id: current_user.favorites.select(:property_id))
+    end
 
     # Full-text search via pg_search
     if params[:query].present?
@@ -19,7 +24,7 @@ class PropertiesController < ApplicationController
 
     # Date availability filtering
     if params[:check_in].present? && params[:check_out].present?
-      booked_property_ids = Booking.where(status: [:pending, :confirmed])
+      booked_property_ids = Booking.where(status: [ :pending, :confirmed ])
                                    .where("check_in < ? AND check_out > ?", params[:check_out], params[:check_in])
                                    .select(:property_id)
       properties = properties.where.not(id: booked_property_ids)
@@ -37,7 +42,7 @@ class PropertiesController < ApplicationController
       properties = properties.order(created_at: :desc)
     end
 
-    @pagy, @properties = pagy(properties, limit: 12)
+    @pagy, @properties = pagy(properties.with_attached_images, limit: 12)
   end
 
   def show

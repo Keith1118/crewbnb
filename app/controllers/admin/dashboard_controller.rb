@@ -7,7 +7,7 @@ module Admin
       @total_users = User.count
       @total_properties = Property.count
       @total_bookings = Booking.count
-      @total_revenue = Booking.where(status: [:confirmed, :completed]).sum(:total_price)
+      @total_revenue = Booking.where(status: [ :confirmed, :completed ]).sum(:total_price)
 
       @recent_users = User.order(created_at: :desc).limit(5)
       @recent_bookings = Booking.includes(:user, :property).order(created_at: :desc).limit(10)

@@ -2,7 +2,7 @@ module Host
   class BookingsController < ApplicationController
     before_action :authenticate_user!
     before_action :require_host
-    before_action :set_booking, only: [:show, :update]
+    before_action :set_booking, only: [ :show, :update ]
 
     def index
       bookings = Booking.where(property: current_user.properties)

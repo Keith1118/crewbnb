@@ -1,5 +1,7 @@
 class MessagesController < ApplicationController
   before_action :authenticate_user!
+  rate_limit to: 30, within: 1.minute, only: :create,
+             with: -> { redirect_to conversations_path, alert: "You're sending messages too quickly. Please slow down." }
 
   def create
     @conversation = Conversation.for_user(current_user).find(params[:conversation_id])

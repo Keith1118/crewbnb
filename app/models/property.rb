@@ -20,12 +20,15 @@ class Property < ApplicationRecord
 
   # Search
   pg_search_scope :search_by_text,
-    against: [:title, :description, :city],
+    against: [ :title, :description, :city ],
     using: { tsearch: { prefix: true } }
 
   # Geocoding
   geocoded_by :full_address
-  after_validation :geocode, if: ->(obj) { obj.address_changed? || obj.city_changed? || obj.country_changed? }
+  after_validation :geocode, if: ->(obj) {
+    (obj.address_changed? || obj.city_changed? || obj.country_changed?) &&
+      !(obj.latitude_changed? || obj.longitude_changed?)
+  }
 
   # Validations
   validates :title, presence: true
@@ -40,10 +43,29 @@ class Property < ApplicationRecord
 
   # Methods
   def full_address
-    [address, city, country].compact.join(", ")
+    [ address, city, country ].compact.join(", ")
   end
 
   def average_rating
-    reviews.average(:rating)&.round(2)
+    reviews.average(:rating)&.round(1)
+  end
+
+  def weekly_price
+    (price_per_night * 5).round
+  end
+
+  def available_between?(check_in, check_out)
+    !bookings.blocking.overlapping(check_in, check_out).exists?
+  end
+
+  def next_available_date
+    last_blocking = bookings.blocking.where("check_out > ?", Date.current).order(:check_out)
+    date = Date.current
+    last_blocking.each do |booking|
+      break if booking.check_in > date
+
+      date = [ date, booking.check_out ].max
+    end
+    date
   end
 end

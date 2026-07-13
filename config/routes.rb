@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: {
     registrations: "users/registrations",
-    sessions: "users/sessions"
+    sessions: "users/sessions",
+    passwords: "users/passwords"
   }
 
   root "pages#home"
@@ -16,44 +17,45 @@ Rails.application.routes.draw do
   get "privacy", to: "pages#privacy", as: :privacy
   get "terms", to: "pages#terms", as: :terms
   get "cookies", to: "pages#cookies", as: :cookies_policy
+  get "sitemap.xml", to: "pages#sitemap", defaults: { format: "xml" }, as: :sitemap
 
-  resources :properties, only: [:index, :show] do
-    resources :bookings, only: [:new, :create]
-    resources :reviews, only: [:new, :create]
+  resources :properties, only: [ :index, :show ] do
+    resources :bookings, only: [ :new, :create ]
+    resources :reviews, only: [ :new, :create ]
     member do
       post :favorite
       delete :unfavorite
     end
   end
 
-  resources :bookings, only: [:index, :show, :update] do
-    resource :payment, only: [:new, :create] do
+  resources :bookings, only: [ :index, :show, :update ] do
+    resource :payment, only: [ :new, :create ] do
       get :complete
     end
-    resources :reviews, only: [:new, :create]
+    resources :reviews, only: [ :new, :create ]
   end
 
-  resources :conversations, only: [:index, :show, :create] do
-    resources :messages, only: [:create]
+  resources :conversations, only: [ :index, :show, :create ] do
+    resources :messages, only: [ :create ]
   end
 
   namespace :host do
     root "dashboard#index"
     resources :properties
-    resources :bookings, only: [:index, :show, :update]
+    resources :bookings, only: [ :index, :show, :update ]
   end
 
   namespace :admin do
     root "dashboard#index"
     resources :users
-    resources :properties, only: [:index, :show, :update, :destroy]
-    resources :bookings, only: [:index, :show]
-    resources :reviews, only: [:index, :destroy]
-    resources :contact_submissions, only: [:index, :show, :destroy]
+    resources :properties, only: [ :index, :show, :update, :destroy ]
+    resources :bookings, only: [ :index, :show ]
+    resources :reviews, only: [ :index, :destroy ]
+    resources :contact_submissions, only: [ :index, :show, :destroy ]
   end
 
   namespace :webhooks do
-    resource :stripe, only: [:create], controller: "stripe"
+    resource :stripe, only: [ :create ], controller: "stripe"
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

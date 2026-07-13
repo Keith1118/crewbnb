@@ -58,7 +58,7 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "workstays.com") }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "crewbnb.ie") }
 
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
@@ -67,7 +67,7 @@ Rails.application.configure do
     port: ENV.fetch("SMTP_PORT", 587).to_i,
     user_name: ENV.fetch("SMTP_USERNAME", Rails.application.credentials.dig(:smtp, :user_name)),
     password: ENV.fetch("SMTP_PASSWORD", Rails.application.credentials.dig(:smtp, :password)),
-    domain: ENV.fetch("SMTP_DOMAIN", "workstays.com"),
+    domain: ENV.fetch("SMTP_DOMAIN", "crewbnb.ie"),
     authentication: :plain,
     enable_starttls_auto: true
   }

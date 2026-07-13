@@ -2,7 +2,7 @@ module Admin
   class PropertiesController < ApplicationController
     before_action :authenticate_user!
     before_action :require_admin
-    before_action :set_property, only: [:show, :update, :destroy]
+    before_action :set_property, only: [ :show, :update, :destroy ]
 
     def index
       @pagy, @properties = pagy(

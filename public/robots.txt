@@ -1,1 +1,11 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+# Crewbnb — crew accommodation booking
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /host/
+Disallow: /bookings
+Disallow: /conversations
+Disallow: /users/
+
+Sitemap: https://crewbnb.ie/sitemap.xml

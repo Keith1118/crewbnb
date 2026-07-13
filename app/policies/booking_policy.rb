@@ -18,10 +18,11 @@ class BookingPolicy < ApplicationPolicy
     guest? || admin?
   end
 
-  # Only the property host (or an admin) can update a booking
-  # (e.g. approve / reject).
+  # The property host (or an admin) can update a booking (approve / reject).
+  # The guest who made the booking can also update it — the controller
+  # restricts guests to cancelling their own booking.
   def update?
-    admin? || property_host?
+    admin? || property_host? || booking_guest?
   end
 
   # Only admins can destroy bookings.

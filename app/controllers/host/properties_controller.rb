@@ -2,7 +2,7 @@ module Host
   class PropertiesController < ApplicationController
     before_action :authenticate_user!
     before_action :require_host
-    before_action :set_property, only: [:show, :edit, :update, :destroy]
+    before_action :set_property, only: [ :show, :edit, :update, :destroy ]
 
     def index
       @pagy, @properties = pagy(
@@ -61,7 +61,8 @@ module Host
         :title, :description, :property_type, :address, :city, :country,
         :price_per_night, :bedrooms, :bathrooms, :max_guests, :status,
         :wifi_speed, :has_desk, :has_meeting_room, :has_parking, :has_printer,
-        :instant_book, images: [],
+        :instant_book, :bed_configuration, :house_rules, :check_in_time,
+        :check_out_time, :nearby_attractions, images: [],
         amenity_ids: []
       )
     end

@@ -4,18 +4,16 @@
 
 import { application } from "./application"
 
-import CarouselController from "./carousel_controller"
+import BookingCalcController from "./booking_calc_controller"
 import DismissableController from "./dismissable_controller"
 import DropdownController from "./dropdown_controller"
-import HelloController from "./hello_controller"
 import MobileMenuController from "./mobile_menu_controller"
 import PaymentFormController from "./payment_form_controller"
 import PropertyMapController from "./property_map_controller"
 import SidebarController from "./sidebar_controller"
-application.register("carousel", CarouselController)
+application.register("booking-calc", BookingCalcController)
 application.register("dismissable", DismissableController)
 application.register("dropdown", DropdownController)
-application.register("hello", HelloController)
 application.register("mobile-menu", MobileMenuController)
 application.register("payment-form", PaymentFormController)
 application.register("property-map", PropertyMapController)

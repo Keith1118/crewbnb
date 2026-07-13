@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_03_113105) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_13_110000) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -74,6 +75,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_113105) do
     t.bigint "user_id", null: false
     t.index ["property_id"], name: "index_bookings_on_property_id"
     t.index ["user_id"], name: "index_bookings_on_user_id"
+    t.exclusion_constraint "property_id WITH =, daterange(check_in, check_out) WITH &&", where: "status = ANY (ARRAY[0, 1])", using: :gist, name: "bookings_no_overlap"
   end
 
   create_table "contact_submissions", force: :cascade do |t|
@@ -133,7 +135,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_113105) do
   create_table "properties", force: :cascade do |t|
     t.string "address"
     t.integer "bathrooms"
+    t.string "bed_configuration"
     t.integer "bedrooms"
+    t.string "check_in_time", default: "3:00 PM"
+    t.string "check_out_time", default: "10:30 AM"
     t.string "city"
     t.string "country"
     t.datetime "created_at", null: false
@@ -142,10 +147,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_03_113105) do
     t.boolean "has_meeting_room", default: false
     t.boolean "has_parking", default: false
     t.boolean "has_printer", default: false
+    t.text "house_rules"
     t.boolean "instant_book", default: false
     t.float "latitude"
     t.float "longitude"
     t.integer "max_guests"
+    t.text "nearby_attractions"
     t.decimal "price_per_night"
     t.string "property_type"
     t.integer "status", default: 0

@@ -7,7 +7,14 @@ class ReviewsController < ApplicationController
       @property = @booking.property
     else
       @property = Property.find(params[:property_id])
+      @booking = current_user.bookings.where(property: @property).completed.last
     end
+
+    unless @booking&.completed?
+      redirect_to @property, alert: "You can review a property once you've completed a stay there."
+      return
+    end
+
     @review = Review.new
   end
 
@@ -20,10 +27,16 @@ class ReviewsController < ApplicationController
       @booking = current_user.bookings.where(property: @property).completed.last
     end
 
+    unless @booking&.completed?
+      redirect_to @property, alert: "You can review a property once you've completed a stay there."
+      return
+    end
+
     @review = Review.new(review_params)
     @review.reviewer = current_user
     @review.booking = @booking
     @review.reviewable = @property
+    authorize @review
 
     if @review.save
       redirect_to @property, notice: "Review submitted successfully."

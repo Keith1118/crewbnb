@@ -7,7 +7,7 @@ module Host
       @property_count = current_user.properties.count
       @booking_count = Booking.where(property: current_user.properties).count
       @earnings = Booking.where(property: current_user.properties)
-                         .where(status: [:confirmed, :completed])
+                         .where(status: [ :confirmed, :completed ])
                          .sum(:total_price)
       @recent_bookings = Booking.where(property: current_user.properties)
                                 .includes(:property, :user)

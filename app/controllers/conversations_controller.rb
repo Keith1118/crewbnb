@@ -20,8 +20,8 @@ class ConversationsController < ApplicationController
     property = Property.find(params[:property_id])
 
     @conversation = Conversation.find_or_create_by!(
-      participant_1: [current_user, other_user].min_by(&:id),
-      participant_2: [current_user, other_user].max_by(&:id),
+      participant_1: [ current_user, other_user ].min_by(&:id),
+      participant_2: [ current_user, other_user ].max_by(&:id),
       property: property
     )
 

@@ -93,12 +93,26 @@
         <% end %>
       </div>
 
+      <%# Payment status note %>
+      <% if @booking.user_id == current_user.id && !@booking.paid? && (@booking.pending? || @booking.confirmed?) %>
+        <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-5 flex items-start gap-3">
+          <span class="material-symbols-outlined text-yellow-700" aria-hidden="true">info</span>
+          <p class="text-sm text-yellow-800">
+            <% if @booking.property.instant_book? || @booking.confirmed? %>
+              Your booking isn't confirmed until payment is complete. Your dates are held in the meantime.
+            <% else %>
+              Your booking request has been sent to the host. Once it's approved, you'll be able to pay and confirm your stay.
+            <% end %>
+          </p>
+        </div>
+      <% end %>
+
       <%# Actions %>
       <div class="flex flex-wrap gap-3">
-        <% if @booking.pending? %>
+        <% if @booking.user_id == current_user.id && !@booking.paid? && (@booking.confirmed? || (@booking.pending? && @booking.property.instant_book?)) %>
           <%= link_to new_booking_payment_path(@booking),
-              class: "inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold active:scale-95 transition-transform" do %>
-            <span class="material-symbols-outlined text-lg">payment</span>
+              class: "inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold hover:bg-primary transition-colors active:scale-95" do %>
+            <span class="material-symbols-outlined text-lg" aria-hidden="true">payment</span>
             Pay Now
           <% end %>
         <% end %>

@@ -3,7 +3,9 @@
 <section class="max-w-screen-lg mx-auto px-6 py-12">
   <h1 class="font-headline text-3xl font-extrabold text-on-surface tracking-tight mb-8">Confirm Your Booking</h1>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8"
+       data-controller="booking-calc"
+       data-booking-calc-price-value="<%= @property.price_per_night.to_f %>">
     <%# Booking Form %>
     <div class="lg:col-span-2">
       <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-8">
@@ -35,6 +37,7 @@
               <%= f.date_field :check_in,
                   class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors",
                   min: Date.current,
+                  data: { booking_calc_target: "checkIn", action: "change->booking-calc#recalculate" },
                   value: @booking.check_in || params[:check_in] %>
             </div>
             <div>
@@ -47,6 +50,7 @@
               <%= f.date_field :check_out,
                   class: "w-full border border-outline-variant/30 rounded-xl px-4 py-3 text-on-surface bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors",
                   min: Date.current + 1,
+                  data: { booking_calc_target: "checkOut", action: "change->booking-calc#recalculate" },
                   value: @booking.check_out || params[:check_out] %>
             </div>
           </div>
@@ -120,15 +124,33 @@
         </div>
       </div>
 
-      <%# Price Breakdown Placeholder %>
-      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+      <%# Price Breakdown %>
+      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6" aria-live="polite">
         <h3 class="font-headline font-bold text-on-surface mb-4">Price Breakdown</h3>
-        <div class="space-y-3 text-sm text-on-surface-variant">
-          <p class="flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-base">info</span>
-            Select dates to see the price breakdown.
-          </p>
+        <p class="flex items-center gap-1.5 text-sm text-on-surface-variant hidden" data-booking-calc-target="empty">
+          <span class="material-symbols-outlined text-base" aria-hidden="true">info</span>
+          Select dates to see the price breakdown.
+        </p>
+        <div class="space-y-2" data-booking-calc-target="breakdown">
+          <div class="flex justify-between text-sm">
+            <span class="text-on-surface-variant"><%= number_to_currency(@property.price_per_night, precision: 0) %> &times; <span data-booking-calc-target="nights">--</span> nights</span>
+            <span class="text-on-surface font-medium" data-booking-calc-target="subtotal">--</span>
+          </div>
+          <div class="flex justify-between text-base font-bold pt-2 border-t border-outline-variant/15">
+            <span class="text-on-surface">Total</span>
+            <span class="text-on-surface font-headline" data-booking-calc-target="total">--</span>
+          </div>
+          <p class="text-xs text-on-surface-variant pt-1">No service fees or hidden charges.</p>
         </div>
+      </div>
+
+      <%# Cancellation policy %>
+      <div class="bg-surface-container-low rounded-2xl border border-outline-variant/10 p-5 text-sm text-on-surface-variant">
+        <h3 class="font-semibold text-on-surface mb-1 flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-base" aria-hidden="true">event_available</span>
+          Cancellation
+        </h3>
+        <p>You can cancel your booking from your bookings page. See our <%= link_to "terms", terms_path, class: "underline hover:text-on-surface" %> for the full cancellation and refund policy.</p>
       </div>
     </div>
   </div>

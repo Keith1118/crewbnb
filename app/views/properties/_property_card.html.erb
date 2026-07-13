@@ -1,10 +1,10 @@
 <% hue = (property.id * 47 + 180) % 360 %>
-<% weekly = (property.price_per_night * 5).to_i %>
+<% weekly = property.weekly_price %>
 
 <%= link_to property_path(property), class: "group block" do %>
   <div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-3">
     <% if property.images.attached? %>
-      <%= image_tag property.images.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" %>
+      <%= image_tag property.images.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500", loading: "lazy", alt: "#{property.title} in #{property.city}" %>
     <% else %>
       <div class="w-full h-full" style="background: linear-gradient(145deg, hsl(<%= hue %>, 30%, 45%) 0%, hsl(<%= hue %>, 25%, 30%) 100%);">
         <div class="w-full h-full flex items-center justify-center">
@@ -15,12 +15,14 @@
 
     <%# Badges — top left %>
     <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
-      <span class="bg-white/90 backdrop-blur-sm text-slate-800 text-xs font-medium px-2 py-0.5 rounded-full shadow-sm">Mon–Fri available</span>
+      <% if property.instant_book? %>
+        <span class="bg-white/90 backdrop-blur-sm text-slate-800 text-xs font-medium px-2 py-0.5 rounded-full shadow-sm">Instant book</span>
+      <% end %>
       <% if property.has_parking %>
         <span class="bg-white/90 backdrop-blur-sm text-slate-800 text-xs font-medium px-2 py-0.5 rounded-full shadow-sm">Free parking</span>
       <% end %>
-      <% if property.bedrooms >= 3 %>
-        <span class="bg-white/90 backdrop-blur-sm text-slate-800 text-xs font-medium px-2 py-0.5 rounded-full shadow-sm"><%= property.bedrooms %> beds</span>
+      <% if property.property_type.present? %>
+        <span class="bg-white/90 backdrop-blur-sm text-slate-800 text-xs font-medium px-2 py-0.5 rounded-full shadow-sm"><%= property.property_type %></span>
       <% end %>
     </div>
   </div>

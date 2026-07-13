@@ -1,6 +1,10 @@
 class PagesController < ApplicationController
+  rate_limit to: 5, within: 1.minute, only: :submit_contact,
+             with: -> { redirect_to contact_path, alert: "Too many messages sent. Please wait a minute and try again." }
+
   def home
     @properties = Property.published
+                          .with_attached_images
                           .order(created_at: :desc)
                           .limit(9)
   end
@@ -40,6 +44,11 @@ class PagesController < ApplicationController
   end
 
   def cookies
+  end
+
+  def sitemap
+    @properties = Property.published.order(updated_at: :desc)
+    render formats: :xml
   end
 
   private

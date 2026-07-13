@@ -8,6 +8,6 @@ class CreateConversations < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :conversations, [:participant_1_id, :participant_2_id, :property_id], unique: true, name: "index_conversations_on_participants_and_property"
+    add_index :conversations, [ :participant_1_id, :participant_2_id, :property_id ], unique: true, name: "index_conversations_on_participants_and_property"
   end
 end

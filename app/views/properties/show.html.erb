@@ -1,6 +1,46 @@
 <% content_for(:title, "#{@property.title} - Crewbnb") %>
 <% meta_description "#{@property.title} in #{@property.city}, #{@property.country}. #{@property.bedrooms} beds, #{@property.max_guests} guests. From EUR #{@property.price_per_night.to_i}/night. Book on Crewbnb." %>
 
+<% content_for(:head) do %>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LodgingBusiness",
+      "name": <%= @property.title.to_json %>,
+      "description": <%= @property.description.to_s.truncate(300).to_json %>,
+      "url": <%= property_url(@property).to_json %>,
+      <% if @property.images.attached? %>
+      "image": <%= url_for(@property.images.first).to_json %>,
+      <% end %>
+      "address": {
+        "@type": "PostalAddress",
+        <% if @property.address.present? %>
+        "streetAddress": <%= @property.address.to_json %>,
+        <% end %>
+        "addressLocality": <%= @property.city.to_json %>,
+        "addressCountry": <%= @property.country.to_json %>
+      },
+      <% if @property.latitude.present? && @property.longitude.present? %>
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": <%= @property.latitude %>,
+        "longitude": <%= @property.longitude %>
+      },
+      <% end %>
+      <% if @property.average_rating && @property.reviews.any? %>
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": <%= @property.average_rating %>,
+        "reviewCount": <%= @property.reviews.count %>
+      },
+      <% end %>
+      "checkinTime": <%= (@property.check_in_time.presence || "3:00 PM").to_json %>,
+      "checkoutTime": <%= (@property.check_out_time.presence || "10:30 AM").to_json %>,
+      "priceRange": "€<%= @property.price_per_night.to_i %> per night"
+    }
+  </script>
+<% end %>
+
 <%# Deterministic gradient for placeholders %>
 <% hue_1 = (@property.id * 37) % 360 %>
 <% hue_2 = (hue_1 + 40) % 360 %>
@@ -29,8 +69,9 @@
         <p class="text-on-surface-variant">
           Hosted by <span class="font-semibold text-on-surface"><%= @property.user.first_name || @property.user.email.split("@").first %></span>
         </p>
-        <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold uppercase tracking-wider bg-primary-container/20 text-primary-container">
-          <%= @property.user.role %>
+        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-primary-container/10 text-primary-container">
+          <span class="material-symbols-outlined text-sm" aria-hidden="true">verified</span>
+          Verified host
         </span>
       </div>
     </div>
@@ -63,12 +104,12 @@
     <% if @property.images.attached? %>
       <%# Main Image %>
       <div class="md:col-span-2 md:row-span-2 aspect-[4/3] md:aspect-auto">
-        <%= image_tag @property.images.first, class: "w-full h-full object-cover" %>
+        <%= image_tag @property.images.first, class: "w-full h-full object-cover", alt: "#{@property.title} — main photo" %>
       </div>
       <%# Secondary Images %>
       <% @property.images.drop(1).first(4).each_with_index do |image, index| %>
         <div class="hidden md:block aspect-[4/3]">
-          <%= image_tag image, class: "w-full h-full object-cover" %>
+          <%= image_tag image, class: "w-full h-full object-cover", loading: "lazy", alt: "#{@property.title} — photo #{index + 2}" %>
         </div>
       <% end %>
       <%# Fill remaining slots with gradient placeholders %>
@@ -187,22 +228,71 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             <% @property.amenities.each do |amenity| %>
               <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low border border-outline-variant/10">
-                <span class="material-symbols-outlined text-primary-container text-xl"><%= amenity.icon.present? ? amenity.icon : "check_circle" %></span>
+                <span class="material-symbols-outlined text-primary-container text-xl" aria-hidden="true"><%= amenity.icon.present? ? amenity.icon : "check_circle" %></span>
                 <span class="text-sm font-medium text-on-surface"><%= amenity.name %></span>
               </div>
             <% end %>
           </div>
         </section>
       <% end %>
+
+      <%# Sleeping Arrangements %>
+      <% if @property.bed_configuration.present? %>
+        <section>
+          <h2 class="font-headline text-xl font-bold text-on-surface mb-4">Sleeping arrangements</h2>
+          <div class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10 max-w-md">
+            <span class="material-symbols-outlined text-primary-container text-xl" aria-hidden="true">king_bed</span>
+            <span class="text-sm font-medium text-on-surface"><%= @property.bed_configuration %></span>
+          </div>
+        </section>
+      <% end %>
+
+      <%# House Rules & Check-in %>
+      <section>
+        <h2 class="font-headline text-xl font-bold text-on-surface mb-4">Good to know</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10">
+            <span class="material-symbols-outlined text-primary-container text-xl" aria-hidden="true">login</span>
+            <div>
+              <p class="text-sm font-semibold text-on-surface">Check-in</p>
+              <p class="text-xs text-on-surface-variant">From <%= @property.check_in_time.presence || "3:00 PM" %></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10">
+            <span class="material-symbols-outlined text-primary-container text-xl" aria-hidden="true">logout</span>
+            <div>
+              <p class="text-sm font-semibold text-on-surface">Check-out</p>
+              <p class="text-xs text-on-surface-variant">By <%= @property.check_out_time.presence || "10:30 AM" %></p>
+            </div>
+          </div>
+        </div>
+        <% if @property.house_rules.present? %>
+          <div class="rounded-xl bg-surface-container-low border border-outline-variant/10 p-5">
+            <h3 class="text-sm font-bold text-on-surface mb-2">House rules</h3>
+            <div class="text-sm text-on-surface-variant leading-relaxed whitespace-pre-line"><%= @property.house_rules %></div>
+          </div>
+        <% end %>
+      </section>
+
+      <%# Nearby Attractions %>
+      <% if @property.nearby_attractions.present? %>
+        <section>
+          <h2 class="font-headline text-xl font-bold text-on-surface mb-4">What's nearby</h2>
+          <div class="text-on-surface-variant text-sm leading-relaxed whitespace-pre-line"><%= @property.nearby_attractions %></div>
+        </section>
+      <% end %>
     </div>
 
     <%# Right Column: Booking Card %>
     <div class="lg:col-span-1">
-      <div class="sticky top-24 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 shadow-lg p-6 space-y-5">
+      <div class="sticky top-24 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 shadow-lg p-6 space-y-5"
+           data-controller="booking-calc"
+           data-booking-calc-price-value="<%= @property.price_per_night.to_f %>">
         <%# Price Display %>
         <div class="flex items-baseline gap-1">
-          <span class="font-headline text-2xl font-extrabold text-on-surface"><%= number_to_currency(@property.price_per_night) %></span>
+          <span class="font-headline text-2xl font-extrabold text-on-surface"><%= number_to_currency(@property.price_per_night, precision: 0) %></span>
           <span class="text-on-surface-variant text-sm font-medium">/ night</span>
+          <span class="text-on-surface-variant text-sm ml-auto"><%= number_to_currency(@property.weekly_price, precision: 0) %> / week</span>
         </div>
 
         <%# Booking Form %>
@@ -210,56 +300,75 @@
           <%# Check-in / Check-out %>
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Check-in</label>
+              <%= f.label :check_in, "Check-in", class: "block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1" %>
               <%= f.date_field :check_in,
                   value: params[:check_in],
+                  min: Date.current,
+                  data: { booking_calc_target: "checkIn", action: "change->booking-calc#recalculate" },
                   class: "w-full px-3 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
             </div>
             <div>
-              <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Check-out</label>
+              <%= f.label :check_out, "Check-out", class: "block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1" %>
               <%= f.date_field :check_out,
                   value: params[:check_out],
+                  min: Date.current + 1,
+                  data: { booking_calc_target: "checkOut", action: "change->booking-calc#recalculate" },
                   class: "w-full px-3 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
             </div>
           </div>
 
           <%# Guests %>
           <div>
-            <label class="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Guests</label>
+            <%= f.label :guests_count, "Guests", class: "block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1" %>
             <%= f.number_field :guests_count, min: 1, max: @property.max_guests,
                 value: params[:guests] || 1,
                 class: "w-full px-3 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+            <p class="text-xs text-on-surface-variant mt-1">Sleeps up to <%= @property.max_guests %></p>
           </div>
 
           <%# Price Calculation Area %>
-          <div class="border-t border-outline-variant/15 pt-4 space-y-2">
-            <div class="flex justify-between text-sm">
-              <span class="text-on-surface-variant"><%= number_to_currency(@property.price_per_night) %> x <span data-nights>--</span> nights</span>
-              <span class="text-on-surface font-medium" data-subtotal>--</span>
-            </div>
-            <div class="flex justify-between text-base font-bold pt-2 border-t border-outline-variant/15">
-              <span class="text-on-surface">Total</span>
-              <span class="text-on-surface font-headline" data-total>--</span>
+          <div class="border-t border-outline-variant/15 pt-4 space-y-2" aria-live="polite">
+            <p class="text-sm text-on-surface-variant hidden" data-booking-calc-target="empty">Select dates to see your total.</p>
+            <div data-booking-calc-target="breakdown">
+              <div class="flex justify-between text-sm">
+                <span class="text-on-surface-variant"><%= number_to_currency(@property.price_per_night, precision: 0) %> &times; <span data-booking-calc-target="nights">--</span> nights</span>
+                <span class="text-on-surface font-medium" data-booking-calc-target="subtotal">--</span>
+              </div>
+              <div class="flex justify-between text-base font-bold pt-2 mt-2 border-t border-outline-variant/15">
+                <span class="text-on-surface">Total</span>
+                <span class="text-on-surface font-headline" data-booking-calc-target="total">--</span>
+              </div>
+              <p class="text-xs text-on-surface-variant mt-1">No service fees. The price you see is the price you pay.</p>
             </div>
           </div>
 
           <%# Submit %>
           <% if @property.instant_book? %>
             <%= f.submit "Book Now",
-                class: "w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform cursor-pointer" %>
+                class: "w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm hover:bg-primary transition-colors active:scale-[0.98] cursor-pointer" %>
           <% else %>
             <%= f.submit "Request to Book",
-                class: "w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform cursor-pointer" %>
+                class: "w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm hover:bg-primary transition-colors active:scale-[0.98] cursor-pointer" %>
           <% end %>
         <% end %>
 
-        <%# Instant Book Badge %>
-        <% if @property.instant_book? %>
+        <%# Trust signals %>
+        <div class="space-y-2 pt-1">
+          <% if @property.instant_book? %>
+            <div class="flex items-center gap-2 text-xs text-on-surface-variant">
+              <span class="material-symbols-outlined text-primary-container text-base" aria-hidden="true">bolt</span>
+              <span>Instant booking &mdash; no approval needed</span>
+            </div>
+          <% end %>
           <div class="flex items-center gap-2 text-xs text-on-surface-variant">
-            <span class="material-symbols-outlined text-primary-container text-base">bolt</span>
-            <span>Instant booking - no approval needed</span>
+            <span class="material-symbols-outlined text-primary-container text-base" aria-hidden="true">lock</span>
+            <span>Secure card payment via Stripe</span>
           </div>
-        <% end %>
+          <div class="flex items-center gap-2 text-xs text-on-surface-variant">
+            <span class="material-symbols-outlined text-primary-container text-base" aria-hidden="true">receipt_long</span>
+            <span>VAT invoice with every booking</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
