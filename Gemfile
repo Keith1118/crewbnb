@@ -66,6 +66,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
   gem "faker"
   gem "factory_bot_rails"
+  gem "dotenv-rails" # loads a local .env file so you can test API keys in development
 end
 
 group :development do
