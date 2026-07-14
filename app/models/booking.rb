@@ -17,6 +17,7 @@ class Booking < ApplicationRecord
   validate :check_in_not_in_past, on: :create
   validate :guests_within_capacity
   validate :dates_not_double_booked
+  validate :dates_not_blocked
 
   # Callbacks
   before_validation :set_total_price
@@ -73,6 +74,15 @@ class Booking < ApplicationRecord
     clash = clash.where.not(id: id) if persisted?
 
     errors.add(:base, "Those dates are no longer available for this property") if clash.exists?
+  end
+
+  def dates_not_blocked
+    return unless property && check_in && check_out
+    return if cancelled?
+
+    if property.availabilities.where(available: false, date: check_in...check_out).exists?
+      errors.add(:base, "Some of those dates have been blocked by the host and can't be booked")
+    end
   end
 
   def set_total_price

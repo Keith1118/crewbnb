@@ -1,0 +1,53 @@
+<% content_for(:page_title, "Inbox") %>
+<% content_for(:title, "Inbox - Crewbnb Host") %>
+
+<div class="mb-6">
+  <h2 class="font-headline text-2xl font-extrabold text-ink tracking-tight">Inbox</h2>
+  <p class="text-sm text-muted mt-1">Messages from guests about your listings.</p>
+</div>
+
+<% if @conversations.any? %>
+  <div class="bg-white rounded-2xl border border-line overflow-hidden divide-y divide-line">
+    <% @conversations.each do |conversation| %>
+      <% guest = conversation.other_participant(current_user) %>
+      <% last_msg = conversation.last_message %>
+      <% unread = conversation.messages.where.not(user: current_user).unread.count %>
+      <%= link_to host_conversation_path(conversation), class: "flex items-center gap-4 px-5 py-4 hover:bg-neutral-50 transition-colors" do %>
+        <div class="relative flex-shrink-0">
+          <% if guest.avatar.attached? %>
+            <%= image_tag guest.avatar, class: "w-12 h-12 rounded-full object-cover" %>
+          <% else %>
+            <div class="w-12 h-12 rounded-full bg-brand flex items-center justify-center text-white text-lg font-bold"><%= (guest.first_name.presence || guest.email)[0].upcase %></div>
+          <% end %>
+          <% if unread > 0 %>
+            <span class="absolute -top-1 -right-1 min-w-5 h-5 px-1 bg-brand text-white text-[10px] font-bold rounded-full flex items-center justify-center"><%= unread > 9 ? "9+" : unread %></span>
+          <% end %>
+        </div>
+
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-3 mb-0.5">
+            <h3 class="font-bold text-sm truncate <%= unread > 0 ? 'text-ink' : 'text-ink' %>"><%= guest.first_name.present? ? "#{guest.first_name} #{guest.last_name}" : guest.email %></h3>
+            <% if last_msg %><span class="text-xs text-muted flex-shrink-0"><%= time_ago_in_words(last_msg.created_at) %> ago</span><% end %>
+          </div>
+          <p class="text-xs text-muted flex items-center gap-1 mb-1 truncate">
+            <span class="material-symbols-outlined text-xs">apartment</span><%= truncate(conversation.property.title, length: 46) %>
+          </p>
+          <% if last_msg %>
+            <p class="text-sm truncate <%= unread > 0 ? 'text-ink font-medium' : 'text-muted' %>">
+              <% if last_msg.user == current_user %><span class="text-muted">You: </span><% end %><%= truncate(last_msg.body, length: 70) %>
+            </p>
+          <% else %>
+            <p class="text-sm text-muted italic">No messages yet</p>
+          <% end %>
+        </div>
+        <span class="material-symbols-outlined text-neutral-300 flex-shrink-0">chevron_right</span>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="text-center py-20 bg-white rounded-2xl border border-line">
+    <span class="material-symbols-outlined text-6xl text-neutral-300">forum</span>
+    <h3 class="font-headline text-lg font-bold text-ink mt-4">No messages yet</h3>
+    <p class="text-muted mt-2 max-w-md mx-auto">When a guest messages you about a listing, or you send an automated check-in message, it'll appear here.</p>
+  </div>
+<% end %>

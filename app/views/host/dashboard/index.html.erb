@@ -1,125 +1,210 @@
 <% content_for(:page_title, "Dashboard") %>
 
-<%# Welcome %>
-<div class="mb-8">
-  <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">
-    Welcome back<%= current_user.first_name.present? ? ", #{current_user.first_name}" : "" %>
-  </h2>
-  <p class="text-on-surface-variant mt-1">Here's an overview of your hosting activity.</p>
-</div>
-
-<%# Stats Cards %>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-  <%# Total Properties %>
-  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
-    <div class="flex items-center justify-between mb-3">
-      <span class="material-symbols-outlined text-2xl text-primary-container">apartment</span>
-      <%= link_to host_properties_path, class: "text-xs text-on-surface-variant hover:text-primary-container transition-colors" do %>
-        View all
-      <% end %>
-    </div>
-    <p class="font-headline text-3xl font-extrabold text-on-surface"><%= @property_count %></p>
-    <p class="text-sm text-on-surface-variant mt-1">Total Properties</p>
+<%# ===== Greeting ===== %>
+<div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
+  <div>
+    <p class="text-sm font-semibold text-brand uppercase tracking-widest"><%= @today.strftime("%A, %-d %B") %></p>
+    <h2 class="font-headline text-3xl font-extrabold text-ink tracking-tight mt-1">
+      Welcome back<%= current_user.first_name.present? ? ", #{current_user.first_name}" : "" %>
+    </h2>
+    <p class="text-muted mt-1">Here's what needs your attention across <%= pluralize(@property_count, "listing") %>.</p>
   </div>
-
-  <%# Active Bookings %>
-  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
-    <div class="flex items-center justify-between mb-3">
-      <span class="material-symbols-outlined text-2xl text-green-600">calendar_month</span>
-      <%= link_to host_bookings_path, class: "text-xs text-on-surface-variant hover:text-primary-container transition-colors" do %>
-        View all
-      <% end %>
-    </div>
-    <p class="font-headline text-3xl font-extrabold text-on-surface"><%= @booking_count %></p>
-    <p class="text-sm text-on-surface-variant mt-1">Active Bookings</p>
-  </div>
-
-  <%# Total Earnings %>
-  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
-    <div class="flex items-center justify-between mb-3">
-      <span class="material-symbols-outlined text-2xl text-yellow-600">payments</span>
-    </div>
-    <p class="font-headline text-3xl font-extrabold text-on-surface">&euro;<%= number_with_delimiter(@earnings, delimiter: ",") %></p>
-    <p class="text-sm text-on-surface-variant mt-1">Total Earnings</p>
-  </div>
-
-  <%# Average Rating %>
-  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
-    <div class="flex items-center justify-between mb-3">
-      <span class="material-symbols-outlined text-2xl text-yellow-500" style="font-variation-settings: 'FILL' 1;">star</span>
-    </div>
-    <% avg_rating = Review.joins(booking: :property).where(properties: { user_id: current_user.id }).average(:rating) %>
-    <p class="font-headline text-3xl font-extrabold text-on-surface">
-      <%= avg_rating.present? ? sprintf("%.1f", avg_rating) : "--" %>
-    </p>
-    <p class="text-sm text-on-surface-variant mt-1">Average Rating</p>
+  <div class="flex items-center gap-2">
+    <%= link_to host_calendar_path, class: "inline-flex items-center gap-2 bg-neutral-100 text-ink px-4 py-2.5 rounded-xl font-bold text-sm border border-neutral-300 active:scale-95 transition-transform" do %>
+      <span class="material-symbols-outlined text-lg">calendar_month</span> Calendar
+    <% end %>
+    <%= link_to host_bookings_path, class: "inline-flex items-center gap-2 bg-brand text-white px-4 py-2.5 rounded-xl font-bold text-sm active:scale-95 transition-transform" do %>
+      <span class="material-symbols-outlined text-lg">event_available</span> Bookings
+    <% end %>
   </div>
 </div>
 
-<%# Recent Bookings Table %>
-<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden mb-8">
-  <div class="flex items-center justify-between px-6 py-4 border-b border-outline-variant/15">
-    <h3 class="font-headline font-bold text-on-surface">Recent Bookings</h3>
-    <%= link_to "View All", host_bookings_path, class: "text-sm text-primary-container hover:underline font-medium" %>
+<%# ===== Needs your attention (pending requests) ===== %>
+<% if @pending.any? %>
+  <div class="bg-amber-400/10 border border-amber-400/30 rounded-2xl p-5 mb-8">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="material-symbols-outlined text-amber-600">notification_important</span>
+      <h3 class="font-headline font-bold text-ink"><%= pluralize(@pending.size, "request") %> to review</h3>
+    </div>
+    <div class="space-y-3">
+      <% @pending.each do |b| %>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 bg-white rounded-xl border border-line p-4">
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-ink truncate"><%= b.user.first_name.presence || b.user.email %> · <%= truncate(b.property.title, length: 34) %></p>
+            <p class="text-sm text-muted"><%= b.check_in.strftime("%d %b") %> → <%= b.check_out.strftime("%d %b") %> · <%= pluralize(b.nights, "night") %> · <%= number_to_currency(b.total_price, precision: 0) %></p>
+          </div>
+          <div class="flex items-center gap-2">
+            <%= button_to host_booking_path(b), method: :patch, params: { booking: { status: "confirmed" } },
+                  class: "inline-flex items-center gap-1 bg-brand text-white px-3 py-2 rounded-lg font-bold text-sm active:scale-95 transition-transform" do %>
+              <span class="material-symbols-outlined text-base">check</span> Approve
+            <% end %>
+            <%= button_to host_booking_path(b), method: :patch, params: { booking: { status: "cancelled" } },
+                  class: "inline-flex items-center gap-1 bg-neutral-100 text-ink px-3 py-2 rounded-lg font-bold text-sm border border-neutral-300 active:scale-95 transition-transform" do %>
+              <span class="material-symbols-outlined text-base">close</span> Decline
+            <% end %>
+            <%= link_to host_booking_path(b), class: "p-2 rounded-lg hover:bg-neutral-100 text-muted", title: "View" do %>
+              <span class="material-symbols-outlined text-base">open_in_new</span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
   </div>
+<% else %>
+  <div class="flex items-center gap-3 bg-white border border-line rounded-2xl p-5 mb-8">
+    <span class="material-symbols-outlined text-brand">task_alt</span>
+    <p class="text-sm font-medium text-ink">You're all caught up — no requests waiting on you.</p>
+  </div>
+<% end %>
 
-  <% if @recent_bookings.any? %>
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b border-outline-variant/15 text-left">
-            <th class="px-6 py-3 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Guest</th>
-            <th class="px-6 py-3 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Property</th>
-            <th class="px-6 py-3 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Dates</th>
-            <th class="px-6 py-3 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Status</th>
-            <th class="px-6 py-3 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-outline-variant/10">
-          <% @recent_bookings.each do |booking| %>
-            <tr class="hover:bg-surface-container/30 transition-colors">
-              <td class="px-6 py-4">
-                <span class="font-medium text-on-surface">
-                  <%= booking.user.first_name.present? ? "#{booking.user.first_name} #{booking.user.last_name}" : booking.user.email %>
-                </span>
-              </td>
-              <td class="px-6 py-4 text-on-surface-variant"><%= truncate(booking.property.title, length: 30) %></td>
-              <td class="px-6 py-4 text-on-surface-variant">
-                <%= booking.check_in.strftime("%b %d") %> &mdash; <%= booking.check_out.strftime("%b %d") %>
-              </td>
-              <td class="px-6 py-4">
-                <% badge_classes = case booking.status
-                   when "pending" then "bg-yellow-100 text-yellow-800"
-                   when "confirmed" then "bg-green-100 text-green-800"
-                   when "cancelled" then "bg-red-100 text-red-800"
-                   when "completed" then "bg-blue-100 text-blue-800"
-                   end %>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold <%= badge_classes %>">
-                  <%= booking.status.capitalize %>
-                </span>
-              </td>
-              <td class="px-6 py-4">
-                <%= link_to "View", host_booking_path(booking),
-                    class: "text-primary-container hover:underline font-medium" %>
-              </td>
-            </tr>
+<%# ===== Today at a glance ===== %>
+<h3 class="font-headline font-bold text-ink mb-3">Today</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+  <%
+    today_tiles = [
+      { label: "Arriving today", icon: "login", accent: "text-brand", set: @arrivals_today, empty: "No arrivals" },
+      { label: "Departing today", icon: "logout", accent: "text-amber-600", set: @departures_today, empty: "No departures" },
+      { label: "In-house now", icon: "night_shelter", accent: "text-green-600", set: @in_house, empty: "No one staying" }
+    ]
+  %>
+  <% today_tiles.each do |t| %>
+    <div class="bg-white rounded-2xl border border-line p-5">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs font-bold text-muted uppercase tracking-wider"><%= t[:label] %></span>
+        <span class="material-symbols-outlined <%= t[:accent] %>"><%= t[:icon] %></span>
+      </div>
+      <p class="font-headline text-3xl font-extrabold text-ink"><%= t[:set].size %></p>
+      <div class="mt-3 space-y-1">
+        <% if t[:set].any? %>
+          <% t[:set].first(3).each do |b| %>
+            <%= link_to host_booking_path(b), class: "flex items-center gap-2 text-sm text-muted hover:text-ink" do %>
+              <span class="w-1.5 h-1.5 rounded-full bg-current opacity-40"></span>
+              <span class="truncate"><%= b.user.first_name.presence || "Guest" %> · <%= truncate(b.property.title, length: 22) %></span>
+            <% end %>
           <% end %>
-        </tbody>
-      </table>
-    </div>
-  <% else %>
-    <div class="px-6 py-12 text-center">
-      <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-2">calendar_month</span>
-      <p class="text-sm text-on-surface-variant">No bookings yet. List a property to start receiving bookings.</p>
+          <% if t[:set].size > 3 %><p class="text-xs text-muted">+<%= t[:set].size - 3 %> more</p><% end %>
+        <% else %>
+          <p class="text-sm text-muted"><%= t[:empty] %></p>
+        <% end %>
+      </div>
     </div>
   <% end %>
 </div>
 
-<%# Quick Actions %>
-<div class="flex items-center gap-4">
-  <%= link_to new_host_property_path,
-      class: "inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold active:scale-95 transition-transform" do %>
-    <span class="material-symbols-outlined text-lg">add</span>
-    New Property
+<%# ===== Upcoming + occupancy ===== %>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+  <%# Upcoming arrivals %>
+  <div class="lg:col-span-2 bg-white rounded-2xl border border-line overflow-hidden">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-line">
+      <h3 class="font-headline font-bold text-ink">Upcoming arrivals · next 14 days</h3>
+      <%= link_to "All bookings", host_bookings_path, class: "text-sm text-brand hover:underline font-medium" %>
+    </div>
+    <% if @upcoming.any? %>
+      <div class="divide-y divide-line">
+        <% @upcoming.each do |b| %>
+          <%= link_to host_booking_path(b), class: "flex items-center gap-4 px-6 py-3.5 hover:bg-neutral-100 transition-colors" do %>
+            <div class="text-center w-12 flex-shrink-0">
+              <p class="font-headline text-lg font-extrabold text-ink leading-none"><%= b.check_in.strftime("%-d") %></p>
+              <p class="text-xs text-muted uppercase"><%= b.check_in.strftime("%b") %></p>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="font-semibold text-ink truncate"><%= b.user.first_name.presence || b.user.email %></p>
+              <p class="text-sm text-muted truncate"><%= truncate(b.property.title, length: 40) %></p>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <p class="text-sm font-semibold text-ink"><%= pluralize(b.nights, "night") %></p>
+              <% if b.pending? %>
+                <span class="text-xs font-bold text-amber-600 uppercase">pending</span>
+              <% else %>
+                <span class="text-xs font-bold text-brand uppercase">confirmed</span>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="px-6 py-12 text-center">
+        <span class="material-symbols-outlined text-4xl text-neutral-300">event_upcoming</span>
+        <p class="text-sm text-muted mt-2">No arrivals booked in the next 14 days.</p>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Occupancy this month %>
+  <div class="bg-white rounded-2xl border border-line p-6 flex flex-col">
+    <h3 class="font-headline font-bold text-ink mb-1">Occupancy</h3>
+    <p class="text-xs text-muted mb-4"><%= @today.strftime("%B") %> · all listings</p>
+    <div class="flex items-center justify-center flex-1 py-2">
+      <div class="relative w-36 h-36">
+        <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">
+          <circle cx="18" cy="18" r="15.9155" fill="none" stroke="currentColor" stroke-width="3" class="text-neutral-400/20" />
+          <circle cx="18" cy="18" r="15.9155" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  class="text-brand" stroke-dasharray="<%= @occupancy %>, 100" />
+        </svg>
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <span class="font-headline text-3xl font-extrabold text-ink"><%= @occupancy %>%</span>
+          <span class="text-xs text-muted"><%= @booked_nights_month %> nights</span>
+        </div>
+      </div>
+    </div>
+    <%= link_to host_calendar_path, class: "mt-4 text-center text-sm font-semibold text-brand hover:underline" do %>
+      Manage availability →
+    <% end %>
+  </div>
+</div>
+
+<%# ===== KPI strip ===== %>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <div class="bg-white rounded-2xl border border-line p-5">
+    <span class="material-symbols-outlined text-2xl text-brand">apartment</span>
+    <p class="font-headline text-2xl font-extrabold text-ink mt-2"><%= @property_count %></p>
+    <p class="text-xs text-muted">Listings</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-line p-5">
+    <span class="material-symbols-outlined text-2xl text-green-600">event_available</span>
+    <p class="font-headline text-2xl font-extrabold text-ink mt-2"><%= @upcoming_count %></p>
+    <p class="text-xs text-muted">Active &amp; upcoming</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-line p-5">
+    <span class="material-symbols-outlined text-2xl text-yellow-600">payments</span>
+    <p class="font-headline text-2xl font-extrabold text-ink mt-2"><%= number_to_currency(@revenue_month, precision: 0) %></p>
+    <p class="text-xs text-muted">Revenue this month</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-line p-5">
+    <span class="material-symbols-outlined text-2xl text-yellow-500" style="font-variation-settings: 'FILL' 1;">star</span>
+    <p class="font-headline text-2xl font-extrabold text-ink mt-2"><%= @avg_rating.present? ? sprintf("%.1f", @avg_rating) : "—" %></p>
+    <p class="text-xs text-muted">Average rating</p>
+  </div>
+</div>
+
+<%# ===== Recent activity ===== %>
+<div class="bg-white rounded-2xl border border-line overflow-hidden">
+  <div class="flex items-center justify-between px-6 py-4 border-b border-line">
+    <h3 class="font-headline font-bold text-ink">Recent activity</h3>
+    <%= link_to "View all", host_bookings_path, class: "text-sm text-brand hover:underline font-medium" %>
+  </div>
+  <% if @recent_bookings.any? %>
+    <div class="divide-y divide-line">
+      <% @recent_bookings.each do |b| %>
+        <%= link_to host_booking_path(b), class: "flex items-center gap-4 px-6 py-3.5 hover:bg-neutral-100 transition-colors" do %>
+          <% badge = case b.status
+             when "pending" then ["bg-amber-400/15 text-amber-600", "pending"]
+             when "confirmed" then ["bg-brand/10 text-brand", "confirmed"]
+             when "cancelled" then ["bg-error-container/20 text-error", "cancelled"]
+             when "completed" then ["bg-blue-500/10 text-blue-600", "completed"]
+             end %>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider flex-shrink-0 <%= badge[0] %>"><%= badge[1] %></span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-ink truncate"><%= b.user.first_name.presence || b.user.email %> · <%= truncate(b.property.title, length: 32) %></p>
+          </div>
+          <p class="text-sm text-muted flex-shrink-0"><%= b.check_in.strftime("%d %b") %> – <%= b.check_out.strftime("%d %b") %></p>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="px-6 py-12 text-center">
+      <span class="material-symbols-outlined text-4xl text-neutral-300">history</span>
+      <p class="text-sm text-muted mt-2">No booking activity yet.</p>
+    </div>
   <% end %>
 </div>

@@ -19,215 +19,216 @@
   <% end %>
 
   <%# Section 1: Basic Info %>
-  <section class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+  <section class="bg-white rounded-2xl border border-line p-6">
     <div class="flex items-center gap-2 mb-6">
-      <span class="material-symbols-outlined text-primary-container text-xl">info</span>
-      <h3 class="font-headline text-lg font-bold text-on-surface">Basic Information</h3>
+      <span class="material-symbols-outlined text-brand text-xl">info</span>
+      <h3 class="font-headline text-lg font-bold text-ink">Basic Information</h3>
     </div>
 
     <div class="space-y-5">
       <%# Title %>
       <div>
-        <label for="property_title" class="block text-sm font-semibold text-on-surface mb-1.5">Title <span class="text-error">*</span></label>
+        <label for="property_title" class="block text-sm font-semibold text-ink mb-1.5">Title <span class="text-error">*</span></label>
         <%= f.text_field :title,
             placeholder: "e.g., Modern Studio with Dedicated Workspace",
-            class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+            class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
       </div>
 
       <%# Description %>
       <div>
-        <label for="property_description" class="block text-sm font-semibold text-on-surface mb-1.5">Description <span class="text-error">*</span></label>
+        <label for="property_description" class="block text-sm font-semibold text-ink mb-1.5">Description <span class="text-error">*</span></label>
         <%= f.text_area :description,
             rows: 5,
             placeholder: "Describe your property, its work features, neighborhood, and what makes it great for remote workers...",
-            class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors resize-y" %>
+            class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors resize-y" %>
       </div>
 
       <%# Property Type %>
       <div>
-        <label for="property_property_type" class="block text-sm font-semibold text-on-surface mb-1.5">Property Type <span class="text-error">*</span></label>
+        <label for="property_property_type" class="block text-sm font-semibold text-ink mb-1.5">Property Type <span class="text-error">*</span></label>
         <%= f.select :property_type,
             options_for_select([["Select type...", ""], "Twin Room", "Double Room", "Triple Room", "Apartment", "House", "Studio", "Shared Room"], property.property_type),
             {},
-            class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body appearance-none focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+            class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body appearance-none focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
       </div>
     </div>
   </section>
 
   <%# Section 2: Location %>
-  <section class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+  <section class="bg-white rounded-2xl border border-line p-6">
     <div class="flex items-center gap-2 mb-6">
-      <span class="material-symbols-outlined text-primary-container text-xl">location_on</span>
-      <h3 class="font-headline text-lg font-bold text-on-surface">Location</h3>
+      <span class="material-symbols-outlined text-brand text-xl">location_on</span>
+      <h3 class="font-headline text-lg font-bold text-ink">Location</h3>
     </div>
 
     <div class="space-y-5">
       <%# Address %>
       <div>
-        <label for="property_address" class="block text-sm font-semibold text-on-surface mb-1.5">Street Address</label>
+        <label for="property_address" class="block text-sm font-semibold text-ink mb-1.5">Street Address</label>
         <%= f.text_field :address,
             placeholder: "123 Main Street",
-            class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+            class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
       </div>
 
       <%# City & Country %>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label for="property_city" class="block text-sm font-semibold text-on-surface mb-1.5">City <span class="text-error">*</span></label>
+          <label for="property_city" class="block text-sm font-semibold text-ink mb-1.5">City <span class="text-error">*</span></label>
           <%= f.text_field :city,
               placeholder: "e.g., Dublin",
-              class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+              class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
         </div>
         <div>
-          <label for="property_country" class="block text-sm font-semibold text-on-surface mb-1.5">Country <span class="text-error">*</span></label>
+          <label for="property_country" class="block text-sm font-semibold text-ink mb-1.5">Country <span class="text-error">*</span></label>
           <%= f.text_field :country,
               placeholder: "e.g., Ireland",
-              class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+              class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
         </div>
       </div>
     </div>
   </section>
 
   <%# Section 3: Details %>
-  <section class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+  <section class="bg-white rounded-2xl border border-line p-6">
     <div class="flex items-center gap-2 mb-6">
-      <span class="material-symbols-outlined text-primary-container text-xl">tune</span>
-      <h3 class="font-headline text-lg font-bold text-on-surface">Property Details</h3>
+      <span class="material-symbols-outlined text-brand text-xl">tune</span>
+      <h3 class="font-headline text-lg font-bold text-ink">Property Details</h3>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
       <%# Bedrooms %>
       <div>
-        <label for="property_bedrooms" class="block text-sm font-semibold text-on-surface mb-1.5">Bedrooms <span class="text-error">*</span></label>
+        <label for="property_bedrooms" class="block text-sm font-semibold text-ink mb-1.5">Bedrooms <span class="text-error">*</span></label>
         <%= f.number_field :bedrooms, min: 0,
-            class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+            class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
       </div>
 
       <%# Bathrooms %>
       <div>
-        <label for="property_bathrooms" class="block text-sm font-semibold text-on-surface mb-1.5">Bathrooms <span class="text-error">*</span></label>
+        <label for="property_bathrooms" class="block text-sm font-semibold text-ink mb-1.5">Bathrooms <span class="text-error">*</span></label>
         <%= f.number_field :bathrooms, min: 0,
-            class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+            class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
       </div>
 
       <%# Max Guests %>
       <div>
-        <label for="property_max_guests" class="block text-sm font-semibold text-on-surface mb-1.5">Max Guests <span class="text-error">*</span></label>
+        <label for="property_max_guests" class="block text-sm font-semibold text-ink mb-1.5">Max Guests <span class="text-error">*</span></label>
         <%= f.number_field :max_guests, min: 1,
-            class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+            class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
       </div>
 
       <%# Price Per Night %>
       <div>
-        <label for="property_price_per_night" class="block text-sm font-semibold text-on-surface mb-1.5">Price Per Night <span class="text-error">*</span></label>
+        <label for="property_price_per_night" class="block text-sm font-semibold text-ink mb-1.5">Price Per Night <span class="text-error">*</span></label>
         <div class="relative">
-          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm font-medium">&euro;</span>
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted text-sm font-medium">&euro;</span>
           <%= f.number_field :price_per_night, min: 0, step: 0.01,
-              class: "w-full pl-8 pr-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+              class: "w-full pl-8 pr-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
         </div>
       </div>
     </div>
   </section>
 
   <%# Section 4: Work Features %>
-  <section class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+  <section class="bg-white rounded-2xl border border-line p-6">
     <div class="flex items-center gap-2 mb-6">
-      <span class="material-symbols-outlined text-primary-container text-xl">work</span>
-      <h3 class="font-headline text-lg font-bold text-on-surface">Work Features</h3>
+      <span class="material-symbols-outlined text-brand text-xl">work</span>
+      <h3 class="font-headline text-lg font-bold text-ink">Work Features</h3>
     </div>
 
     <div class="space-y-5">
       <%# Checkboxes %>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <label class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10 cursor-pointer hover:bg-surface-container-high transition-colors">
-          <%= f.check_box :has_desk, class: "w-5 h-5 rounded-md border-outline-variant/40 text-primary-container focus:ring-primary-container" %>
-          <span class="material-symbols-outlined text-on-surface-variant text-xl">desk</span>
-          <span class="text-sm font-medium text-on-surface">Dedicated Desk</span>
+        <label class="flex items-center gap-3 p-4 rounded-xl bg-neutral-100 border border-line cursor-pointer hover:bg-neutral-100 transition-colors">
+          <%= f.check_box :has_desk, class: "w-5 h-5 rounded-md border-neutral-300 text-brand focus:ring-brand" %>
+          <span class="material-symbols-outlined text-muted text-xl">desk</span>
+          <span class="text-sm font-medium text-ink">Dedicated Desk</span>
         </label>
 
-        <label class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10 cursor-pointer hover:bg-surface-container-high transition-colors">
-          <%= f.check_box :has_meeting_room, class: "w-5 h-5 rounded-md border-outline-variant/40 text-primary-container focus:ring-primary-container" %>
-          <span class="material-symbols-outlined text-on-surface-variant text-xl">meeting_room</span>
-          <span class="text-sm font-medium text-on-surface">Meeting Room</span>
+        <label class="flex items-center gap-3 p-4 rounded-xl bg-neutral-100 border border-line cursor-pointer hover:bg-neutral-100 transition-colors">
+          <%= f.check_box :has_meeting_room, class: "w-5 h-5 rounded-md border-neutral-300 text-brand focus:ring-brand" %>
+          <span class="material-symbols-outlined text-muted text-xl">meeting_room</span>
+          <span class="text-sm font-medium text-ink">Meeting Room</span>
         </label>
 
-        <label class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10 cursor-pointer hover:bg-surface-container-high transition-colors">
-          <%= f.check_box :has_printer, class: "w-5 h-5 rounded-md border-outline-variant/40 text-primary-container focus:ring-primary-container" %>
-          <span class="material-symbols-outlined text-on-surface-variant text-xl">print</span>
-          <span class="text-sm font-medium text-on-surface">Printer Access</span>
+        <label class="flex items-center gap-3 p-4 rounded-xl bg-neutral-100 border border-line cursor-pointer hover:bg-neutral-100 transition-colors">
+          <%= f.check_box :has_printer, class: "w-5 h-5 rounded-md border-neutral-300 text-brand focus:ring-brand" %>
+          <span class="material-symbols-outlined text-muted text-xl">print</span>
+          <span class="text-sm font-medium text-ink">Printer Access</span>
         </label>
 
-        <label class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10 cursor-pointer hover:bg-surface-container-high transition-colors">
-          <%= f.check_box :has_parking, class: "w-5 h-5 rounded-md border-outline-variant/40 text-primary-container focus:ring-primary-container" %>
-          <span class="material-symbols-outlined text-on-surface-variant text-xl">local_parking</span>
-          <span class="text-sm font-medium text-on-surface">Parking Available</span>
+        <label class="flex items-center gap-3 p-4 rounded-xl bg-neutral-100 border border-line cursor-pointer hover:bg-neutral-100 transition-colors">
+          <%= f.check_box :has_parking, class: "w-5 h-5 rounded-md border-neutral-300 text-brand focus:ring-brand" %>
+          <span class="material-symbols-outlined text-muted text-xl">local_parking</span>
+          <span class="text-sm font-medium text-ink">Parking Available</span>
         </label>
       </div>
 
       <%# Wi-Fi Speed %>
       <div>
-        <label for="property_wifi_speed" class="block text-sm font-semibold text-on-surface mb-1.5">Wi-Fi Speed</label>
+        <label for="property_wifi_speed" class="block text-sm font-semibold text-ink mb-1.5">Wi-Fi Speed</label>
         <%= f.text_field :wifi_speed,
             placeholder: "e.g., 100 Mbps fiber",
-            class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
-        <p class="text-xs text-on-surface-variant mt-1">Specify the internet speed available at your property.</p>
+            class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
+        <p class="text-xs text-muted mt-1">Specify the internet speed available at your property.</p>
       </div>
     </div>
   </section>
 
   <%# Section 4b: Stay Details %>
-  <section class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+  <section class="bg-white rounded-2xl border border-line p-6">
     <div class="flex items-center gap-2 mb-6">
-      <span class="material-symbols-outlined text-primary-container text-xl">hotel</span>
-      <h3 class="font-headline text-lg font-bold text-on-surface">Stay Details</h3>
+      <span class="material-symbols-outlined text-brand text-xl">hotel</span>
+      <h3 class="font-headline text-lg font-bold text-ink">Stay Details</h3>
     </div>
 
     <div class="space-y-5">
       <div>
-        <label for="property_bed_configuration" class="block text-sm font-semibold text-on-surface mb-1.5">Bed Configuration</label>
+        <label for="property_bed_configuration" class="block text-sm font-semibold text-ink mb-1.5">Bed Configuration</label>
         <%= f.text_field :bed_configuration,
             placeholder: "e.g., 2 single beds",
-            class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+            class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label for="property_check_in_time" class="block text-sm font-semibold text-on-surface mb-1.5">Check-in From</label>
+          <label for="property_check_in_time" class="block text-sm font-semibold text-ink mb-1.5">Check-in From</label>
           <%= f.text_field :check_in_time,
               placeholder: "e.g., 3:00 PM",
-              class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+              class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
         </div>
         <div>
-          <label for="property_check_out_time" class="block text-sm font-semibold text-on-surface mb-1.5">Check-out By</label>
+          <label for="property_check_out_time" class="block text-sm font-semibold text-ink mb-1.5">Check-out By</label>
           <%= f.text_field :check_out_time,
               placeholder: "e.g., 10:30 AM",
-              class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
+              class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
         </div>
       </div>
 
       <div>
-        <label for="property_house_rules" class="block text-sm font-semibold text-on-surface mb-1.5">House Rules</label>
+        <label for="property_house_rules" class="block text-sm font-semibold text-ink mb-1.5">House Rules</label>
         <%= f.text_area :house_rules,
             rows: 4,
             placeholder: "One rule per line, e.g. No smoking indoors",
-            class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors resize-y" %>
+            class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors resize-y" %>
       </div>
 
       <div>
-        <label for="property_nearby_attractions" class="block text-sm font-semibold text-on-surface mb-1.5">What's Nearby</label>
+        <label for="property_nearby_attractions" class="block text-sm font-semibold text-ink mb-1.5">Nearby towns</label>
+        <p class="text-xs text-muted mb-1.5">One town per line with an approx drive time — helps crews judge the commute to their job.</p>
         <%= f.text_area :nearby_attractions,
-            rows: 4,
-            placeholder: "One item per line, e.g. Supermarket — 5 min walk",
-            class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors resize-y" %>
+            rows: 5,
+            placeholder: "One town per line, e.g.\nNaas — ~20 min\nDublin city / airport — ~1 hour",
+            class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors resize-y" %>
       </div>
     </div>
   </section>
 
   <%# Section 5: Photos %>
-  <section class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+  <section class="bg-white rounded-2xl border border-line p-6">
     <div class="flex items-center gap-2 mb-6">
-      <span class="material-symbols-outlined text-primary-container text-xl">photo_library</span>
-      <h3 class="font-headline text-lg font-bold text-on-surface">Photos</h3>
+      <span class="material-symbols-outlined text-brand text-xl">photo_library</span>
+      <h3 class="font-headline text-lg font-bold text-ink">Photos</h3>
     </div>
 
     <div class="space-y-4">
@@ -240,48 +241,48 @@
             </div>
           <% end %>
         </div>
-        <p class="text-xs text-on-surface-variant"><%= property.images.count %> photo<%= property.images.count == 1 ? "" : "s" %> uploaded. Add more below.</p>
+        <p class="text-xs text-muted"><%= property.images.count %> photo<%= property.images.count == 1 ? "" : "s" %> uploaded. Add more below.</p>
       <% end %>
 
       <%# File Upload %>
-      <div class="border-2 border-dashed border-outline-variant/30 rounded-2xl p-8 text-center hover:border-primary-container/40 transition-colors">
-        <span class="material-symbols-outlined text-4xl text-outline-variant/40 mb-3">cloud_upload</span>
-        <p class="text-sm font-medium text-on-surface mb-1">Upload property photos</p>
-        <p class="text-xs text-on-surface-variant mb-4">Drag and drop or click to browse. JPG, PNG, WebP accepted.</p>
+      <div class="border-2 border-dashed border-line rounded-2xl p-8 text-center hover:border-brand/40 transition-colors">
+        <span class="material-symbols-outlined text-4xl text-neutral-300 mb-3">cloud_upload</span>
+        <p class="text-sm font-medium text-ink mb-1">Upload property photos</p>
+        <p class="text-xs text-muted mb-4">Drag and drop or click to browse. JPG, PNG, WebP accepted.</p>
         <%= f.file_field :images, multiple: true, accept: "image/*",
-            class: "block w-full text-sm text-on-surface-variant file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-primary-container file:text-on-primary-container hover:file:bg-primary-container/80 file:cursor-pointer file:transition-colors" %>
+            class: "block w-full text-sm text-muted file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-brand file:text-white hover:file:bg-brand/80 file:cursor-pointer file:transition-colors" %>
       </div>
     </div>
   </section>
 
   <%# Section 6: Settings %>
-  <section class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+  <section class="bg-white rounded-2xl border border-line p-6">
     <div class="flex items-center gap-2 mb-6">
-      <span class="material-symbols-outlined text-primary-container text-xl">settings</span>
-      <h3 class="font-headline text-lg font-bold text-on-surface">Settings</h3>
+      <span class="material-symbols-outlined text-brand text-xl">settings</span>
+      <h3 class="font-headline text-lg font-bold text-ink">Settings</h3>
     </div>
 
     <div class="space-y-5">
       <%# Instant Book %>
-      <label class="flex items-center gap-3 p-4 rounded-xl bg-surface-container border border-outline-variant/10 cursor-pointer hover:bg-surface-container-high transition-colors">
-        <%= f.check_box :instant_book, class: "w-5 h-5 rounded-md border-outline-variant/40 text-primary-container focus:ring-primary-container" %>
+      <label class="flex items-center gap-3 p-4 rounded-xl bg-neutral-100 border border-line cursor-pointer hover:bg-neutral-100 transition-colors">
+        <%= f.check_box :instant_book, class: "w-5 h-5 rounded-md border-neutral-300 text-brand focus:ring-brand" %>
         <div>
           <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-on-surface-variant text-xl">bolt</span>
-            <span class="text-sm font-semibold text-on-surface">Instant Book</span>
+            <span class="material-symbols-outlined text-muted text-xl">bolt</span>
+            <span class="text-sm font-semibold text-ink">Instant Book</span>
           </div>
-          <p class="text-xs text-on-surface-variant mt-0.5 ml-7">Allow guests to book without waiting for your approval.</p>
+          <p class="text-xs text-muted mt-0.5 ml-7">Allow guests to book without waiting for your approval.</p>
         </div>
       </label>
 
       <%# Status %>
       <div>
-        <label for="property_status" class="block text-sm font-semibold text-on-surface mb-1.5">Listing Status</label>
+        <label for="property_status" class="block text-sm font-semibold text-ink mb-1.5">Listing Status</label>
         <%= f.select :status,
             options_for_select([["Draft - Not visible to guests", "draft"], ["Published - Visible and bookable", "published"]], property.status),
             {},
-            class: "w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant/30 text-on-surface text-sm font-body appearance-none focus:outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-colors" %>
-        <p class="text-xs text-on-surface-variant mt-1">Draft listings are only visible to you. Publish when ready.</p>
+            class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body appearance-none focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
+        <p class="text-xs text-muted mt-1">Draft listings are only visible to you. Publish when ready.</p>
       </div>
     </div>
   </section>
@@ -289,8 +290,8 @@
   <%# Submit %>
   <div class="flex items-center gap-4 pt-2">
     <%= f.submit property.persisted? ? "Update Property" : "Create Property",
-        class: "bg-primary-container text-on-primary-container px-8 py-3.5 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform cursor-pointer" %>
+        class: "bg-brand text-white px-8 py-3.5 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform cursor-pointer" %>
     <%= link_to "Cancel", property.persisted? ? host_property_path(property) : host_properties_path,
-        class: "text-on-surface-variant font-medium text-sm hover:text-on-surface transition-colors px-4 py-3.5" %>
+        class: "text-muted font-medium text-sm hover:text-ink transition-colors px-4 py-3.5" %>
   </div>
 <% end %>

@@ -99,16 +99,16 @@
     </div>
   </div>
 
-  <%# Image Gallery %>
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-3 rounded-2xl overflow-hidden mb-10">
+  <%# Image Gallery — swipeable on mobile, grid on desktop %>
+  <div class="flex overflow-x-auto snap-x snap-mandatory no-scrollbar gap-3 md:grid md:grid-cols-4 md:overflow-hidden rounded-2xl mb-10">
     <% if @property.images.attached? %>
       <%# Main Image %>
-      <div class="md:col-span-2 md:row-span-2 aspect-[4/3] md:aspect-auto">
+      <div class="flex-shrink-0 w-[88%] snap-center md:w-auto md:flex-shrink md:col-span-2 md:row-span-2 aspect-[4/3] md:aspect-auto rounded-2xl md:rounded-none overflow-hidden">
         <%= image_tag @property.images.first, class: "w-full h-full object-cover", alt: "#{@property.title} — main photo" %>
       </div>
       <%# Secondary Images %>
       <% @property.images.drop(1).first(4).each_with_index do |image, index| %>
-        <div class="hidden md:block aspect-[4/3]">
+        <div class="flex-shrink-0 w-[88%] snap-center md:w-auto md:flex-shrink aspect-[4/3] rounded-2xl md:rounded-none overflow-hidden">
           <%= image_tag image, class: "w-full h-full object-cover", loading: "lazy", alt: "#{@property.title} — photo #{index + 2}" %>
         </div>
       <% end %>
@@ -274,10 +274,14 @@
         <% end %>
       </section>
 
-      <%# Nearby Attractions %>
+      <%# Nearby towns %>
       <% if @property.nearby_attractions.present? %>
         <section>
-          <h2 class="font-headline text-xl font-bold text-on-surface mb-4">What's nearby</h2>
+          <h2 class="font-headline text-xl font-bold text-on-surface mb-1 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary-container" aria-hidden="true">near_me</span>
+            Nearby towns
+          </h2>
+          <p class="text-xs text-on-surface-variant mb-4">Approximate drive times — handy for judging the commute to your job.</p>
           <div class="text-on-surface-variant text-sm leading-relaxed whitespace-pre-line"><%= @property.nearby_attractions %></div>
         </section>
       <% end %>
@@ -285,7 +289,7 @@
 
     <%# Right Column: Booking Card %>
     <div class="lg:col-span-1">
-      <div class="sticky top-24 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 shadow-lg p-6 space-y-5"
+      <div id="booking-card" class="sticky top-24 scroll-mt-24 bg-surface-container-lowest rounded-2xl border border-outline-variant/20 shadow-lg p-6 space-y-5"
            data-controller="booking-calc"
            data-booking-calc-price-value="<%= @property.price_per_night.to_f %>">
         <%# Price Display %>
@@ -296,6 +300,7 @@
         </div>
 
         <%# Booking Form %>
+        <% instant = @property.instant_book? && StripeConfig.configured? %>
         <%= form_with model: @booking, url: property_bookings_path(@property), class: "space-y-4" do |f| %>
           <%# Check-in / Check-out %>
           <div class="grid grid-cols-2 gap-3">
@@ -342,28 +347,35 @@
             </div>
           </div>
 
-          <%# Submit %>
-          <% if @property.instant_book? %>
-            <%= f.submit "Book Now",
-                class: "w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm hover:bg-primary transition-colors active:scale-[0.98] cursor-pointer" %>
-          <% else %>
-            <%= f.submit "Request to Book",
-                class: "w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm hover:bg-primary transition-colors active:scale-[0.98] cursor-pointer" %>
+          <%# Submit — only promise instant booking when we can actually take payment %>
+          <%= f.submit instant ? "Book Now" : "Request to Book",
+              class: "w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm hover:bg-primary transition-colors active:scale-[0.98] cursor-pointer" %>
+          <% unless instant %>
+            <p class="text-xs text-on-surface-variant text-center">You won't be charged yet</p>
           <% end %>
         <% end %>
 
         <%# Trust signals %>
         <div class="space-y-2 pt-1">
-          <% if @property.instant_book? %>
+          <% if instant %>
             <div class="flex items-center gap-2 text-xs text-on-surface-variant">
               <span class="material-symbols-outlined text-primary-container text-base" aria-hidden="true">bolt</span>
               <span>Instant booking &mdash; no approval needed</span>
             </div>
+            <div class="flex items-center gap-2 text-xs text-on-surface-variant">
+              <span class="material-symbols-outlined text-primary-container text-base" aria-hidden="true">lock</span>
+              <span>Secure card payment via Stripe</span>
+            </div>
+          <% else %>
+            <div class="flex items-center gap-2 text-xs text-on-surface-variant">
+              <span class="material-symbols-outlined text-primary-container text-base" aria-hidden="true">schedule</span>
+              <span>Host confirms quickly &mdash; usually the same day</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-on-surface-variant">
+              <span class="material-symbols-outlined text-primary-container text-base" aria-hidden="true">event_available</span>
+              <span>Free to request &mdash; cancel anytime before confirmation</span>
+            </div>
           <% end %>
-          <div class="flex items-center gap-2 text-xs text-on-surface-variant">
-            <span class="material-symbols-outlined text-primary-container text-base" aria-hidden="true">lock</span>
-            <span>Secure card payment via Stripe</span>
-          </div>
           <div class="flex items-center gap-2 text-xs text-on-surface-variant">
             <span class="material-symbols-outlined text-primary-container text-base" aria-hidden="true">receipt_long</span>
             <span>VAT invoice with every booking</span>
@@ -481,4 +493,18 @@
       </div>
     <% end %>
   </section>
+</div>
+
+<%# ===== Mobile sticky booking bar (hidden on desktop where the card is visible) ===== %>
+<div class="lg:hidden sticky bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur border-t border-slate-200 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+  <div class="flex items-center justify-between gap-4">
+    <div>
+      <p class="font-headline text-lg font-extrabold text-on-surface leading-tight"><%= number_to_currency(@property.price_per_night, precision: 0) %><span class="text-sm font-medium text-on-surface-variant"> / night</span></p>
+      <p class="text-xs text-on-surface-variant"><%= number_to_currency(@property.weekly_price, precision: 0) %> / week &middot; no fees</p>
+    </div>
+    <a href="#booking-card"
+       class="flex-shrink-0 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform">
+      <%= @property.instant_book? && StripeConfig.configured? ? "Book now" : "Request to book" %>
+    </a>
+  </div>
 </div>

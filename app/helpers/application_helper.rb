@@ -5,7 +5,7 @@ module ApplicationHelper
     if text
       content_for(:meta_description, text)
     else
-      content_for?(:meta_description) ? content_for(:meta_description) : "Crewbnb — Book crew accommodation near your job site. Weekday pricing, automatic invoices, stays built for workers."
+      content_for?(:meta_description) ? content_for(:meta_description) : "Crewbnb — book accommodation for working crews of every kind: construction, film, engineering, business teams and more. Weekday pricing, automatic invoices, stays built for people who travel for work."
     end
   end
 

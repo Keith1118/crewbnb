@@ -3,50 +3,50 @@
 <%# Header %>
 <div class="flex items-center justify-between mb-8">
   <div>
-    <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">Booking Requests</h2>
-    <p class="text-on-surface-variant mt-1">Manage incoming bookings for your properties.</p>
+    <h2 class="font-headline text-2xl font-extrabold text-ink tracking-tight">Booking Requests</h2>
+    <p class="text-muted mt-1">Manage incoming bookings for your properties.</p>
   </div>
 </div>
 
 <%# Bookings Table %>
 <% if @bookings.any? %>
-  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+  <div class="bg-white rounded-2xl border border-line overflow-hidden">
     <div class="overflow-x-auto">
       <table class="w-full text-sm">
         <thead>
-          <tr class="border-b border-outline-variant/15 text-left">
-            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Guest</th>
-            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Property</th>
-            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Dates</th>
-            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Guests</th>
-            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Total</th>
-            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Status</th>
-            <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Actions</th>
+          <tr class="border-b border-line text-left">
+            <th class="px-6 py-4 text-xs font-medium text-muted uppercase tracking-widest">Guest</th>
+            <th class="px-6 py-4 text-xs font-medium text-muted uppercase tracking-widest">Property</th>
+            <th class="px-6 py-4 text-xs font-medium text-muted uppercase tracking-widest">Dates</th>
+            <th class="px-6 py-4 text-xs font-medium text-muted uppercase tracking-widest">Guests</th>
+            <th class="px-6 py-4 text-xs font-medium text-muted uppercase tracking-widest">Total</th>
+            <th class="px-6 py-4 text-xs font-medium text-muted uppercase tracking-widest">Status</th>
+            <th class="px-6 py-4 text-xs font-medium text-muted uppercase tracking-widest">Actions</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-outline-variant/10">
+        <tbody class="divide-y divide-line">
           <% @bookings.each do |booking| %>
-            <tr class="hover:bg-surface-container/30 transition-colors">
+            <tr class="hover:bg-neutral-100 transition-colors">
               <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
                   <% if booking.user.avatar.attached? %>
                     <%= image_tag booking.user.avatar, class: "w-8 h-8 rounded-full object-cover" %>
                   <% else %>
-                    <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
-                      <span class="text-on-primary-container text-xs font-bold"><%= booking.user.email[0].upcase %></span>
+                    <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center">
+                      <span class="text-white text-xs font-bold"><%= booking.user.email[0].upcase %></span>
                     </div>
                   <% end %>
-                  <span class="font-medium text-on-surface">
+                  <span class="font-medium text-ink">
                     <%= booking.user.first_name.present? ? "#{booking.user.first_name} #{booking.user.last_name}" : booking.user.email %>
                   </span>
                 </div>
               </td>
-              <td class="px-6 py-4 text-on-surface-variant"><%= truncate(booking.property.title, length: 25) %></td>
-              <td class="px-6 py-4 text-on-surface-variant whitespace-nowrap">
+              <td class="px-6 py-4 text-muted"><%= truncate(booking.property.title, length: 25) %></td>
+              <td class="px-6 py-4 text-muted whitespace-nowrap">
                 <%= booking.check_in.strftime("%b %d") %> &mdash; <%= booking.check_out.strftime("%b %d, %Y") %>
               </td>
-              <td class="px-6 py-4 text-on-surface-variant text-center"><%= booking.guests_count %></td>
-              <td class="px-6 py-4 font-medium text-on-surface whitespace-nowrap">&euro;<%= number_with_delimiter(booking.total_price, delimiter: ",") %></td>
+              <td class="px-6 py-4 text-muted text-center"><%= booking.guests_count %></td>
+              <td class="px-6 py-4 font-medium text-ink whitespace-nowrap">&euro;<%= number_with_delimiter(booking.total_price, delimiter: ",") %></td>
               <td class="px-6 py-4">
                 <% badge_classes = case booking.status
                    when "pending" then "bg-yellow-100 text-yellow-800"
@@ -80,7 +80,7 @@
                   <% end %>
 
                   <%= link_to host_booking_path(booking),
-                      class: "inline-flex items-center gap-1 text-primary-container hover:underline text-xs font-medium" do %>
+                      class: "inline-flex items-center gap-1 text-brand hover:underline text-xs font-medium" do %>
                     <span class="material-symbols-outlined text-sm">visibility</span>
                     View
                   <% end %>
@@ -98,9 +98,9 @@
     <%== pagy_nav(@pagy) %>
   </div>
 <% else %>
-  <div class="text-center py-20 bg-surface-container-lowest rounded-2xl border border-outline-variant/15">
-    <span class="material-symbols-outlined text-6xl text-on-surface-variant/30 mb-4">calendar_month</span>
-    <h3 class="font-headline text-xl font-bold text-on-surface mb-2">No booking requests</h3>
-    <p class="text-on-surface-variant">When guests book your properties, they will appear here.</p>
+  <div class="text-center py-20 bg-white rounded-2xl border border-line">
+    <span class="material-symbols-outlined text-6xl text-muted/30 mb-4">calendar_month</span>
+    <h3 class="font-headline text-xl font-bold text-ink mb-2">No booking requests</h3>
+    <p class="text-muted">When guests book your properties, they will appear here.</p>
   </div>
 <% end %>

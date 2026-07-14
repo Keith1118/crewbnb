@@ -3,6 +3,7 @@ class PropertiesController < ApplicationController
   before_action :set_property, only: [ :show, :favorite, :unfavorite ]
 
   def index
+    @cities = Property.published.where.not(city: nil).distinct.order(:city).pluck(:city)
     properties = Property.published
 
     # "My favorites" filter from the account menu
@@ -64,6 +65,15 @@ class PropertiesController < ApplicationController
   private
 
   def set_property
-    @property = Property.find(params[:id])
+    @property = visible_properties.find(params[:id])
+  end
+
+  # The public only ever sees published listings; owners and admins may
+  # preview their own drafts/archived listings by direct URL.
+  def visible_properties
+    return Property.all if current_user&.admin?
+    return Property.published.or(Property.where(user_id: current_user.id)) if user_signed_in?
+
+    Property.published
   end
 end

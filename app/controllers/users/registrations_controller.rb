@@ -1,6 +1,9 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   SELF_ASSIGNABLE_ROLES = %w[guest host].freeze
 
+  # Signed-in hosts/admins keep the host chrome on account settings; everyone else uses the site layout.
+  layout :resolve_layout
+
   rate_limit to: 5, within: 1.minute, only: :create,
              with: -> { redirect_to new_user_registration_path, alert: "Too many sign-up attempts. Please wait a minute and try again." }
 
@@ -23,5 +26,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def configure_account_update_params
     devise_parameter_sanitizer.permit(:account_update, keys: [ :first_name, :last_name, :phone, :bio, :avatar ])
+  end
+
+  def resolve_layout
+    current_user&.host? || current_user&.admin? ? "host" : "application"
   end
 end

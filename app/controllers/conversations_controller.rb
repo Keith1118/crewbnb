@@ -1,5 +1,7 @@
 class ConversationsController < ApplicationController
   before_action :authenticate_user!
+  # Hosts/admins keep the host "extranet" chrome on Messages; guests use the site layout.
+  layout :resolve_layout
 
   def index
     @conversations = Conversation.for_user(current_user)
@@ -31,5 +33,11 @@ class ConversationsController < ApplicationController
     end
 
     redirect_to @conversation
+  end
+
+  private
+
+  def resolve_layout
+    current_user&.host? || current_user&.admin? ? "host" : "application"
   end
 end

@@ -43,6 +43,12 @@ Rails.application.routes.draw do
     root "dashboard#index"
     resources :properties
     resources :bookings, only: [ :index, :show, :update ]
+    get "calendar", to: "calendar#index", as: :calendar
+    patch "calendar/toggle", to: "calendar#toggle", as: :calendar_toggle
+    patch "calendar/block_range", to: "calendar#block_range", as: :calendar_block_range
+    resources :conversations, only: [ :index, :show ] do
+      resources :messages, only: [ :create ]
+    end
   end
 
   namespace :admin do

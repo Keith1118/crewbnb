@@ -86,11 +86,14 @@
                 placeholder: "Any special requests or notes for the host..." %>
           </div>
 
-          <%# Submit %>
+          <%# Submit — only promise instant booking when payment is actually available %>
           <div class="pt-4">
-            <% submit_label = @property.instant_book? ? "Book Now" : "Request to Book" %>
-            <%= f.submit submit_label,
+            <% instant = @property.instant_book? && StripeConfig.configured? %>
+            <%= f.submit instant ? "Book Now" : "Request to Book",
                 class: "w-full bg-primary-container text-on-primary-container px-8 py-4 rounded-xl font-headline font-bold text-lg active:scale-[0.98] transition-transform cursor-pointer flex items-center justify-center gap-2" %>
+            <p class="text-xs text-on-surface-variant text-center mt-2">
+              <%= instant ? "You'll pay securely on the next step." : "You won't be charged yet — the host confirms first." %>
+            </p>
           </div>
         <% end %>
       </div>

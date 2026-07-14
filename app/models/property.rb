@@ -55,7 +55,10 @@ class Property < ApplicationRecord
   end
 
   def available_between?(check_in, check_out)
-    !bookings.blocking.overlapping(check_in, check_out).exists?
+    return false if bookings.blocking.overlapping(check_in, check_out).exists?
+    return false if availabilities.where(available: false, date: check_in...check_out).exists?
+
+    true
   end
 
   def next_available_date

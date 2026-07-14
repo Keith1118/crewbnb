@@ -93,23 +93,50 @@
         <% end %>
       </div>
 
-      <%# Payment status note %>
+      <%# What happens next %>
+      <% can_pay_online = StripeConfig.configured? %>
       <% if @booking.user_id == current_user.id && !@booking.paid? && (@booking.pending? || @booking.confirmed?) %>
-        <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-5 flex items-start gap-3">
-          <span class="material-symbols-outlined text-yellow-700" aria-hidden="true">info</span>
-          <p class="text-sm text-yellow-800">
-            <% if @booking.property.instant_book? || @booking.confirmed? %>
+        <% if @booking.pending? && !(can_pay_online && @booking.property.instant_book?) %>
+          <div class="bg-surface-container-lowest border border-outline-variant/15 rounded-2xl p-6">
+            <h3 class="font-headline font-bold text-on-surface mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary-container" aria-hidden="true">route</span>
+              What happens next
+            </h3>
+            <ol class="space-y-3">
+              <li class="flex items-start gap-3">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center"><span class="material-symbols-outlined text-base">check</span></span>
+                <p class="text-sm text-on-surface pt-0.5">Your request has been sent to the host — your dates are held.</p>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-container/15 text-primary-container text-xs font-bold flex items-center justify-center">2</span>
+                <p class="text-sm text-on-surface-variant pt-0.5">The host reviews your request — usually the same day.</p>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary-container/15 text-primary-container text-xs font-bold flex items-center justify-center">3</span>
+                <p class="text-sm text-on-surface-variant pt-0.5">You'll get an email as soon as it's confirmed. Nothing to pay right now.</p>
+              </li>
+            </ol>
+          </div>
+        <% elsif can_pay_online %>
+          <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-5 flex items-start gap-3">
+            <span class="material-symbols-outlined text-yellow-700" aria-hidden="true">info</span>
+            <p class="text-sm text-yellow-800">
               Your booking isn't confirmed until payment is complete. Your dates are held in the meantime.
-            <% else %>
-              Your booking request has been sent to the host. Once it's approved, you'll be able to pay and confirm your stay.
-            <% end %>
-          </p>
-        </div>
+            </p>
+          </div>
+        <% else %>
+          <div class="bg-green-50 border border-green-200 rounded-2xl p-5 flex items-start gap-3">
+            <span class="material-symbols-outlined text-green-700" aria-hidden="true">check_circle</span>
+            <p class="text-sm text-green-800">
+              Your booking is confirmed and your dates are secured. The host will be in touch about payment and check-in details.
+            </p>
+          </div>
+        <% end %>
       <% end %>
 
       <%# Actions %>
       <div class="flex flex-wrap gap-3">
-        <% if @booking.user_id == current_user.id && !@booking.paid? && (@booking.confirmed? || (@booking.pending? && @booking.property.instant_book?)) %>
+        <% if StripeConfig.configured? && @booking.user_id == current_user.id && !@booking.paid? && (@booking.confirmed? || (@booking.pending? && @booking.property.instant_book?)) %>
           <%= link_to new_booking_payment_path(@booking),
               class: "inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold hover:bg-primary transition-colors active:scale-95" do %>
             <span class="material-symbols-outlined text-lg" aria-hidden="true">payment</span>

@@ -1,5 +1,6 @@
 module Host
   class BookingsController < ApplicationController
+    layout "host"
     before_action :authenticate_user!
     before_action :require_host
     before_action :set_booking, only: [ :show, :update ]
@@ -19,7 +20,8 @@ module Host
       case params[:booking][:status]
       when "confirmed"
         @booking.confirmed!
-        redirect_to host_booking_path(@booking), notice: "Booking approved."
+        AutoMessenger.booking_confirmed(@booking)
+        redirect_to host_booking_path(@booking), notice: "Booking approved — check-in details sent to the guest."
       when "cancelled"
         @booking.cancelled!
         redirect_to host_booking_path(@booking), notice: "Booking rejected."

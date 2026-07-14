@@ -1,5 +1,6 @@
 module Host
   class PropertiesController < ApplicationController
+    layout "host"
     before_action :authenticate_user!
     before_action :require_host
     before_action :set_property, only: [ :show, :edit, :update, :destroy ]

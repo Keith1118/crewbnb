@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_13_110000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_15_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -64,10 +64,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_13_110000) do
   create_table "bookings", force: :cascade do |t|
     t.date "check_in"
     t.date "check_out"
+    t.datetime "confirmation_sent_at"
     t.datetime "created_at", null: false
     t.integer "guests_count"
     t.string "invoice_reference"
     t.bigint "property_id", null: false
+    t.datetime "reminder_sent_at"
+    t.datetime "request_ack_sent_at"
+    t.datetime "review_request_sent_at"
     t.text "special_requests"
     t.integer "status"
     t.decimal "total_price"

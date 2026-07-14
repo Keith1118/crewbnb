@@ -51,7 +51,10 @@ class PaymentsController < ApplicationController
   end
 
   def ensure_payable
-    if @booking.cancelled?
+    if !StripeConfig.configured?
+      redirect_to booking_path(@booking),
+                  notice: "Online payment isn't available yet — your booking request has been sent to the host for confirmation."
+    elsif @booking.cancelled?
       redirect_to booking_path(@booking), alert: "This booking has been cancelled and can't be paid."
     elsif @booking.paid?
       redirect_to booking_path(@booking), notice: "This booking has already been paid."
@@ -82,6 +85,7 @@ class PaymentsController < ApplicationController
       unless @booking.confirmed?
         @booking.confirmed!
         BookingMailer.confirmation(@booking).deliver_later
+        AutoMessenger.booking_confirmed(@booking)
       end
       redirect_to booking_path(@booking), notice: "Payment successful. Your booking is confirmed."
     else

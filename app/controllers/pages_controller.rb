@@ -7,6 +7,7 @@ class PagesController < ApplicationController
                           .with_attached_images
                           .order(created_at: :desc)
                           .limit(9)
+    @cities = Property.published.where.not(city: nil).distinct.order(:city).pluck(:city)
   end
 
   def about

@@ -5,10 +5,10 @@
   <%# Header %>
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div>
-      <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">My Properties</h2>
-      <p class="text-sm text-on-surface-variant mt-1"><%= @properties.count %> total properties</p>
+      <h2 class="font-headline text-2xl font-extrabold text-ink tracking-tight">My Properties</h2>
+      <p class="text-sm text-muted mt-1"><%= @properties.count %> total properties</p>
     </div>
-    <%= link_to new_host_property_path, class: "inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-5 py-2.5 rounded-xl font-bold text-sm active:scale-95 transition-transform" do %>
+    <%= link_to new_host_property_path, class: "inline-flex items-center gap-2 bg-brand text-white px-5 py-2.5 rounded-xl font-bold text-sm active:scale-95 transition-transform" do %>
       <span class="material-symbols-outlined text-lg">add</span>
       New Property
     <% end %>
@@ -16,24 +16,24 @@
 
   <% if @properties.any? %>
     <%# Properties Table %>
-    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+    <div class="bg-white rounded-2xl border border-line overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full">
           <thead>
-            <tr class="border-b border-outline-variant/15">
-              <th class="text-left px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Property</th>
-              <th class="text-left px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider hidden sm:table-cell">City</th>
-              <th class="text-left px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider hidden md:table-cell">Status</th>
-              <th class="text-left px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider hidden md:table-cell">Price</th>
-              <th class="text-left px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider hidden lg:table-cell">Bookings</th>
-              <th class="text-right px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Actions</th>
+            <tr class="border-b border-line">
+              <th class="text-left px-6 py-4 text-xs font-bold text-muted uppercase tracking-wider">Property</th>
+              <th class="text-left px-6 py-4 text-xs font-bold text-muted uppercase tracking-wider hidden sm:table-cell">City</th>
+              <th class="text-left px-6 py-4 text-xs font-bold text-muted uppercase tracking-wider hidden md:table-cell">Status</th>
+              <th class="text-left px-6 py-4 text-xs font-bold text-muted uppercase tracking-wider hidden md:table-cell">Price</th>
+              <th class="text-left px-6 py-4 text-xs font-bold text-muted uppercase tracking-wider hidden lg:table-cell">Bookings</th>
+              <th class="text-right px-6 py-4 text-xs font-bold text-muted uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-outline-variant/10">
+          <tbody class="divide-y divide-line">
             <% @properties.each do |property| %>
               <% hue_1 = (property.id * 37) % 360 %>
               <% hue_2 = (hue_1 + 40) % 360 %>
-              <tr class="hover:bg-surface-container/50 transition-colors">
+              <tr class="hover:bg-neutral-100 transition-colors">
                 <%# Property Name + Thumbnail %>
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-3">
@@ -45,22 +45,22 @@
                       <% end %>
                     </div>
                     <div>
-                      <p class="text-sm font-semibold text-on-surface truncate max-w-[200px]"><%= property.title %></p>
-                      <p class="text-xs text-on-surface-variant sm:hidden"><%= property.city %></p>
+                      <p class="text-sm font-semibold text-ink truncate max-w-[200px]"><%= property.title %></p>
+                      <p class="text-xs text-muted sm:hidden"><%= property.city %></p>
                     </div>
                   </div>
                 </td>
 
                 <%# City %>
                 <td class="px-6 py-4 hidden sm:table-cell">
-                  <span class="text-sm text-on-surface-variant"><%= property.city %></span>
+                  <span class="text-sm text-muted"><%= property.city %></span>
                 </td>
 
                 <%# Status Badge %>
                 <td class="px-6 py-4 hidden md:table-cell">
                   <% status_styles = {
-                    "draft" => "bg-on-surface-variant/10 text-on-surface-variant",
-                    "published" => "bg-primary-container/20 text-primary-container",
+                    "draft" => "bg-neutral-100 text-muted",
+                    "published" => "bg-brand/15 text-brand",
                     "archived" => "bg-error-container/20 text-error"
                   } %>
                   <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider <%= status_styles[property.status] || status_styles['draft'] %>">
@@ -70,25 +70,28 @@
 
                 <%# Price %>
                 <td class="px-6 py-4 hidden md:table-cell">
-                  <span class="text-sm font-semibold text-on-surface"><%= number_to_currency(property.price_per_night) %></span>
-                  <span class="text-xs text-on-surface-variant">/night</span>
+                  <span class="text-sm font-semibold text-ink"><%= number_to_currency(property.price_per_night) %></span>
+                  <span class="text-xs text-muted">/night</span>
                 </td>
 
                 <%# Bookings Count %>
                 <td class="px-6 py-4 hidden lg:table-cell">
-                  <span class="text-sm text-on-surface-variant"><%= property.bookings.count %></span>
+                  <span class="text-sm text-muted"><%= property.bookings.count %></span>
                 </td>
 
                 <%# Actions %>
                 <td class="px-6 py-4 text-right">
                   <div class="flex items-center justify-end gap-2">
-                    <%= link_to host_property_path(property), class: "p-2 rounded-lg hover:bg-surface-container transition-colors text-on-surface-variant hover:text-on-surface", title: "View" do %>
+                    <%= link_to host_calendar_path(property_id: property.id), class: "p-2 rounded-lg hover:bg-neutral-100 transition-colors text-muted hover:text-ink", title: "Calendar" do %>
+                      <span class="material-symbols-outlined text-lg">calendar_month</span>
+                    <% end %>
+                    <%= link_to host_property_path(property), class: "p-2 rounded-lg hover:bg-neutral-100 transition-colors text-muted hover:text-ink", title: "View" do %>
                       <span class="material-symbols-outlined text-lg">visibility</span>
                     <% end %>
-                    <%= link_to edit_host_property_path(property), class: "p-2 rounded-lg hover:bg-surface-container transition-colors text-on-surface-variant hover:text-on-surface", title: "Edit" do %>
+                    <%= link_to edit_host_property_path(property), class: "p-2 rounded-lg hover:bg-neutral-100 transition-colors text-muted hover:text-ink", title: "Edit" do %>
                       <span class="material-symbols-outlined text-lg">edit</span>
                     <% end %>
-                    <%= link_to property_path(property), target: "_blank", class: "p-2 rounded-lg hover:bg-surface-container transition-colors text-on-surface-variant hover:text-on-surface", title: "View public listing" do %>
+                    <%= link_to property_path(property), target: "_blank", class: "p-2 rounded-lg hover:bg-neutral-100 transition-colors text-muted hover:text-ink", title: "View public listing" do %>
                       <span class="material-symbols-outlined text-lg">open_in_new</span>
                     <% end %>
                   </div>
@@ -110,13 +113,13 @@
     <% end %>
   <% else %>
     <%# Empty State %>
-    <div class="text-center py-20 bg-surface-container-lowest rounded-2xl border border-outline-variant/15">
-      <span class="material-symbols-outlined text-6xl text-outline-variant/40">real_estate_agent</span>
-      <h3 class="font-headline text-lg font-bold text-on-surface mt-4">No properties yet</h3>
-      <p class="text-on-surface-variant mt-2 max-w-md mx-auto">
+    <div class="text-center py-20 bg-white rounded-2xl border border-line">
+      <span class="material-symbols-outlined text-6xl text-neutral-300">real_estate_agent</span>
+      <h3 class="font-headline text-lg font-bold text-ink mt-4">No properties yet</h3>
+      <p class="text-muted mt-2 max-w-md mx-auto">
         Get started by listing your first work-ready property.
       </p>
-      <%= link_to new_host_property_path, class: "inline-flex items-center gap-2 mt-6 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold text-sm active:scale-95 transition-transform" do %>
+      <%= link_to new_host_property_path, class: "inline-flex items-center gap-2 mt-6 bg-brand text-white px-6 py-3 rounded-xl font-bold text-sm active:scale-95 transition-transform" do %>
         <span class="material-symbols-outlined text-lg">add</span>
         List Your First Property
       <% end %>
