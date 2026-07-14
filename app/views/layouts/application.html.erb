@@ -64,8 +64,9 @@
     <nav class="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200/60 h-16">
       <div class="flex justify-between items-center px-8 py-3 max-w-screen-xl mx-auto h-full">
         <%# Brand %>
-        <%= link_to root_path, class: "flex items-center", "aria-label": "crewbnb home" do %>
+        <%= link_to root_path, class: "flex flex-col items-start leading-none", "aria-label": "crewbnb home" do %>
           <%= image_tag "crewbnb-lockup-horizontal-navy.svg", alt: "crewbnb", class: "h-7 w-auto" %>
+          <span class="text-[10px] font-semibold uppercase tracking-wide text-slate-400 mt-1 ml-11">Leinster, Ireland</span>
         <% end %>
 
         <%# Desktop Navigation Links %>
