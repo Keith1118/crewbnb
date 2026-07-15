@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_15_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_15_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -58,6 +58,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_15_000002) do
     t.date "date"
     t.bigint "property_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["property_id", "date"], name: "index_availabilities_on_property_id_and_date", unique: true
     t.index ["property_id"], name: "index_availabilities_on_property_id"
   end
 
@@ -77,7 +78,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_15_000002) do
     t.decimal "total_price"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["property_id", "status"], name: "index_bookings_on_property_id_and_status"
     t.index ["property_id"], name: "index_bookings_on_property_id"
+    t.index ["status", "check_in"], name: "index_bookings_on_status_and_check_in"
+    t.index ["status", "check_out"], name: "index_bookings_on_status_and_check_out"
     t.index ["user_id"], name: "index_bookings_on_user_id"
     t.exclusion_constraint "property_id WITH =, daterange(check_in, check_out) WITH &&", where: "status = ANY (ARRAY[0, 1])", using: :gist, name: "bookings_no_overlap"
   end
@@ -102,6 +106,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_15_000002) do
     t.index ["participant_1_id"], name: "index_conversations_on_participant_1_id"
     t.index ["participant_2_id"], name: "index_conversations_on_participant_2_id"
     t.index ["property_id"], name: "index_conversations_on_property_id"
+    t.index ["updated_at"], name: "index_conversations_on_updated_at"
   end
 
   create_table "favorites", force: :cascade do |t|
@@ -121,6 +126,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_15_000002) do
     t.datetime "read_at"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.index ["conversation_id", "read_at"], name: "index_messages_on_conversation_id_and_read_at"
     t.index ["conversation_id"], name: "index_messages_on_conversation_id"
     t.index ["user_id"], name: "index_messages_on_user_id"
   end
@@ -164,6 +170,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_15_000002) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.string "wifi_speed"
+    t.index ["city"], name: "index_properties_on_city"
+    t.index ["latitude", "longitude"], name: "index_properties_on_latitude_and_longitude"
+    t.index ["status"], name: "index_properties_on_status"
     t.index ["user_id"], name: "index_properties_on_user_id"
   end
 

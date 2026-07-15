@@ -118,7 +118,7 @@
       <%= link_to property_path(@conversation.property), target: "_blank", class: "flex items-center gap-3 group" do %>
         <div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-neutral-100">
           <% if @conversation.property.images.attached? %>
-            <%= image_tag @conversation.property.images.first, class: "w-full h-full object-cover" %>
+            <%= image_tag sized_image(@conversation.property.images.first, resize_to_fill: [96, 96]), class: "w-full h-full object-cover" %>
           <% end %>
         </div>
         <div class="min-w-0">

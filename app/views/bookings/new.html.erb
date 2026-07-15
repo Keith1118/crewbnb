@@ -90,6 +90,7 @@
           <div class="pt-4">
             <% instant = @property.instant_book? && StripeConfig.configured? %>
             <%= f.submit instant ? "Book Now" : "Request to Book",
+                data: { turbo_submits_with: "Sending…" },
                 class: "w-full bg-primary-container text-on-primary-container px-8 py-4 rounded-xl font-headline font-bold text-lg active:scale-[0.98] transition-transform cursor-pointer flex items-center justify-center gap-2" %>
             <p class="text-xs text-on-surface-variant text-center mt-2">
               <%= instant ? "You'll pay securely on the next step." : "You won't be charged yet — the host confirms first." %>
@@ -104,7 +105,7 @@
       <%# Property Summary %>
       <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
         <% if @property.images.attached? %>
-          <%= image_tag @property.images.first, class: "w-full h-40 object-cover" %>
+          <%= image_tag sized_image(@property.images.first, resize_to_fill: [800, 320]), class: "w-full h-40 object-cover" %>
         <% else %>
           <div class="w-full h-40 bg-surface-container flex items-center justify-center">
             <span class="material-symbols-outlined text-4xl text-on-surface-variant/30">apartment</span>

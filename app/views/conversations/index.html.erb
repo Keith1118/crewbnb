@@ -8,7 +8,7 @@
       <% @conversations.each do |conversation| %>
         <% other = conversation.other_participant(current_user) %>
         <% last_msg = conversation.last_message %>
-        <% unread_count = conversation.messages.where.not(user: current_user).unread.count %>
+        <% unread_count = @unread_counts[conversation.id].to_i %>
 
         <%= link_to conversation_path(conversation), class: "block hover:bg-surface-container/50 transition-colors" do %>
           <div class="flex items-center gap-4 px-6 py-5">
@@ -66,6 +66,9 @@
         <% end %>
       <% end %>
     </div>
+    <% if @pagy.pages > 1 %>
+      <nav class="mt-8 flex justify-center" aria-label="Pagination"><%== pagy_nav(@pagy) %></nav>
+    <% end %>
   <% else %>
     <div class="text-center py-20">
       <span class="material-symbols-outlined text-6xl text-on-surface-variant/30 mb-4">chat</span>

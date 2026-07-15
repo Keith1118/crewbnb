@@ -13,6 +13,14 @@ module ApplicationHelper
     content_for?(:meta_image) ? content_for(:meta_image) : "#{request.base_url}/icon.png"
   end
 
+  # Sized variant of an uploaded image, falling back to the original for
+  # anything that can't be processed — pages must never break over a thumbnail.
+  def sized_image(attachment, **transform)
+    attachment.variable? ? attachment.variant(**transform) : attachment
+  rescue StandardError
+    attachment
+  end
+
   # Rough drive-time estimate from a straight-line distance (km): roads run ~1.25x
   # longer than a straight line, averaging ~65 km/h across Irish roads. Rounded to
   # 5 minutes because it's explicitly an approximation.

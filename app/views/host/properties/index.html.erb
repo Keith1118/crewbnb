@@ -39,7 +39,7 @@
                   <div class="flex items-center gap-3">
                     <div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0">
                       <% if property.images.attached? %>
-                        <%= image_tag property.images.first, class: "w-full h-full object-cover" %>
+                        <%= image_tag sized_image(property.images.first, resize_to_fill: [96, 96]), class: "w-full h-full object-cover" %>
                       <% else %>
                         <div class="w-full h-full" style="background: linear-gradient(135deg, hsl(<%= hue_1 %>, 45%, 35%) 0%, hsl(<%= hue_2 %>, 55%, 25%) 100%);"></div>
                       <% end %>

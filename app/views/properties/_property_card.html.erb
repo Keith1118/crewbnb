@@ -4,7 +4,7 @@
 <%= link_to property_path(property), class: "group block" do %>
   <div class="relative aspect-[4/3] rounded-2xl overflow-hidden mb-3">
     <% if property.images.attached? %>
-      <%= image_tag property.images.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500", loading: "lazy", alt: "#{property.title} in #{property.city}" %>
+      <%= image_tag sized_image(property.images.first, resize_to_fill: [640, 480]), class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500", loading: "lazy", alt: "#{property.title} in #{property.city}" %>
     <% else %>
       <div class="w-full h-full" style="background: linear-gradient(145deg, hsl(<%= hue %>, 30%, 45%) 0%, hsl(<%= hue %>, 25%, 30%) 100%);">
         <div class="w-full h-full flex items-center justify-center">

@@ -34,7 +34,7 @@
           <p class="text-xs text-on-surface-variant mt-1.5">Include the country code (e.g. <span class="font-medium">IE</span> for Ireland). Checked live against the EU VIES register.</p>
         </div>
 
-        <%= submit_tag "Verify & continue", class: "w-full bg-primary text-on-primary px-6 py-3.5 rounded-xl font-bold text-sm cursor-pointer hover:bg-primary-container hover:text-on-primary-container active:scale-[0.98] transition-all" %>
+        <%= submit_tag "Verify & continue", data: { turbo_submits_with: "Checking VAT register…" }, class: "w-full bg-primary text-on-primary px-6 py-3.5 rounded-xl font-bold text-sm cursor-pointer hover:bg-primary-container hover:text-on-primary-container active:scale-[0.98] transition-all" %>
       <% end %>
 
       <div class="mt-6 pt-5 border-t border-outline-variant/15 space-y-2">

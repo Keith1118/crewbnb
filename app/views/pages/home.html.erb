@@ -34,7 +34,7 @@
             class: "w-full px-3 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F224F]" %>
       </div>
       <div class="col-span-2 md:col-span-2">
-        <%= submit_tag "Search stays", class: "w-full bg-[#0F224F] text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-[#002d75] transition-colors cursor-pointer" %>
+        <%= submit_tag "Search stays", data: { turbo_submits_with: "Searching…" }, class: "w-full bg-[#0F224F] text-white px-4 py-3 rounded-xl font-bold text-sm hover:bg-[#002d75] transition-colors cursor-pointer" %>
       </div>
     <% end %>
 

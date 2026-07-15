@@ -104,12 +104,12 @@
     <% if @property.images.attached? %>
       <%# Main Image %>
       <div class="flex-shrink-0 w-[88%] snap-center md:w-auto md:flex-shrink md:col-span-2 md:row-span-2 aspect-[4/3] md:aspect-auto rounded-2xl md:rounded-none overflow-hidden">
-        <%= image_tag @property.images.first, class: "w-full h-full object-cover", alt: "#{@property.title} — main photo" %>
+        <%= image_tag sized_image(@property.images.first, resize_to_limit: [1600, 1200]), class: "w-full h-full object-cover", alt: "#{@property.title} — main photo" %>
       </div>
       <%# Secondary Images %>
       <% @property.images.drop(1).first(4).each_with_index do |image, index| %>
         <div class="flex-shrink-0 w-[88%] snap-center md:w-auto md:flex-shrink aspect-[4/3] rounded-2xl md:rounded-none overflow-hidden">
-          <%= image_tag image, class: "w-full h-full object-cover", loading: "lazy", alt: "#{@property.title} — photo #{index + 2}" %>
+          <%= image_tag sized_image(image, resize_to_fill: [800, 600]), class: "w-full h-full object-cover", loading: "lazy", alt: "#{@property.title} — photo #{index + 2}" %>
         </div>
       <% end %>
       <%# Fill remaining slots with gradient placeholders %>
@@ -354,6 +354,7 @@
 
           <%# Submit — only promise instant booking when we can actually take payment %>
           <%= f.submit instant ? "Book Now" : "Request to Book",
+              data: { turbo_submits_with: "Sending…" },
               class: "w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm hover:bg-primary transition-colors active:scale-[0.98] cursor-pointer" %>
           <% unless instant %>
             <p class="text-xs text-on-surface-variant text-center">You won't be charged yet</p>

@@ -4,9 +4,16 @@ class ConversationsController < ApplicationController
   layout :resolve_layout
 
   def index
-    @conversations = Conversation.for_user(current_user)
-                                 .includes(:participant_1, :participant_2, :property)
-                                 .order(updated_at: :desc)
+    @pagy, @conversations = pagy(
+      Conversation.for_user(current_user)
+                  .includes(:participant_1, :participant_2, :property)
+                  .order(updated_at: :desc),
+      limit: 20
+    )
+    # One grouped query for unread counts instead of a COUNT per conversation
+    @unread_counts = Message.where(conversation_id: @conversations.map(&:id), read_at: nil)
+                            .where.not(user_id: current_user.id)
+                            .group(:conversation_id).count
   end
 
   def show

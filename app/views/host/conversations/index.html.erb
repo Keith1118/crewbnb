@@ -11,7 +11,7 @@
     <% @conversations.each do |conversation| %>
       <% guest = conversation.other_participant(current_user) %>
       <% last_msg = conversation.last_message %>
-      <% unread = conversation.messages.where.not(user: current_user).unread.count %>
+      <% unread = @unread_counts[conversation.id].to_i %>
       <%= link_to host_conversation_path(conversation), class: "flex items-center gap-4 px-5 py-4 hover:bg-neutral-50 transition-colors" do %>
         <div class="relative flex-shrink-0">
           <% if guest.avatar.attached? %>
@@ -44,6 +44,9 @@
       <% end %>
     <% end %>
   </div>
+  <% if @pagy.pages > 1 %>
+    <nav class="mt-6 flex justify-center" aria-label="Pagination"><%== pagy_nav(@pagy) %></nav>
+  <% end %>
 <% else %>
   <div class="text-center py-20 bg-white rounded-2xl border border-line">
     <span class="material-symbols-outlined text-6xl text-neutral-300">forum</span>
