@@ -39,6 +39,9 @@ Rails.application.routes.draw do
     resources :messages, only: [ :create ]
   end
 
+  # Guests verify they're a business (VAT number) before booking
+  resource :business_verification, only: [ :new, :create ]
+
   namespace :host do
     root "dashboard#index"
     resources :properties

@@ -1,0 +1,52 @@
+<% content_for(:title, "Verify your business | Crewbnb") %>
+
+<div class="min-h-screen bg-surface-container-low flex items-center justify-center py-12 px-4">
+  <div class="w-full max-w-lg">
+    <div class="bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/15 p-8 md:p-10">
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-primary-container/10 flex items-center justify-center mx-auto mb-4">
+          <span class="material-symbols-outlined text-primary-container text-2xl" aria-hidden="true">verified_user</span>
+        </div>
+        <h1 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">Verify your business</h1>
+        <p class="text-sm text-on-surface-variant mt-2">
+          Crewbnb is for working crews and companies. Enter your VAT number and we'll confirm it instantly with the EU register — then you're ready to book.
+        </p>
+      </div>
+
+      <% if alert.present? %>
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-5 flex items-start gap-2">
+          <span class="material-symbols-outlined text-red-600 text-lg" aria-hidden="true">error</span>
+          <p class="text-sm text-red-800"><%= alert %></p>
+        </div>
+      <% end %>
+
+      <%= form_with url: business_verification_path, method: :post, class: "space-y-5" do %>
+        <div>
+          <%= label_tag :company_name, "Company name", class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+          <%= text_field_tag :company_name, @company_name, autofocus: true, placeholder: "e.g. Murphy Construction Ltd",
+              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+        </div>
+
+        <div>
+          <%= label_tag :vat_number, "VAT number", class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+          <%= text_field_tag :vat_number, @vat_number, placeholder: "e.g. IE1234567X", autocapitalize: "characters",
+              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all uppercase" %>
+          <p class="text-xs text-on-surface-variant mt-1.5">Include the country code (e.g. <span class="font-medium">IE</span> for Ireland). Checked live against the EU VIES register.</p>
+        </div>
+
+        <%= submit_tag "Verify & continue", class: "w-full bg-primary text-on-primary px-6 py-3.5 rounded-xl font-bold text-sm cursor-pointer hover:bg-primary-container hover:text-on-primary-container active:scale-[0.98] transition-all" %>
+      <% end %>
+
+      <div class="mt-6 pt-5 border-t border-outline-variant/15 space-y-2">
+        <p class="text-xs text-on-surface-variant flex items-center gap-2">
+          <span class="material-symbols-outlined text-base text-primary-container" aria-hidden="true">lock</span>
+          We only use this to confirm you're a business and to put your company on the invoice.
+        </p>
+        <p class="text-xs text-on-surface-variant flex items-center gap-2">
+          <span class="material-symbols-outlined text-base text-primary-container" aria-hidden="true">receipt_long</span>
+          Every booking then comes with a proper VAT invoice for your accounts team.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

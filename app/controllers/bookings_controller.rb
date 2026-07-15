@@ -1,5 +1,6 @@
 class BookingsController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_business_verification, only: [ :new, :create ]
   rate_limit to: 10, within: 1.minute, only: :create,
              with: -> { redirect_to properties_path, alert: "Too many booking attempts. Please wait a minute and try again." }
   before_action :set_booking, only: [ :show, :update ]
@@ -80,6 +81,22 @@ class BookingsController < ApplicationController
   end
 
   private
+
+  # Only verified businesses can book. Remember where they were headed so we can
+  # drop them straight back into the booking after they verify.
+  def require_business_verification
+    return if current_user.business_verified?
+
+    booking = params[:booking] || {}
+    session[:after_verification] = new_property_booking_path(
+      params[:property_id],
+      check_in: booking[:check_in] || params[:check_in],
+      check_out: booking[:check_out] || params[:check_out],
+      guests: booking[:guests_count] || params[:guests]
+    )
+    redirect_to new_business_verification_path,
+                notice: "Crewbnb is for businesses — verify your company's VAT number to book."
+  end
 
   def set_booking
     @booking = Booking.find(params[:id])

@@ -10,6 +10,30 @@
         <p class="text-sm text-on-surface-variant mt-2">Update your personal information</p>
       </div>
 
+      <%# Business verification status (guests book as businesses) %>
+      <% if current_user.guest? %>
+        <% if current_user.business_verified? %>
+          <div class="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
+            <span class="material-symbols-outlined text-green-700" aria-hidden="true">verified</span>
+            <div class="min-w-0">
+              <p class="text-sm font-bold text-green-800">Verified business</p>
+              <p class="text-xs text-green-700 truncate"><%= current_user.company_name %> &middot; VAT <%= current_user.vat_number %></p>
+            </div>
+          </div>
+        <% else %>
+          <div class="flex items-center justify-between gap-3 bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="material-symbols-outlined text-yellow-700" aria-hidden="true">business_center</span>
+              <div class="min-w-0">
+                <p class="text-sm font-bold text-yellow-800">Business not verified</p>
+                <p class="text-xs text-yellow-700">Verify your VAT number to book stays.</p>
+              </div>
+            </div>
+            <%= link_to "Verify", new_business_verification_path, class: "text-sm font-semibold text-yellow-900 underline whitespace-nowrap flex-shrink-0" %>
+          </div>
+        <% end %>
+      <% end %>
+
       <%# Error Messages %>
       <%= render "devise/shared/error_messages", resource: resource %>
 

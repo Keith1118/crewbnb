@@ -16,4 +16,9 @@ class User < ApplicationRecord
 
   # Attachments
   has_one_attached :avatar
+
+  # A guest must be a verified business (valid VAT number) before booking.
+  def business_verified?
+    business_verified_at.present?
+  end
 end
