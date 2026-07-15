@@ -125,7 +125,8 @@ module Host
       @pending_dates  = month_days.select { |d| @bookings_by_date[d]&.pending? }
       @blocked_in_month = month_days.count { |d| @blocked.include?(d) }
       @open_in_month  = month_days.count { |d| @bookings_by_date[d].nil? && !@blocked.include?(d) }
-      @revenue_month  = @booked_dates.sum { |d| @custom_prices[d] || @property.price_per_night }
+      gross_month     = @booked_dates.sum { |d| @custom_prices[d] || @property.price_per_night }
+      @revenue_month  = (gross_month * (1 - Booking::COMMISSION_RATE)).round(2)
     end
   end
 end

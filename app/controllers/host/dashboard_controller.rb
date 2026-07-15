@@ -36,10 +36,11 @@ module Host
       @occupancy = capacity.zero? ? 0 : ((booked_nights.to_f / capacity) * 100).round
       @booked_nights_month = booked_nights
 
-      # Money
+      # Money — host earnings are net of Crewbnb's commission
+      net = 1 - Booking::COMMISSION_RATE
       earned = bookings.where(status: [ :confirmed, :completed ])
-      @revenue_month = earned.where(check_in: m_start..m_end).sum(:total_price)
-      @earnings = earned.sum(:total_price)
+      @revenue_month = (earned.where(check_in: m_start..m_end).sum(:total_price) * net).round(2)
+      @earnings = (earned.sum(:total_price) * net).round(2)
 
       @upcoming_count = bookings.blocking.where("check_out >= ?", today).count
       @avg_rating = Review.joins(booking: :property)

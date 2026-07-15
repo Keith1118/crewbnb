@@ -85,8 +85,29 @@
     <% end %>
   </div>
 
-  <%# Sidebar: Guest Info %>
+  <%# Sidebar: Payout + Guest Info %>
   <div class="space-y-6">
+    <%# Your payout %>
+    <div class="bg-white rounded-2xl border border-line p-6">
+      <h3 class="font-headline font-bold text-ink mb-4">Your payout</h3>
+      <div class="space-y-2.5 text-sm">
+        <div class="flex justify-between">
+          <span class="text-muted">Booking total</span>
+          <span class="text-ink font-medium"><%= number_to_currency(@booking.total_price, precision: 2) %></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-muted">Crewbnb commission (7.5%)</span>
+          <span class="text-ink">&minus;<%= number_to_currency(@booking.commission_amount, precision: 2) %></span>
+        </div>
+        <div class="flex justify-between pt-2.5 border-t border-line">
+          <span class="font-bold text-ink">You receive</span>
+          <span class="font-headline font-extrabold text-ink"><%= number_to_currency(@booking.host_payout, precision: 2) %></span>
+        </div>
+      </div>
+      <p class="text-xs text-muted mt-3">The guest pays the full total — commission comes out of your payout, not added on top.</p>
+    </div>
+
+    <%# Guest info %>
     <div class="bg-white rounded-2xl border border-line p-6">
       <h3 class="font-headline font-bold text-ink mb-4">Guest Information</h3>
       <div class="flex items-center gap-4 mb-4">

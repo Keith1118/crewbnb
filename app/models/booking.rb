@@ -1,4 +1,8 @@
 class Booking < ApplicationRecord
+  # Crewbnb's commission, taken out of the host's payout (never added to the
+  # guest's price — the guest always pays exactly the listed total).
+  COMMISSION_RATE = BigDecimal("0.075") # 7.5%
+
   # Associations
   belongs_to :property
   belongs_to :user
@@ -32,6 +36,20 @@ class Booking < ApplicationRecord
     return 0 unless check_in && check_out
 
     (check_out - check_in).to_i
+  end
+
+  # Crewbnb's cut of this booking (7.5% of the total the guest pays).
+  def commission_amount
+    return 0 unless total_price
+
+    (total_price * COMMISSION_RATE).round(2)
+  end
+
+  # What the host actually receives after commission.
+  def host_payout
+    return 0 unless total_price
+
+    total_price - commission_amount
   end
 
   def paid?
