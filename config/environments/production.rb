@@ -25,8 +25,11 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :amazon
+  # Uploaded files. Defaults to local disk so the app deploys with no cloud
+  # credentials; set ACTIVE_STORAGE_SERVICE=amazon (+ AWS/R2 creds) for durable
+  # object storage before real launch. NOTE: local disk is ephemeral on hosts
+  # without a persistent disk — uploads reset on redeploy until you switch this.
+  config.active_storage.service = ENV.fetch("ACTIVE_STORAGE_SERVICE", "local").to_sym
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
@@ -62,7 +65,7 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "crewbnb.io") }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "crewbnb.ie") }
 
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
@@ -71,7 +74,7 @@ Rails.application.configure do
     port: ENV.fetch("SMTP_PORT", 587).to_i,
     user_name: ENV.fetch("SMTP_USERNAME", Rails.application.credentials.dig(:smtp, :user_name)),
     password: ENV.fetch("SMTP_PASSWORD", Rails.application.credentials.dig(:smtp, :password)),
-    domain: ENV.fetch("SMTP_DOMAIN", "crewbnb.io"),
+    domain: ENV.fetch("SMTP_DOMAIN", "crewbnb.ie"),
     authentication: :plain,
     enable_starttls_auto: true
   }
