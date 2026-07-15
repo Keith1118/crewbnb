@@ -15,6 +15,10 @@ Rails.application.configure do
   # Turn on fragment caching in view templates.
   config.action_controller.perform_caching = true
 
+  # Let the app serve precompiled assets when there's no separate static server
+  # in front (e.g. running Puma directly on Render). Set RAILS_SERVE_STATIC_FILES.
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
+
   # Cache assets for far-future expiry since they are all digest stamped.
   config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
 
@@ -58,7 +62,7 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "crewbnb.ie") }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "crewbnb.io") }
 
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
@@ -67,7 +71,7 @@ Rails.application.configure do
     port: ENV.fetch("SMTP_PORT", 587).to_i,
     user_name: ENV.fetch("SMTP_USERNAME", Rails.application.credentials.dig(:smtp, :user_name)),
     password: ENV.fetch("SMTP_PASSWORD", Rails.application.credentials.dig(:smtp, :password)),
-    domain: ENV.fetch("SMTP_DOMAIN", "crewbnb.ie"),
+    domain: ENV.fetch("SMTP_DOMAIN", "crewbnb.io"),
     authentication: :plain,
     enable_starttls_auto: true
   }

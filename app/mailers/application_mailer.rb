@@ -1,5 +1,5 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "bookings@crewbnb.ie"
+  default from: "bookings@crewbnb.io"
   layout "mailer"
 
   private
