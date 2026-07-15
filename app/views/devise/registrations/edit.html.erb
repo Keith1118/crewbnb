@@ -93,6 +93,39 @@
               class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all resize-none" %>
         </div>
 
+        <%# Host invoicing details — the "from" side of guest invoices %>
+        <% if current_user.host? %>
+          <div class="pt-4 border-t border-outline-variant/15 space-y-4">
+            <div>
+              <p class="text-sm font-bold text-on-surface">Invoicing details</p>
+              <p class="text-xs text-on-surface-variant mt-0.5">Shown as the sender on every guest invoice. Add your VAT number only if you're VAT-registered.</p>
+            </div>
+            <div>
+              <%= f.label :company_name, "Business name", class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+              <%= f.text_field :company_name, placeholder: "e.g. Tully's Home Ltd",
+                  class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+            </div>
+            <div>
+              <%= f.label :company_address, "Business address", class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+              <%= f.text_area :company_address, rows: 2, placeholder: "Street, town, county, Eircode",
+                  class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all resize-none" %>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <%= f.label :vat_number, "VAT number (optional)", class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+                <%= f.text_field :vat_number, placeholder: "IE1234567X",
+                    class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all uppercase" %>
+              </div>
+              <div>
+                <%= f.label :vat_rate, "VAT rate %", class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+                <%= f.number_field :vat_rate, step: 0.5, min: 0, placeholder: "13.5",
+                    class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+              </div>
+            </div>
+            <p class="text-xs text-on-surface-variant">Leave the VAT fields blank if you're not VAT-registered — invoices will simply show no VAT.</p>
+          </div>
+        <% end %>
+
         <%# Current Password (required to update) %>
         <div class="pt-2 border-t border-outline-variant/15">
           <p class="text-xs text-on-surface-variant mb-4 mt-4">We need your current password to confirm changes</p>

@@ -38,6 +38,42 @@ class Booking < ApplicationRecord
     (check_out - check_in).to_i
   end
 
+  # ----- Invoice figures (invoice is FROM the host, TO the guest's business) -----
+  # The guest always pays the listed price; if the host is VAT-registered the
+  # VAT is simply backed out of that inclusive total.
+
+  # Default Irish short-term accommodation VAT rate when a registered host
+  # hasn't set their own.
+  DEFAULT_VAT_RATE = BigDecimal("13.5")
+
+  def supplier
+    property.user
+  end
+
+  def vat_registered_supplier?
+    supplier.vat_number.present?
+  end
+
+  def invoice_vat_rate
+    return BigDecimal("0") unless vat_registered_supplier?
+
+    supplier.vat_rate.presence || DEFAULT_VAT_RATE
+  end
+
+  def invoice_gross
+    total_price || 0
+  end
+
+  def invoice_net
+    return invoice_gross unless vat_registered_supplier?
+
+    (invoice_gross / (1 + invoice_vat_rate / 100)).round(2)
+  end
+
+  def invoice_vat
+    (invoice_gross - invoice_net).round(2)
+  end
+
   # Crewbnb's cut of this booking (7.5% of the total the guest pays).
   def commission_amount
     return 0 unless total_price

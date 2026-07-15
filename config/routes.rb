@@ -29,6 +29,7 @@ Rails.application.routes.draw do
   end
 
   resources :bookings, only: [ :index, :show, :update ] do
+    member { get :invoice }
     resource :payment, only: [ :new, :create ] do
       get :complete
     end

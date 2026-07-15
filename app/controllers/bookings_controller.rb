@@ -3,7 +3,7 @@ class BookingsController < ApplicationController
   before_action :require_business_verification, only: [ :new, :create ]
   rate_limit to: 10, within: 1.minute, only: :create,
              with: -> { redirect_to properties_path, alert: "Too many booking attempts. Please wait a minute and try again." }
-  before_action :set_booking, only: [ :show, :update ]
+  before_action :set_booking, only: [ :show, :update, :invoice ]
 
   def index
     scope = current_user.bookings.includes(:property).order(created_at: :desc)
@@ -78,6 +78,17 @@ class BookingsController < ApplicationController
     else
       render :show, status: :unprocessable_entity
     end
+  end
+
+  # Printable invoice — visible to the guest, the host, or an admin.
+  def invoice
+    unless @booking.user_id == current_user.id ||
+           @booking.property.user_id == current_user.id ||
+           current_user.admin?
+      redirect_to(bookings_path, alert: "You're not authorised to view that invoice.") and return
+    end
+
+    render layout: "invoice"
   end
 
   private

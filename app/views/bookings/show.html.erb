@@ -136,6 +136,13 @@
 
       <%# Actions %>
       <div class="flex flex-wrap gap-3">
+        <% unless @booking.cancelled? %>
+          <%= link_to invoice_booking_path(@booking), target: "_blank",
+              class: "inline-flex items-center gap-2 border border-outline-variant/30 text-on-surface px-6 py-3 rounded-xl font-bold hover:bg-surface-container active:scale-95 transition-all" do %>
+            <span class="material-symbols-outlined text-lg" aria-hidden="true">receipt_long</span>
+            View invoice
+          <% end %>
+        <% end %>
         <% if StripeConfig.configured? && @booking.user_id == current_user.id && !@booking.paid? && (@booking.confirmed? || (@booking.pending? && @booking.property.instant_book?)) %>
           <%= link_to new_booking_payment_path(@booking),
               class: "inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold hover:bg-primary transition-colors active:scale-95" do %>

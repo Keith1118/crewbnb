@@ -25,7 +25,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def configure_account_update_params
-    devise_parameter_sanitizer.permit(:account_update, keys: [ :first_name, :last_name, :phone, :bio, :avatar ])
+    devise_parameter_sanitizer.permit(:account_update, keys: [
+      :first_name, :last_name, :phone, :bio, :avatar,
+      :company_name, :company_address, :vat_number, :vat_rate
+    ])
   end
 
   def resolve_layout

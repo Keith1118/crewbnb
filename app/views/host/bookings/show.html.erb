@@ -62,6 +62,17 @@
       <% end %>
     </div>
 
+    <%# Invoice %>
+    <% unless @booking.cancelled? %>
+      <div>
+        <%= link_to invoice_booking_path(@booking), target: "_blank",
+            class: "inline-flex items-center gap-2 border border-line text-ink px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-neutral-100 active:scale-95 transition-all" do %>
+          <span class="material-symbols-outlined text-lg" aria-hidden="true">receipt_long</span>
+          View / print invoice
+        <% end %>
+      </div>
+    <% end %>
+
     <%# Action Buttons for Pending Bookings %>
     <% if @booking.pending? %>
       <div class="flex items-center gap-3">

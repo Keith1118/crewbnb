@@ -1,0 +1,95 @@
+<%
+  host = @booking.supplier
+  guest = @booking.user
+  host_name = host.company_name.presence || [host.first_name, host.last_name].compact.join(" ").presence || host.email
+  guest_name = guest.company_name.presence || [guest.first_name, guest.last_name].compact.join(" ").presence || guest.email
+  vat = @booking.vat_registered_supplier?
+%>
+<style>
+  .inv-h { display:flex; justify-content:space-between; align-items:flex-start; padding-bottom:28px; border-bottom:2px solid #0F224F; }
+  .inv-title { font-size:30px; font-weight:800; letter-spacing:-0.02em; color:#0F224F; }
+  .inv-meta { text-align:right; font-size:13px; color:#475569; line-height:1.7; }
+  .inv-meta b { color:#0F224F; }
+  .inv-cols { display:flex; gap:40px; margin:28px 0; }
+  .inv-col { flex:1; }
+  .inv-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#94a3b8; margin-bottom:6px; }
+  .inv-party { font-size:14px; color:#1e293b; line-height:1.6; }
+  .inv-party b { display:block; font-size:15px; color:#0F224F; }
+  table.inv { width:100%; border-collapse:collapse; margin-top:8px; }
+  table.inv th { text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:#94a3b8; padding:10px 0; border-bottom:1px solid #e2e8f0; }
+  table.inv th.r, table.inv td.r { text-align:right; }
+  table.inv td { padding:14px 0; font-size:14px; border-bottom:1px solid #f1f5f9; vertical-align:top; }
+  .inv-sub { font-size:12px; color:#64748b; margin-top:3px; }
+  .inv-totals { margin-left:auto; width:280px; margin-top:16px; }
+  .inv-totals div { display:flex; justify-content:space-between; padding:7px 0; font-size:14px; color:#475569; }
+  .inv-totals .grand { border-top:2px solid #0F224F; margin-top:6px; padding-top:12px; font-size:18px; font-weight:800; color:#0F224F; }
+  .inv-note { margin-top:36px; padding-top:20px; border-top:1px solid #e2e8f0; font-size:12px; color:#94a3b8; line-height:1.7; }
+  .inv-badge { display:inline-block; font-size:12px; font-weight:600; padding:3px 10px; border-radius:999px; background:#dcfce7; color:#166534; }
+</style>
+
+<div class="inv-h">
+  <div>
+    <div class="inv-title">INVOICE</div>
+    <div style="margin-top:6px;font-size:13px;color:#64748b;">via Crewbnb</div>
+  </div>
+  <div class="inv-meta">
+    <div>Invoice no. <b><%= @booking.invoice_reference %></b></div>
+    <div>Issued <%= (@booking.updated_at || Date.current).to_date.strftime("%d %b %Y") %></div>
+    <div style="margin-top:6px;">
+      <% if @booking.confirmed? || @booking.completed? %><span class="inv-badge">Confirmed</span><% else %><span class="inv-badge" style="background:#fef9c3;color:#854d0e;"><%= @booking.status.capitalize %></span><% end %>
+    </div>
+  </div>
+</div>
+
+<div class="inv-cols">
+  <div class="inv-col">
+    <div class="inv-label">From</div>
+    <div class="inv-party">
+      <b><%= host_name %></b>
+      <% if host.company_address.present? %><%= simple_format(host.company_address, {}, sanitize: true) %><% end %>
+      <% if host.vat_number.present? %><div style="margin-top:4px;">VAT: <%= host.vat_number %></div><% end %>
+    </div>
+  </div>
+  <div class="inv-col">
+    <div class="inv-label">Bill to</div>
+    <div class="inv-party">
+      <b><%= guest_name %></b>
+      <% if guest.company_address.present? %><%= simple_format(guest.company_address, {}, sanitize: true) %><% end %>
+      <% if guest.vat_number.present? %><div style="margin-top:4px;">VAT: <%= guest.vat_number %></div><% end %>
+    </div>
+  </div>
+</div>
+
+<table class="inv">
+  <thead>
+    <tr><th>Description</th><th class="r">Nights</th><th class="r">Amount</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>Accommodation — <%= @booking.property.title %></strong>
+        <div class="inv-sub"><%= @booking.check_in.strftime("%d %b %Y") %> → <%= @booking.check_out.strftime("%d %b %Y") %> · <%= pluralize(@booking.guests_count, "guest") %></div>
+      </td>
+      <td class="r"><%= @booking.nights %></td>
+      <td class="r"><%= number_to_currency(vat ? @booking.invoice_net : @booking.invoice_gross, precision: 2) %></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="inv-totals">
+  <% if vat %>
+    <div><span>Subtotal (net)</span><span><%= number_to_currency(@booking.invoice_net, precision: 2) %></span></div>
+    <div><span>VAT @ <%= number_with_precision(@booking.invoice_vat_rate, precision: 1, strip_insignificant_zeros: true) %>%</span><span><%= number_to_currency(@booking.invoice_vat, precision: 2) %></span></div>
+    <div class="grand"><span>Total</span><span><%= number_to_currency(@booking.invoice_gross, precision: 2) %></span></div>
+  <% else %>
+    <div class="grand"><span>Total</span><span><%= number_to_currency(@booking.invoice_gross, precision: 2) %></span></div>
+  <% end %>
+</div>
+
+<div class="inv-note">
+  <% unless vat %><p>Supplier is not VAT registered — no VAT charged.</p><% end %>
+  <p>Prices are inclusive of any applicable VAT. This invoice is issued by <%= host_name %> for accommodation booked through Crewbnb. Payment reference: <%= @booking.invoice_reference %>.</p>
+  <% if current_user.id == host.id && host.company_name.blank? %>
+    <p style="color:#b45309;margin-top:8px;">Tip: add your business name, address and VAT number in Account settings so they appear on this invoice.</p>
+  <% end %>
+</div>
