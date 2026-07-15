@@ -32,9 +32,9 @@
       <h3 class="font-semibold text-slate-900 text-sm truncate"><%= property.title %></h3>
       <p class="text-slate-500 text-sm mt-0.5"><%= [property.city, property.country].compact.join(", ") %></p>
       <div class="flex items-center gap-3 mt-1.5 text-slate-500 text-sm">
-        <span><%= property.bedrooms %> bed<%= property.bedrooms == 1 ? "" : "s" %></span>
+        <span><%= property.max_guests %> bed<%= property.max_guests == 1 ? "" : "s" %></span>
         <span class="text-slate-300">&middot;</span>
-        <span><%= property.max_guests %> guest<%= property.max_guests == 1 ? "" : "s" %></span>
+        <span><%= property.bedrooms %> bedroom<%= property.bedrooms == 1 ? "" : "s" %></span>
         <% if property.has_parking %>
           <span class="text-slate-300">&middot;</span>
           <span>Parking</span>
