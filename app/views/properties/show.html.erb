@@ -385,57 +385,29 @@
     </div>
   </div>
 
-  <%# Location & Surroundings %>
+  <%# Location — free Google Maps embed (no API key required) %>
   <% if @property.latitude.present? && @property.longitude.present? %>
-    <section class="mt-16 border-t border-outline-variant/20 pt-10"
-             data-controller="property-map"
-             data-property-map-lat-value="<%= @property.latitude %>"
-             data-property-map-lng-value="<%= @property.longitude %>"
-             data-property-map-title-value="<%= @property.title %>"
-             data-property-map-api-key-value="<%= ENV['GOOGLE_MAPS_API_KEY'] || Rails.application.credentials.dig(:google, :maps_api_key) %>">
-
-      <div class="flex items-center gap-3 mb-8">
+    <% map_query = "#{@property.latitude},#{@property.longitude}" %>
+  <% elsif [@property.address, @property.city, @property.country].any?(&:present?) %>
+    <% map_query = [@property.address, @property.city, @property.country].compact_blank.join(", ") %>
+  <% end %>
+  <% if defined?(map_query) && map_query.present? %>
+    <section class="mt-16 border-t border-outline-variant/20 pt-10">
+      <div class="flex items-center gap-3 mb-6">
         <span class="material-symbols-outlined text-primary-container text-2xl">map</span>
-        <h2 class="font-headline text-xl font-bold text-on-surface">Location & Surroundings</h2>
+        <h2 class="font-headline text-xl font-bold text-on-surface">Location</h2>
       </div>
-
-      <%# Map + Street View %>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <%# Google Map %>
-        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
-          <div data-property-map-target="map" class="w-full" style="height: 400px;"></div>
-        </div>
-
-        <%# Street View %>
-        <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
-          <div data-property-map-target="streetView" class="w-full" style="height: 400px;"></div>
-          <div data-property-map-target="streetViewFallback" class="hidden w-full flex items-center justify-center" style="height: 400px;">
-            <div class="text-center">
-              <span class="material-symbols-outlined text-4xl text-outline-variant/40">streetview</span>
-              <p class="text-on-surface-variant mt-3 text-sm">Street View not available for this location.</p>
-            </div>
-          </div>
-        </div>
+      <div class="rounded-2xl overflow-hidden border border-outline-variant/15">
+        <iframe
+          title="Map showing <%= @property.title %>"
+          src="https://maps.google.com/maps?q=<%= u map_query %>&z=14&output=embed"
+          width="100%" height="420" style="border:0;"
+          loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen></iframe>
       </div>
-
-      <%# Nearby Places %>
-      <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
-        <div class="flex items-center gap-2 mb-6">
-          <span class="material-symbols-outlined text-primary-container text-xl">near_me</span>
-          <h3 class="font-headline text-lg font-bold text-on-surface">Nearby Places</h3>
-        </div>
-        <div data-property-map-target="nearbyPlaces">
-          <div class="text-center py-8">
-            <div class="inline-flex items-center gap-2 text-on-surface-variant text-sm">
-              <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-              </svg>
-              Loading nearby places...
-            </div>
-          </div>
-        </div>
-      </div>
+      <p class="text-xs text-on-surface-variant mt-3">
+        <%= link_to "Open in Google Maps", "https://www.google.com/maps/search/?api=1&query=#{u map_query}", target: "_blank", rel: "noopener", class: "inline-flex items-center gap-1 hover:text-primary-container" %>
+      </p>
     </section>
   <% end %>
 
