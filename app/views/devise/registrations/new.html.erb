@@ -1,109 +1,157 @@
-<% content_for(:title, "Sign Up | Crewbnb") %>
+<% host = params[:role] == "host" %>
+<% content_for(:title, host ? "List your property | Crewbnb" : "Sign Up | Crewbnb") %>
 
 <div class="min-h-screen bg-surface-container-low flex items-center justify-center py-12 px-4">
-  <div class="w-full max-w-lg">
-    <%# Card %>
-    <div class="bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/15 p-8 md:p-10">
-      <%# Header %>
-      <div class="text-center mb-8">
-        <%= link_to root_path, class: "inline-block mb-4" do %>
-          <span class="text-2xl font-extrabold tracking-tighter text-primary-container font-headline">Crewbnb</span>
+  <div class="w-full <%= host ? "max-w-5xl" : "max-w-lg" %>">
+    <div class="<%= "grid lg:grid-cols-2 gap-8 items-stretch" if host %>">
+
+      <%# Registration form card %>
+      <div class="bg-surface-container-lowest rounded-2xl shadow-xl border border-outline-variant/15 p-8 md:p-10 <%= "lg:order-2" if host %>">
+        <%# Header %>
+        <div class="text-center mb-8">
+          <%= link_to root_path, class: "inline-block mb-4" do %>
+            <%= image_tag "crewbnb-lockup-horizontal-navy.svg", alt: "crewbnb", class: "h-7 w-auto mx-auto" %>
+          <% end %>
+          <h1 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">
+            <%= host ? "List your property" : "Create your account" %>
+          </h1>
+          <p class="text-sm text-on-surface-variant mt-2">
+            <%= host ? "Start earning from your empty weekdays — set up in minutes." : "Join Crewbnb and find your next work-ready stay" %>
+          </p>
+        </div>
+
+        <%# Error Messages %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <%# Registration Form %>
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-5" }) do |f| %>
+
+          <%# Name Fields %>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <%= f.label :first_name, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+              <%= f.text_field :first_name, autofocus: true, autocomplete: "given-name", placeholder: "First name",
+                  class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+            </div>
+            <div>
+              <%= f.label :last_name, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+              <%= f.text_field :last_name, autocomplete: "family-name", placeholder: "Last name",
+                  class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+            </div>
+          </div>
+
+          <%# Email %>
+          <div>
+            <%= f.label :email, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+            <%= f.email_field :email, autocomplete: "email", placeholder: "you@company.com",
+                class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+          </div>
+
+          <%# Phone (optional) %>
+          <div>
+            <%= f.label :phone, "Phone (optional)", class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+            <%= f.telephone_field :phone, autocomplete: "tel", placeholder: "+353 87 000 0000",
+                class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+          </div>
+
+          <%# Role Selection %>
+          <div>
+            <span class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-3">I want to</span>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="relative cursor-pointer">
+                <%= f.radio_button :role, "guest", checked: params[:role] != "host", class: "peer sr-only" %>
+                <div class="flex items-center gap-3 border-2 border-outline-variant/30 rounded-xl px-4 py-3 peer-checked:border-primary-container peer-checked:bg-primary-container/5 transition-all">
+                  <span class="material-symbols-outlined text-on-surface-variant peer-checked:text-primary-container text-xl">luggage</span>
+                  <div>
+                    <p class="text-sm font-semibold text-on-surface">Guest</p>
+                    <p class="text-xs text-on-surface-variant">Find stays</p>
+                  </div>
+                </div>
+              </label>
+              <label class="relative cursor-pointer">
+                <%= f.radio_button :role, "host", checked: params[:role] == "host", class: "peer sr-only" %>
+                <div class="flex items-center gap-3 border-2 border-outline-variant/30 rounded-xl px-4 py-3 peer-checked:border-primary-container peer-checked:bg-primary-container/5 transition-all">
+                  <span class="material-symbols-outlined text-on-surface-variant peer-checked:text-primary-container text-xl">home_work</span>
+                  <div>
+                    <p class="text-sm font-semibold text-on-surface">Host</p>
+                    <p class="text-xs text-on-surface-variant">List properties</p>
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <%# Password %>
+          <div>
+            <%= f.label :password, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+            <% if @minimum_password_length %>
+              <p class="text-xs text-on-surface-variant mb-1.5"><%= @minimum_password_length %> characters minimum</p>
+            <% end %>
+            <%= f.password_field :password, autocomplete: "new-password", placeholder: "Create a password",
+                class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+          </div>
+
+          <%# Password Confirmation %>
+          <div>
+            <%= f.label :password_confirmation, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
+            <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "Confirm your password",
+                class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
+          </div>
+
+          <%# Submit %>
+          <div class="pt-2">
+            <%= f.submit(host ? "Create host account" : "Sign Up", class: "w-full bg-primary text-on-primary px-6 py-3.5 rounded-xl font-bold text-sm cursor-pointer hover:bg-primary-container hover:text-on-primary-container active:scale-[0.98] transition-all") %>
+          </div>
         <% end %>
-        <h1 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">Create your account</h1>
-        <p class="text-sm text-on-surface-variant mt-2">Join Crewbnb and find your next work-ready stay</p>
+
+        <%# Links %>
+        <div class="mt-6 pt-6 border-t border-outline-variant/15">
+          <p class="text-sm text-on-surface-variant text-center">
+            Already have an account?
+            <%= link_to "Sign in", new_session_path(resource_name), class: "text-secondary font-semibold hover:underline" %>
+          </p>
+        </div>
       </div>
 
-      <%# Error Messages %>
-      <%= render "devise/shared/error_messages", resource: resource %>
+      <%# Host benefits panel (only when listing a property) %>
+      <% if host %>
+        <div class="bg-[#0F224F] text-white rounded-2xl p-8 md:p-10 lg:order-1 flex flex-col">
+          <h2 class="font-headline text-2xl font-extrabold tracking-tight mb-2">Your place, earning midweek.</h2>
+          <p class="text-blue-200/80 text-sm mb-8">Crews need somewhere near the job Monday to Friday — exactly when holiday lets sit empty.</p>
 
-      <%# Registration Form %>
-      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-5" }) do |f| %>
-
-        <%# Name Fields %>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <%= f.label :first_name, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
-            <%= f.text_field :first_name, autofocus: true, autocomplete: "given-name", placeholder: "First name",
-                class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
-          </div>
-          <div>
-            <%= f.label :last_name, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
-            <%= f.text_field :last_name, autocomplete: "family-name", placeholder: "Last name",
-                class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
-          </div>
-        </div>
-
-        <%# Email %>
-        <div>
-          <%= f.label :email, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
-          <%= f.email_field :email, autocomplete: "email", placeholder: "you@company.com",
-              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
-        </div>
-
-        <%# Phone (optional) %>
-        <div>
-          <%= f.label :phone, "Phone (optional)", class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
-          <%= f.telephone_field :phone, autocomplete: "tel", placeholder: "+1 (555) 000-0000",
-              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
-        </div>
-
-        <%# Role Selection %>
-        <div>
-          <span class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-3">I want to</span>
-          <div class="grid grid-cols-2 gap-3">
-            <label class="relative cursor-pointer">
-              <%= f.radio_button :role, "guest", checked: params[:role] != "host", class: "peer sr-only" %>
-              <div class="flex items-center gap-3 border-2 border-outline-variant/30 rounded-xl px-4 py-3 peer-checked:border-primary-container peer-checked:bg-primary-container/5 transition-all">
-                <span class="material-symbols-outlined text-on-surface-variant peer-checked:text-primary-container text-xl">luggage</span>
+          <%
+            benefits = [
+              { icon: "event_available", title: "Fill your empty Mon–Fri", body: "Crews need weekdays, tourists need weekends." },
+              { icon: "calendar_month",  title: "Longer bookings",         body: "Weeks or months, not weekends — less turnover, steadier income." },
+              { icon: "autorenew",       title: "Repeat bookings",         body: "Projects run for weeks, and crews come back." },
+              { icon: "receipt_long",    title: "Invoicing done for you",  body: "A proper VAT invoice on every booking — no chasing paperwork." },
+              { icon: "sentiment_satisfied", title: "Easy guests",         body: "They sleep, work and leave early. No parties, low wear." },
+              { icon: "forum",           title: "Guest messaging on autopilot", body: "Confirmations, check-in details and reminders sent for you." }
+            ]
+          %>
+          <ul class="space-y-4">
+            <% benefits.each do |b| %>
+              <li class="flex gap-3">
+                <span class="material-symbols-outlined text-blue-300 flex-shrink-0" aria-hidden="true"><%= b[:icon] %></span>
                 <div>
-                  <p class="text-sm font-semibold text-on-surface">Guest</p>
-                  <p class="text-xs text-on-surface-variant">Find stays</p>
+                  <p class="font-semibold text-white text-sm"><%= b[:title] %></p>
+                  <p class="text-blue-200/70 text-xs leading-relaxed"><%= b[:body] %></p>
                 </div>
-              </div>
-            </label>
-            <label class="relative cursor-pointer">
-              <%= f.radio_button :role, "host", checked: params[:role] == "host", class: "peer sr-only" %>
-              <div class="flex items-center gap-3 border-2 border-outline-variant/30 rounded-xl px-4 py-3 peer-checked:border-primary-container peer-checked:bg-primary-container/5 transition-all">
-                <span class="material-symbols-outlined text-on-surface-variant peer-checked:text-primary-container text-xl">home_work</span>
-                <div>
-                  <p class="text-sm font-semibold text-on-surface">Host</p>
-                  <p class="text-xs text-on-surface-variant">List properties</p>
-                </div>
-              </div>
-            </label>
+              </li>
+            <% end %>
+          </ul>
+
+          <%# Commission highlight %>
+          <div class="mt-8 bg-white/10 border border-white/15 rounded-xl p-4 flex items-center gap-3">
+            <span class="material-symbols-outlined text-white" aria-hidden="true">percent</span>
+            <div>
+              <p class="font-bold text-white text-sm">Just 7.5% commission</p>
+              <p class="text-blue-200/70 text-xs">Keep more of every booking — Airbnb &amp; Booking.com take ~15%+.</p>
+            </div>
           </div>
-        </div>
-
-        <%# Password %>
-        <div>
-          <%= f.label :password, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
-          <% if @minimum_password_length %>
-            <p class="text-xs text-on-surface-variant mb-1.5"><%= @minimum_password_length %> characters minimum</p>
-          <% end %>
-          <%= f.password_field :password, autocomplete: "new-password", placeholder: "Create a password",
-              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
-        </div>
-
-        <%# Password Confirmation %>
-        <div>
-          <%= f.label :password_confirmation, class: "block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1.5" %>
-          <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "Confirm your password",
-              class: "w-full bg-surface-container-low border border-outline-variant/30 rounded-xl px-4 py-3 text-sm text-on-surface placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-surface-tint focus:border-transparent transition-all" %>
-        </div>
-
-        <%# Submit %>
-        <div class="pt-2">
-          <%= f.submit "Sign Up", class: "w-full bg-primary text-on-primary px-6 py-3.5 rounded-xl font-bold text-sm cursor-pointer hover:bg-primary-container hover:text-on-primary-container active:scale-[0.98] transition-all" %>
         </div>
       <% end %>
 
-      <%# Links %>
-      <div class="mt-6 pt-6 border-t border-outline-variant/15">
-        <p class="text-sm text-on-surface-variant text-center">
-          Already have an account?
-          <%= link_to "Sign in", new_session_path(resource_name), class: "text-secondary font-semibold hover:underline" %>
-        </p>
-      </div>
     </div>
   </div>
 </div>
