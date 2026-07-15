@@ -3,7 +3,6 @@ class PropertiesController < ApplicationController
   before_action :set_property, only: [ :show, :favorite, :unfavorite ]
 
   def index
-    @cities = Property.published.where.not(city: nil).distinct.order(:city).pluck(:city)
     properties = Property.published
 
     # "My favorites" filter from the account menu
@@ -17,7 +16,6 @@ class PropertiesController < ApplicationController
     end
 
     # Filters
-    properties = properties.where(city: params[:city]) if params[:city].present?
     properties = properties.where(property_type: params[:property_type]) if params[:property_type].present?
     properties = properties.where("price_per_night >= ?", params[:min_price]) if params[:min_price].present?
     properties = properties.where("price_per_night <= ?", params[:max_price]) if params[:max_price].present?
@@ -31,16 +29,19 @@ class PropertiesController < ApplicationController
       properties = properties.where.not(id: booked_property_ids)
     end
 
-    # Sorting
-    case params[:sort]
-    when "price_asc"
-      properties = properties.order(price_per_night: :asc)
-    when "price_desc"
-      properties = properties.order(price_per_night: :desc)
-    when "newest"
-      properties = properties.order(created_at: :desc)
+    # Location search — geocode the typed place and sort stays by distance from it
+    @near = params[:near].to_s.strip.presence
+    @origin = geocode_origin(@near)
+
+    if @origin
+      # near() orders by distance and exposes property.distance (km, per geocoder config)
+      properties = properties.near(@origin, 2000)
     else
-      properties = properties.order(created_at: :desc)
+      case params[:sort]
+      when "price_asc"  then properties = properties.order(price_per_night: :asc)
+      when "price_desc" then properties = properties.order(price_per_night: :desc)
+      else properties = properties.order(created_at: :desc)
+      end
     end
 
     @pagy, @properties = pagy(properties.with_attached_images, limit: 12)
@@ -63,6 +64,20 @@ class PropertiesController < ApplicationController
   end
 
   private
+
+  # Turn a typed place ("Naas", "Dublin Airport", an Eircode) into coordinates.
+  # Cached (OSM rate limits) and failure-safe — a bad location just falls back
+  # to the normal listing rather than erroring.
+  def geocode_origin(place)
+    return nil if place.blank?
+
+    Rails.cache.fetch("geocode/#{place.downcase}", expires_in: 1.month) do
+      Geocoder.search("#{place}, Ireland").first&.coordinates
+    end
+  rescue StandardError => e
+    Rails.logger.warn("Location search geocode failed for #{place.inspect}: #{e.message}")
+    nil
+  end
 
   def set_property
     @property = visible_properties.find(params[:id])

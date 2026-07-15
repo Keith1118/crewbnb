@@ -54,4 +54,12 @@
     <span class="text-slate-500 text-sm"> / week</span>
     <span class="text-slate-400 text-sm ml-1">(&euro;<%= property.price_per_night.to_i %>/night)</span>
   </div>
+
+  <%# Distance + approx drive time from the searched location %>
+  <% if @near.present? && property.try(:distance).present? %>
+    <div class="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 bg-slate-100 rounded-lg px-2.5 py-1.5">
+      <span class="material-symbols-outlined text-sm" aria-hidden="true">directions_car</span>
+      ~<%= property.distance.round %> km &middot; ~<%= format_drive_time(approx_drive_minutes(property.distance)) %> drive from <%= @near %>
+    </div>
+  <% end %>
 <% end %>

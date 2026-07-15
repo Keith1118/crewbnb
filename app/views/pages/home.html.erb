@@ -14,10 +14,9 @@
     <%# Hero search %>
     <%= form_with url: properties_path, method: :get, class: "bg-white rounded-2xl p-4 shadow-xl max-w-4xl grid grid-cols-2 md:grid-cols-12 gap-3 items-end mb-6" do %>
       <div class="col-span-2 md:col-span-3">
-        <%= label_tag :city, "Where", class: "block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1" %>
-        <%= select_tag :city,
-            options_for_select([["All locations", ""]] + @cities.map { |c| [c, c] }, params[:city]),
-            class: "w-full px-3 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F224F] cursor-pointer" %>
+        <%= label_tag :near, "Where's the job?", class: "block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1" %>
+        <%= text_field_tag :near, params[:near], placeholder: "Town or county in Ireland",
+            class: "w-full px-3 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#0F224F]" %>
       </div>
       <div class="md:col-span-3">
         <%= label_tag :check_in, "Check-in", class: "block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1" %>
