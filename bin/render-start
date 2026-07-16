@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+# Render start command: set up the database, then run the web server.
+# A single script (no spaces/quotes to mangle, no reliance on the entrypoint).
+echo "==> Preparing database…"
+./bin/rails db:migrate
+
+echo "==> Starting Puma…"
+exec ./bin/rails server

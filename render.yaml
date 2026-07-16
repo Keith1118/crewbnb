@@ -15,8 +15,8 @@ services:
     plan: free                 # upgrade to Starter for no cold-starts
     region: frankfurt
     healthCheckPath: /up
-    # Puma on Render's $PORT. The image entrypoint prepares the DB before this runs.
-    dockerCommand: ./bin/rails server
+    # Single startup script: migrate the DB, then start Puma on Render's $PORT.
+    dockerCommand: ./bin/render-start
     autoDeploy: true           # redeploy on every push to the default branch
     envVars:
       - key: DATABASE_URL
