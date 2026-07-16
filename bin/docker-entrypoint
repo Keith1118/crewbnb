@@ -1,8 +1,12 @@
 #!/bin/bash -e
 
-# If running the rails server then create or migrate existing database
-if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
-  ./bin/rails db:prepare
-fi
+# Ensure the database schema exists and is current before the app starts.
+# Idempotent and safe on every boot; baked into the image so it always runs
+# no matter how Render passes the container command. Skipped only when the
+# container is explicitly invoked to run a database task itself.
+case "$*" in
+  *db:prepare*|*db:migrate*|*db:setup*) ;;
+  *) ./bin/rails db:prepare ;;
+esac
 
 exec "${@}"
