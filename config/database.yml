@@ -85,17 +85,6 @@ test:
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  # Single database (Render provides one DATABASE_URL). Solid Cache/Queue/Cable
-  # share it — their tables just live alongside the app tables.
-  primary: &primary_production
-    <<: *default
-    url: <%= ENV["DATABASE_URL"] %>
-  cache:
-    <<: *primary_production
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    migrations_paths: db/cable_migrate
+  # Single database — Render provides one DATABASE_URL.
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>

@@ -31,12 +31,10 @@ services:
         value: production
       - key: RAILS_SERVE_STATIC_FILES
         value: "true"          # Puma serves the precompiled assets
-      - key: SOLID_QUEUE_IN_PUMA
-        value: "true"          # run background jobs inside the web process (no separate worker)
       - key: WEB_CONCURRENCY
         value: "1"
       - key: APP_HOST
-        value: crewbnb.io      # used to build links in emails; change when your domain is live
+        value: crewbnb.ie      # used to build links in emails; change when your domain is live
       # --- Payments (from dashboard.stripe.com) ---
       - key: STRIPE_SECRET_KEY
         sync: false
@@ -52,4 +50,4 @@ services:
       - key: SMTP_PASSWORD
         sync: false
       - key: SMTP_DOMAIN
-        value: crewbnb.io
+        value: crewbnb.ie
