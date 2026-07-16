@@ -23,8 +23,10 @@ services:
         fromDatabase:
           name: crewbnb-db
           property: connectionString
+      - key: SECRET_KEY_BASE
+        generateValue: true    # Render generates a stable secret so boot never needs the master key
       - key: RAILS_MASTER_KEY
-        sync: false            # paste from your local config/master.key
+        sync: false            # optional now; paste from config/master.key if you want encrypted credentials
       - key: RAILS_ENV
         value: production
       - key: RAILS_SERVE_STATIC_FILES

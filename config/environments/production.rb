@@ -72,8 +72,8 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     address: ENV.fetch("SMTP_ADDRESS", "smtp.postmarkapp.com"),
     port: ENV.fetch("SMTP_PORT", 587).to_i,
-    user_name: ENV.fetch("SMTP_USERNAME", Rails.application.credentials.dig(:smtp, :user_name)),
-    password: ENV.fetch("SMTP_PASSWORD", Rails.application.credentials.dig(:smtp, :password)),
+    user_name: ENV["SMTP_USERNAME"],
+    password: ENV["SMTP_PASSWORD"],
     domain: ENV.fetch("SMTP_DOMAIN", "crewbnb.ie"),
     authentication: :plain,
     enable_starttls_auto: true
