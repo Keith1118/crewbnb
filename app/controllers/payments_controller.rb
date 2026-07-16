@@ -30,7 +30,7 @@ class PaymentsController < ApplicationController
     end
 
     @client_secret = intent.client_secret
-    @stripe_publishable_key = Rails.application.credentials.dig(:stripe, :publishable_key) || ENV["STRIPE_PUBLISHABLE_KEY"]
+    @stripe_publishable_key = ENV["STRIPE_PUBLISHABLE_KEY"] || Rails.application.credentials.dig(:stripe, :publishable_key)
   rescue Stripe::StripeError => e
     redirect_to booking_path(@booking), alert: "Unable to initialize payment: #{e.message}"
   end
