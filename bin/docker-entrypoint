@@ -5,8 +5,8 @@
 # no matter how Render passes the container command. Skipped only when the
 # container is explicitly invoked to run a database task itself.
 case "$*" in
-  *db:prepare*|*db:migrate*|*db:setup*) ;;
-  *) ./bin/rails db:prepare ;;
+  *db:migrate*|*db:prepare*|*db:setup*) ;;
+  *) ./bin/rails db:migrate ;;
 esac
 
 exec "${@}"
