@@ -15,7 +15,9 @@ services:
     plan: free                 # upgrade to Starter for no cold-starts
     region: frankfurt
     healthCheckPath: /up
-    # Bind Puma straight to Render's $PORT (entrypoint auto-runs db:prepare on boot).
+    # Run migrations (and first-time schema/seed) on every deploy, before it goes live.
+    preDeployCommand: ./bin/rails db:prepare
+    # Bind Puma straight to Render's $PORT.
     dockerCommand: ./bin/rails server
     autoDeploy: true           # redeploy on every push to the default branch
     envVars:
