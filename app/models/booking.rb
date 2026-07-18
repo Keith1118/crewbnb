@@ -1,5 +1,5 @@
 class Booking < ApplicationRecord
-  # Crewbnb's commission, taken out of the host's payout (never added to the
+  # Crewbase's commission, taken out of the host's payout (never added to the
   # guest's price — the guest always pays exactly the listed total).
   COMMISSION_RATE = BigDecimal("0.075") # 7.5%
 
@@ -74,7 +74,7 @@ class Booking < ApplicationRecord
     (invoice_gross - invoice_net).round(2)
   end
 
-  # Crewbnb's cut of this booking (7.5% of the total the guest pays).
+  # Crewbase's cut of this booking (7.5% of the total the guest pays).
   def commission_amount
     return 0 unless total_price
 

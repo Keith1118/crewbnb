@@ -59,7 +59,7 @@ standard_amenities = [
 # ============================================================
 puts "Creating users..."
 admin = User.create!(
-  email: "admin@crewbnb.ie",
+  email: "admin@crewbase.ie",
   password: "password123",
   first_name: "Admin",
   last_name: "User",
@@ -69,7 +69,7 @@ admin = User.create!(
 )
 
 host = User.create!(
-  email: "host1@crewbnb.ie",
+  email: "host1@crewbase.ie",
   password: "password123",
   first_name: "Niall",
   last_name: "Byrne",
@@ -85,7 +85,7 @@ guest_profiles = [
 ]
 guests = guest_profiles.each_with_index.map do |g, i|
   User.create!(
-    email: "guest#{i + 1}@crewbnb.ie",
+    email: "guest#{i + 1}@crewbase.ie",
     password: "password123",
     first_name: g[:first],
     last_name: g[:last],
@@ -291,7 +291,7 @@ end
 puts "Downloading placeholder room images (this may take a minute)..."
 properties.each_with_index do |property, i|
   3.times do |j|
-    seed = "crewbnb-edenderry-room-#{i + 1}-img-#{j}"
+    seed = "crewbase-edenderry-room-#{i + 1}-img-#{j}"
     begin
       image = URI.open("https://picsum.photos/seed/#{seed}/1200/900", open_timeout: 10, read_timeout: 10)
       property.images.attach(
@@ -416,7 +416,7 @@ conv = Conversation.create!(
 ].each { |m| conv.messages.create!(user: m[:user], body: m[:body], read_at: Time.current) }
 
 puts "Seeding complete!"
-puts "Admin: admin@crewbnb.ie / password123"
-puts "Host:  host1@crewbnb.ie / password123"
-puts "Guests: guest1@crewbnb.ie – guest3@crewbnb.ie / password123"
+puts "Admin: admin@crewbase.ie / password123"
+puts "Host:  host1@crewbase.ie / password123"
+puts "Guests: guest1@crewbase.ie – guest3@crewbase.ie / password123"
 puts "#{Property.count} rooms, #{Booking.count} bookings, #{Review.count} reviews"

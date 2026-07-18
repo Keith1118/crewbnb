@@ -1,6 +1,6 @@
-# Crewbnb — Launch Checklist
+# Crewbase — Launch Checklist
 
-A plain-English guide to getting Crewbnb live. Work top to bottom.
+A plain-English guide to getting Crewbase live. Work top to bottom.
 
 ---
 
@@ -11,7 +11,7 @@ A plain-English guide to getting Crewbnb live. Work top to bottom.
 - 13 real listings: 10 Edenderry rooms + 3 Tulfarris homes (photos, pricing, details)
 - Host area ("extranet"): dashboard, availability calendar, bookings, inbox
 - Automatic messages to guests (booking received → confirmation → check-in details)
-- Real crewbnb branding (logo, favicon, navy colours)
+- Real crewbase branding (logo, favicon, navy colours)
 - 3 real accounts, all demo/fake data removed
 
 **The big thing to understand:** the site currently runs **only on your Mac**
@@ -36,7 +36,7 @@ A Rails app needs a host. For a beginner, the easiest options are:
 - Fly.io or Railway.app (also beginner-friendly)
 
 You'll create an account and connect it to your GitHub repo
-(`github.com/Keith1118/crewbnb`). These services build and run the app for you.
+(`github.com/Keith1118/crewbase`). These services build and run the app for you.
 *(This is the step to get help with if any — it's the biggest one.)*
 
 ### 3. Add your secret keys (on the host, as "environment variables")
@@ -64,7 +64,7 @@ Either way, run the database setup on the host once: `rails db:migrate`.
 Check-in reminders and review requests are sent by a scheduled task. On your host,
 set up a **daily cron job** that runs:
 ```
-rails crewbnb:auto_messages
+rails crewbase:auto_messages
 ```
 (The "booking received" and "confirmed" messages already send automatically — no
 cron needed for those.)
@@ -74,13 +74,13 @@ cron needed for those.)
 - [ ] You can open the live site in an incognito window
 - [ ] You can make a test booking end to end
 - [ ] Emails arrive (if SMTP is set)
-- [ ] Your domain (e.g. crewbnb.ie) points to the host
+- [ ] Your domain (e.g. crewbase.ie) points to the host
 
 ---
 
 ## Handy commands (local)
 - Start the site locally: `./start.sh`  (then open http://localhost:3000)
-- Run the reminder task: `bin/rails crewbnb:auto_messages`
+- Run the reminder task: `bin/rails crewbase:auto_messages`
 - Save your work to GitHub: `git add -A && git commit -m "..." && git push`
 
 ## Good to know

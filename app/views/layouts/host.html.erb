@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
   <head>
-    <title><%= content_for(:title) || "Host Dashboard - Crewbnb" %></title>
+    <title><%= content_for(:title) || "Host Dashboard - Crewbase" %></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Crewbnb">
+    <meta name="application-name" content="Crewbase">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -47,9 +47,9 @@
       <div class="max-w-screen-xl mx-auto px-4 sm:px-6">
         <div class="h-16 flex items-center justify-between gap-4">
           <%# Brand %>
-          <%= link_to host_root_path, class: "flex items-center flex-shrink-0", "aria-label": "crewbnb host home" do %>
-            <%= image_tag "crewbnb-lockup-horizontal-navy.svg", alt: "crewbnb", class: "h-7 w-auto hidden sm:block" %>
-            <%= image_tag "crewbnb-mark-navy.svg", alt: "crewbnb", class: "h-8 w-8 sm:hidden" %>
+          <%= link_to host_root_path, class: "flex items-center flex-shrink-0", "aria-label": "crewbase host home" do %>
+            <%= image_tag "crewbase-lockup-horizontal-navy.svg", alt: "crewbase", class: "h-7 w-auto hidden sm:block" %>
+            <%= image_tag "crewbase-mark-navy.svg", alt: "crewbase", class: "h-8 w-8 sm:hidden" %>
           <% end %>
 
           <%# Center tabs (desktop) %>

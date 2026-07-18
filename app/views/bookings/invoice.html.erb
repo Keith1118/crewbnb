@@ -30,7 +30,7 @@
 <div class="inv-h">
   <div>
     <div class="inv-title">INVOICE</div>
-    <div style="margin-top:6px;font-size:13px;color:#64748b;">via Crewbnb</div>
+    <div style="margin-top:6px;font-size:13px;color:#64748b;">via Crewbase</div>
   </div>
   <div class="inv-meta">
     <div>Invoice no. <b><%= @booking.invoice_reference %></b></div>
@@ -88,7 +88,7 @@
 
 <div class="inv-note">
   <% unless vat %><p>Supplier is not VAT registered — no VAT charged.</p><% end %>
-  <p>Prices are inclusive of any applicable VAT. This invoice is issued by <%= host_name %> for accommodation booked through Crewbnb. Payment reference: <%= @booking.invoice_reference %>.</p>
+  <p>Prices are inclusive of any applicable VAT. This invoice is issued by <%= host_name %> for accommodation booked through Crewbase. Payment reference: <%= @booking.invoice_reference %>.</p>
   <% if current_user.id == host.id && host.company_name.blank? %>
     <p style="color:#b45309;margin-top:8px;">Tip: add your business name, address and VAT number in Account settings so they appear on this invoice.</p>
   <% end %>

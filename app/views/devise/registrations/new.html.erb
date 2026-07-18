@@ -1,5 +1,5 @@
 <% host = params[:role] == "host" %>
-<% content_for(:title, host ? "List your property | Crewbnb" : "Sign Up | Crewbnb") %>
+<% content_for(:title, host ? "List your property | Crewbase" : "Sign Up | Crewbase") %>
 
 <div class="min-h-screen bg-surface-container-low flex items-center justify-center py-12 px-4">
   <div class="w-full <%= host ? "max-w-5xl" : "max-w-lg" %>">
@@ -10,13 +10,13 @@
         <%# Header %>
         <div class="text-center mb-8">
           <%= link_to root_path, class: "inline-block mb-4" do %>
-            <%= image_tag "crewbnb-lockup-horizontal-navy.svg", alt: "crewbnb", class: "h-7 w-auto mx-auto" %>
+            <%= image_tag "crewbase-lockup-horizontal-navy.svg", alt: "crewbase", class: "h-7 w-auto mx-auto" %>
           <% end %>
           <h1 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">
             <%= host ? "List your property" : "Create your account" %>
           </h1>
           <p class="text-sm text-on-surface-variant mt-2">
-            <%= host ? "Start earning from your empty weekdays — set up in minutes." : "Join Crewbnb and find your next work-ready stay" %>
+            <%= host ? "Start earning from your empty weekdays — set up in minutes." : "Join Crewbase and find your next work-ready stay" %>
           </p>
         </div>
 

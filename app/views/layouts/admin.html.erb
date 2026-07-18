@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
   <head>
-    <title><%= content_for(:title) || "Admin - Crewbnb" %></title>
+    <title><%= content_for(:title) || "Admin - Crewbase" %></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Crewbnb">
+    <meta name="application-name" content="Crewbase">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -36,7 +36,7 @@
         <%# Brand %>
         <div class="px-6 py-5 border-b border-tertiary-container/30">
           <%= link_to root_path, class: "text-xl font-extrabold tracking-tighter text-on-primary-container font-headline" do %>
-            Crewbnb
+            Crewbase
           <% end %>
           <p class="text-xs text-on-tertiary-container font-label font-medium mt-1 uppercase tracking-widest">Administration</p>
         </div>

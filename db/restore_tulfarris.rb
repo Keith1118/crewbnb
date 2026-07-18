@@ -4,9 +4,9 @@
 # a property has none. It never deletes existing data.
 require "open-uri"
 
-SCRATCH = "/private/tmp/claude-501/-Users-keithmckeown-crewbnb/6f81cc88-6109-4b77-820d-966e3fcb570d/scratchpad".freeze
+SCRATCH = "/private/tmp/claude-501/-Users-keithmckeown-crewbase/6f81cc88-6109-4b77-820d-966e3fcb570d/scratchpad".freeze
 
-host = User.find_by(email: "host1@crewbnb.ie") || User.where(role: :host).first
+host = User.find_by(email: "host1@crewbase.ie") || User.where(role: :host).first
 raise "No host user found" unless host
 
 # Amenities — reuse existing where present, create if missing.

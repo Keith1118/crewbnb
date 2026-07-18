@@ -106,7 +106,7 @@ class BookingsController < ApplicationController
       guests: booking[:guests_count] || params[:guests]
     )
     redirect_to new_business_verification_path,
-                notice: "Crewbnb is for businesses — verify your company's VAT number to book."
+                notice: "Crewbase is for businesses — verify your company's VAT number to book."
   end
 
   def set_booking

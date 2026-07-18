@@ -36,7 +36,7 @@ module Host
       @occupancy = capacity.zero? ? 0 : ((booked_nights.to_f / capacity) * 100).round
       @booked_nights_month = booked_nights
 
-      # Money — host earnings are net of Crewbnb's commission
+      # Money — host earnings are net of Crewbase's commission
       net = 1 - Booking::COMMISSION_RATE
       earned = bookings.where(status: [ :confirmed, :completed ])
       @revenue_month = (earned.where(check_in: m_start..m_end).sum(:total_price) * net).round(2)

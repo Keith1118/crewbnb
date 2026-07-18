@@ -1,16 +1,16 @@
-# Render Blueprint — deploys Crewbnb (web + Postgres) in one go.
+# Render Blueprint — deploys Crewbase (web + Postgres) in one go.
 # In Render: New → Blueprint → connect this repo. Then set the secret values
 # marked "sync: false" (they're never stored in git).
 databases:
-  - name: crewbnb-db
-    databaseName: crewbnb
+  - name: crewbase-db
+    databaseName: crewbase
     plan: free                 # upgrade to a paid plan before real launch (free DB expires after 90 days)
     postgresMajorVersion: "16"
     region: frankfurt          # EU (closest to Ireland)
 
 services:
   - type: web
-    name: crewbnb
+    name: crewbase
     runtime: docker            # uses the existing Dockerfile (builds JS/CSS + assets)
     plan: free                 # upgrade to Starter for no cold-starts
     region: frankfurt
@@ -21,7 +21,7 @@ services:
     envVars:
       - key: DATABASE_URL
         fromDatabase:
-          name: crewbnb-db
+          name: crewbase-db
           property: connectionString
       - key: SECRET_KEY_BASE
         generateValue: true    # Render generates a stable secret so boot never needs the master key
@@ -34,7 +34,7 @@ services:
       - key: WEB_CONCURRENCY
         value: "1"
       - key: APP_HOST
-        value: crewbnb.ie      # used to build links in emails; change when your domain is live
+        value: crewbase.ie      # used to build links in emails; change when your domain is live
       # --- Payments (from dashboard.stripe.com) ---
       - key: STRIPE_SECRET_KEY
         sync: false
@@ -50,4 +50,4 @@ services:
       - key: SMTP_PASSWORD
         sync: false
       - key: SMTP_DOMAIN
-        value: crewbnb.ie
+        value: crewbase.ie

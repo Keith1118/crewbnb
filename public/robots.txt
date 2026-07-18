@@ -1,4 +1,4 @@
-# Crewbnb — crew accommodation booking
+# Crewbase — crew accommodation booking
 
 User-agent: *
 Allow: /
@@ -8,4 +8,4 @@ Disallow: /bookings
 Disallow: /conversations
 Disallow: /users/
 
-Sitemap: https://crewbnb.ie/sitemap.xml
+Sitemap: https://crewbase.ie/sitemap.xml

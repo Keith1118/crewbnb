@@ -1,4 +1,4 @@
-namespace :crewbnb do
+namespace :crewbase do
   desc "Send scheduled host auto-messages: check-in reminders (day before) and review requests (after checkout). Run daily via cron."
   task auto_messages: :environment do
     today = Date.current
@@ -17,6 +17,6 @@ namespace :crewbnb do
       sent[:review_requests] += 1
     end
 
-    puts "crewbnb:auto_messages — #{sent[:reminders]} reminder(s), #{sent[:review_requests]} review request(s) sent."
+    puts "crewbase:auto_messages — #{sent[:reminders]} reminder(s), #{sent[:review_requests]} review request(s) sent."
   end
 end

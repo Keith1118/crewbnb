@@ -1,5 +1,5 @@
 <% content_for(:page_title, "Inbox") %>
-<% content_for(:title, "Conversation with #{@guest.first_name.presence || @guest.email} - Crewbnb Host") %>
+<% content_for(:title, "Conversation with #{@guest.first_name.presence || @guest.email} - Crewbase Host") %>
 
 <%= link_to host_conversations_path, class: "inline-flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-ink mb-4" do %>
   <span class="material-symbols-outlined text-lg">arrow_back</span> All messages
