@@ -1,5 +1,6 @@
 class BookingsController < ApplicationController
   before_action :authenticate_user!
+  before_action :ensure_bookings_open, only: [ :new, :create ]
   before_action :require_business_verification, only: [ :new, :create ]
   rate_limit to: 10, within: 1.minute, only: :create,
              with: -> { redirect_to properties_path, alert: "Too many booking attempts. Please wait a minute and try again." }
@@ -107,6 +108,14 @@ class BookingsController < ApplicationController
     )
     redirect_to new_business_verification_path,
                 notice: "Crewbase is for businesses — verify your company's VAT number to book."
+  end
+
+  # Pre-launch guard: block booking placement until BOOKINGS_OPEN is set.
+  def ensure_bookings_open
+    return if bookings_open?
+
+    redirect_back fallback_location: property_path(params[:property_id]),
+                  alert: "Bookings aren't open just yet — we're launching very soon. Please check back shortly."
   end
 
   def set_booking

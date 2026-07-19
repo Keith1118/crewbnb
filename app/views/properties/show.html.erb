@@ -353,11 +353,17 @@
           </div>
 
           <%# Submit — only promise instant booking when we can actually take payment %>
-          <%= f.submit instant ? "Book Now" : "Request to Book",
-              data: { turbo_submits_with: "Sending…" },
-              class: "w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm hover:bg-primary transition-colors active:scale-[0.98] cursor-pointer" %>
-          <% unless instant %>
-            <p class="text-xs text-on-surface-variant text-center">You won't be charged yet</p>
+          <% if bookings_open? %>
+            <%= f.submit instant ? "Book Now" : "Request to Book",
+                data: { turbo_submits_with: "Sending…" },
+                class: "w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm hover:bg-primary transition-colors active:scale-[0.98] cursor-pointer" %>
+            <% unless instant %>
+              <p class="text-xs text-on-surface-variant text-center">You won't be charged yet</p>
+            <% end %>
+          <% else %>
+            <%# Pre-launch: bookings not open yet %>
+            <div class="w-full bg-surface-container text-on-surface-variant py-3.5 rounded-xl font-headline font-bold text-sm text-center opacity-70 cursor-not-allowed" aria-disabled="true">Bookings opening soon</div>
+            <p class="text-xs text-on-surface-variant text-center">We're launching bookings shortly — check back soon.</p>
           <% end %>
         <% end %>
 

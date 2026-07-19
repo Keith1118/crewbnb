@@ -7,6 +7,13 @@ class ApplicationController < ActionController::Base
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
+  # Whether guests can actually place bookings yet. Closed by default while we
+  # finish pre-launch; flip on by setting ENV["BOOKINGS_OPEN"]="true" in Render.
+  def bookings_open?
+    ActiveModel::Type::Boolean.new.cast(ENV.fetch("BOOKINGS_OPEN", "false"))
+  end
+  helper_method :bookings_open?
+
   private
 
   # After sign-in, send hosts/admins straight to their management area (their
