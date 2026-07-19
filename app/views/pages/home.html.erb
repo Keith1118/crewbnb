@@ -72,7 +72,7 @@
     <span class="hidden md:inline text-green-300">|</span>
     <div class="flex items-center gap-1.5 text-green-800 font-medium">
       <span class="material-symbols-outlined text-lg">receipt_long</span>
-      Automatic invoices, no admin
+      Automatic invoices, less admin
     </div>
     <span class="hidden md:inline text-green-300">|</span>
     <div class="flex items-center gap-1.5 text-green-800 font-medium">
@@ -142,8 +142,9 @@
       </div>
     </div>
 
-    <%# Row 2: steps 4–6 %>
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-0 max-w-4xl mx-auto mt-8 md:mt-10">
+    <%# Row 2: steps 4–6 (md:mt-10 separates the rows on desktop; on mobile the
+        steps flow as one column so step 4's own mt-6 keeps spacing even) %>
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-0 max-w-4xl mx-auto md:mt-10">
       <div class="text-center px-3 mt-6 md:mt-0">
         <div class="w-10 h-10 rounded-full bg-[#0F224F] text-white text-sm font-bold flex items-center justify-center mx-auto mb-3">4</div>
         <p class="font-semibold text-slate-900 text-sm mb-1">Book in minutes</p>
@@ -225,7 +226,7 @@
           </div>
           <div class="flex gap-3 items-start">
             <span class="material-symbols-outlined text-green-600 text-lg mt-0.5">check_circle</span>
-            <p class="text-slate-700 text-sm"><strong>Automatic invoices, no admin</strong> — every booking includes a proper invoice</p>
+            <p class="text-slate-700 text-sm"><strong>Automatic invoices, less admin</strong> — every booking includes a proper invoice</p>
           </div>
           <div class="flex gap-3 items-start">
             <span class="material-symbols-outlined text-green-600 text-lg mt-0.5">check_circle</span>
@@ -263,7 +264,7 @@
           </div>
           <div class="flex gap-3 items-start">
             <span class="material-symbols-outlined text-green-600 text-lg mt-0.5">check_circle</span>
-            <p class="text-slate-700 text-sm"><strong>Automatic invoices, no admin</strong> — every booking includes a proper invoice</p>
+            <p class="text-slate-700 text-sm"><strong>Automatic invoices, less admin</strong> — every booking includes a proper invoice</p>
           </div>
         </div>
         <div class="mt-6">
@@ -304,7 +305,7 @@
         Your crew needs somewhere to stay.<br>Book it now.
       </h2>
       <p class="text-blue-200/60 max-w-md mx-auto mb-8 text-sm">
-        Takes 2 minutes to book. Every booking includes a proper invoice — no admin.
+        Takes 2 minutes to book. Every booking includes a proper invoice — less admin.
       </p>
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
         <%= link_to properties_path, class: "bg-white text-[#0F224F] px-7 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition-colors" do %>
