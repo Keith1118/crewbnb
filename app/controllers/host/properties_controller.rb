@@ -60,7 +60,7 @@ module Host
     def property_params
       params.require(:property).permit(
         :title, :description, :property_type, :address, :city, :country,
-        :price_per_night, :bedrooms, :bathrooms, :max_guests, :status,
+        :price_per_night, :weekday_discount, :bedrooms, :bathrooms, :max_guests, :status,
         :wifi_speed, :has_desk, :has_meeting_room, :has_parking, :has_printer,
         :instant_book, :bed_configuration, :house_rules, :check_in_time,
         :check_out_time, :nearby_attractions, images: [],

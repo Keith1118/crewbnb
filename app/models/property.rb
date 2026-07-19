@@ -34,6 +34,8 @@ class Property < ApplicationRecord
   validates :title, presence: true
   validates :description, presence: true
   validates :price_per_night, presence: true, numericality: { greater_than: 0 }
+  validates :weekday_discount, presence: true,
+            inclusion: { in: [ 10, 15, 20, 25 ], message: "must be 10, 15, 20 or 25%" }
   validates :max_guests, presence: true, numericality: { greater_than: 0 }
   validates :bedrooms, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :bathrooms, presence: true, numericality: { greater_than_or_equal_to: 0 }
@@ -52,6 +54,14 @@ class Property < ApplicationRecord
 
   def weekly_price
     (price_per_night * 5).round
+  end
+
+  # The typical weekend/tourist nightly rate this weekday rate undercuts,
+  # implied by the host's chosen weekday discount. Used to show the saving.
+  def typical_weekend_rate
+    return if weekday_discount.to_i <= 0
+
+    (price_per_night / (1 - (weekday_discount / 100.0))).round
   end
 
   def available_between?(check_in, check_out)
