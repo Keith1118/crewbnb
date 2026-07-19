@@ -85,6 +85,13 @@
   font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
 }
 
+/* Google's Material Symbols stylesheet forces display:inline-block on the icon
+   class, which overrides Tailwind's `hidden`. This two-class rule wins on
+   specificity so a hidden icon (e.g. the mobile menu close icon) stays hidden. */
+.material-symbols-outlined.hidden {
+  display: none;
+}
+
 /* ===== Glassmorphism ===== */
 .glass-effect {
   backdrop-filter: blur(20px);

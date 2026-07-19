@@ -93,8 +93,8 @@
           <% end %>
         </div>
 
-        <%# Right-side Actions %>
-        <div class="flex items-center gap-4">
+        <%# Right-side Actions (desktop only — mobile uses the hamburger menu) %>
+        <div class="hidden md:flex items-center gap-4">
           <% if user_signed_in? %>
             <%# Notification & Messages Icons %>
             <div class="flex gap-3 mr-2">
