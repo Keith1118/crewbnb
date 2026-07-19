@@ -3,10 +3,12 @@ class PagesController < ApplicationController
              with: -> { redirect_to contact_path, alert: "Too many messages sent. Please wait a minute and try again." }
 
   def home
+    # Show a small featured set on the home page — the full catalogue lives on
+    # the Find stays (properties) page.
     @properties = Property.published
                           .with_attached_images
                           .order(created_at: :desc)
-                          .limit(9)
+                          .limit(3)
   end
 
   def about
