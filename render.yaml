@@ -38,6 +38,21 @@ services:
         value: "1"
       - key: APP_HOST
         value: crewbase.ie      # used to build links in emails; change when your domain is live
+      # --- Photo storage: Cloudflare R2 (permanent, survives deploys) ---
+      - key: ACTIVE_STORAGE_SERVICE
+        value: cloudflare
+      - key: R2_BUCKET
+        value: crewbase
+      - key: R2_ENDPOINT
+        value: https://102e53f283a173aa7a776728be1da450.r2.cloudflarestorage.com
+      - key: R2_ACCESS_KEY_ID
+        sync: false            # set in Render dashboard (R2 API token Access Key ID)
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false            # set in Render dashboard (R2 API token Secret)
+      - key: AWS_REQUEST_CHECKSUM_CALCULATION
+        value: when_required   # R2 rejects the AWS SDK's default extra checksum
+      - key: AWS_RESPONSE_CHECKSUM_VALIDATION
+        value: when_required
       # --- Payments (from dashboard.stripe.com) ---
       - key: STRIPE_SECRET_KEY
         sync: false

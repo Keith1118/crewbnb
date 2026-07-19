@@ -12,3 +12,16 @@ amazon:
   secret_access_key: <%= ENV["AWS_SECRET_ACCESS_KEY"] || Rails.application.credentials.dig(:aws, :secret_access_key) %>
   region: <%= ENV["AWS_REGION"] || "eu-west-1" %>
   bucket: <%= ENV["AWS_BUCKET"] || "crewbase-#{Rails.env}" %>
+
+# Cloudflare R2 — permanent, S3-compatible object storage for listing photos.
+# Survives every Render deploy (unlike the ephemeral local disk). All values
+# come from ENV so no secrets live in git. Set ACTIVE_STORAGE_SERVICE=cloudflare
+# to activate. R2_ENDPOINT looks like https://<account_id>.r2.cloudflarestorage.com
+cloudflare:
+  service: S3
+  access_key_id: <%= ENV["R2_ACCESS_KEY_ID"] %>
+  secret_access_key: <%= ENV["R2_SECRET_ACCESS_KEY"] %>
+  region: auto
+  bucket: <%= ENV["R2_BUCKET"] %>
+  endpoint: <%= ENV["R2_ENDPOINT"] %>
+  force_path_style: true
