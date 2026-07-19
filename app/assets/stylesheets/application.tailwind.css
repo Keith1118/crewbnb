@@ -92,6 +92,18 @@
   display: none;
 }
 
+/* iOS Safari renders native date/number inputs wider than their box and won't
+   shrink, so they overflow the screen on mobile. Strip the native chrome and
+   force them to respect their container's width. */
+input[type="date"],
+input[type="number"] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 /* ===== Glassmorphism ===== */
 .glass-effect {
   backdrop-filter: blur(20px);
