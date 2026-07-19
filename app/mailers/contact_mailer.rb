@@ -12,7 +12,7 @@ class ContactMailer < ApplicationMailer
     @contact = contact_submission
 
     mail(
-      to: "admin@crewbase.ie",
+      to: "info@crewbase.ie",
       subject: "New contact form submission: #{@contact.subject}"
     )
   end
