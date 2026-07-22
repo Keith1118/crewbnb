@@ -1,90 +1,102 @@
 # Crewbase — Launch Checklist
 
-A plain-English guide to getting Crewbase live. Work top to bottom.
+A plain-English guide to getting Crewbase fully live. Work top to bottom.
 
 ---
 
 ## Where things stand
 
-**Built and working (tested):**
-- Guest site: homepage, search (by town + dates + guests), listing pages, booking flow
-- 13 real listings: 10 Edenderry rooms + 3 Tulfarris homes (photos, pricing, details)
-- Host area ("extranet"): dashboard, availability calendar, bookings, inbox
-- Automatic messages to guests (booking received → confirmation → check-in details)
-- Real crewbase branding (logo, favicon, navy colours)
-- 3 real accounts, all demo/fake data removed
+**The site is live.** It runs on Render at **https://crewbase.ie** with the real
+listings, photos and accounts on it. Anyone can visit it right now.
 
-**The big thing to understand:** the site currently runs **only on your Mac**
-(`http://localhost:3000`). Nobody else can see it. "Launching" = putting it on the
-internet. That's what the steps below are for.
+What's live and working:
+- Guest site: homepage, search (town + dates + beds), listing pages, FAQ
+- Real listings with photos, pricing and drive-distance chips
+- Host area ("extranet"): dashboard, availability calendar, bookings, inbox
+- Host listing setup, including the weekday rate + weekly discount
+- Automatic messages to guests (booking received → confirmed → check-in → review)
+- Photos stored permanently in Cloudflare R2 (they survive every deploy)
+- Email sending through Resend, from `info@crewbase.ie`
+- Real crewbase branding, `crewbase.ie` domain, sitemap and robots.txt
+
+**What is deliberately switched off:** guests can browse and see prices, but they
+**cannot place a booking**. The booking form says "Bookings opening soon" and the
+server refuses bookings even if someone posts to it directly. That's the
+`BOOKINGS_OPEN` flag — flipping it is the actual go-live moment (step 4 below).
 
 ---
 
 ## Your checklist (in order)
 
-### 1. Change the temporary passwords 🔴 do this first
-Three accounts still use the temporary password `password123`:
-- `keithmckeown@gmail.com` (admin — most important)
-- `tullyshome@gmail.com` (your Tulfarris host account)
-- `edenderrycentral@gmail.com` (Edenderry host account)
+### 1. Move the database off the free plan 🔴 most urgent
+Render's **free Postgres expires after 90 days and is then deleted.** That
+database holds your live listings, photos and accounts. Losing it means starting
+over.
 
-Log in as each → avatar menu → **Account & password** → set a real password.
+In the Render dashboard → your `crewbnb-db` database → **Upgrade** to a paid
+plan. Do this before anything else on this list.
 
-### 2. Choose where to host the site
-A Rails app needs a host. For a beginner, the easiest options are:
-- **Render.com** (recommended — simplest, has a free tier to start)
-- Fly.io or Railway.app (also beginner-friendly)
+*(The database is named `crewbnb-db` on purpose — renaming it would make Render
+build a brand-new empty one and orphan the real data. It's an internal label
+nobody sees.)*
 
-You'll create an account and connect it to your GitHub repo
-(`github.com/Keith1118/crewbase`). These services build and run the app for you.
-*(This is the step to get help with if any — it's the biggest one.)*
+### 2. Sync the blueprint to pick up the two infrastructure changes
+`render.yaml` now sets two things that need a blueprint sync to take effect:
+- the web service moves from **free → starter**, so the site stops going to sleep
+  after 15 minutes idle (no more ~30-second wait on the first visit)
+- a new **`crewbase-auto-messages` cron job** runs daily at 08:00 UTC (09:00 Irish
+  summer time), which is what actually sends check-in reminders and review
+  requests. Until this exists, those two messages never go out.
 
-### 3. Add your secret keys (on the host, as "environment variables")
-The app looks for these. Without them, some features stay off (that's by design —
-nothing breaks, they just don't run):
-- `STRIPE_SECRET_KEY` and `STRIPE_PUBLISHABLE_KEY` → turns on **card payments**.
-  Until these are set, bookings work as "request to book" (host approves manually).
-  Get them free at dashboard.stripe.com.
-- SMTP email settings (host, username, password) → so booking/message **emails
-  actually send**. A service like Resend.com or Postmark works well. Until set,
-  emails won't go out in production.
-- `GOOGLE_MAPS_API_KEY` (optional) → the map + nearby places on listing pages.
-- `RAILS_MASTER_KEY` → copy from your local `config/master.key` (never share it publicly).
+In Render → **Blueprints** → your blueprint → **Sync**. Both are paid services;
+Render has no free tier for cron jobs.
 
-### 4. Get your listings onto the live site
-Important: your 13 listings, photos, and accounts live in the database **on your
-Mac**. A fresh host starts with an **empty** database. Two ways to handle it:
-- **Simplest:** after deploying, log in and re-create the listings/accounts on the
-  live site (upload the photos again).
-- **Advanced:** copy your local database to production (ask for help — it's fiddly).
+Then open the new **crewbase-auto-messages** service → **Environment** and paste in
+the four secrets it can't inherit (they're the same values already on the web
+service): `RAILS_MASTER_KEY`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and
+`SMTP_PASSWORD`. It won't send anything until you do.
 
-Either way, run the database setup on the host once: `rails db:migrate`.
+You can prove it works with **Trigger Run** on that service — it prints how many
+messages it sent.
 
-### 5. Turn on the automatic reminder messages
-Check-in reminders and review requests are sent by a scheduled task. On your host,
-set up a **daily cron job** that runs:
+### 3. Add your Stripe keys (turns on card payments)
+In Render → web service → **Environment**, set:
+- `STRIPE_SECRET_KEY`
+- `STRIPE_PUBLISHABLE_KEY`
+
+Get them free at dashboard.stripe.com. Until they're set the app quietly runs as
+"request to book" (host approves each booking by hand) — nothing breaks, the app
+just stops promising instant booking. Add the keys and payments light up on their
+own; no code change needed.
+
+### 4. Open bookings — this is go-live 🚀
+In Render → web service → **Environment**, add:
 ```
-rails crewbase:auto_messages
+BOOKINGS_OPEN = true
 ```
-(The "booking received" and "confirmed" messages already send automatically — no
-cron needed for those.)
+Do this **last**, after you've walked through a test booking yourself. Setting it
+back to `false` closes bookings again at any time.
 
-### 6. Final checks before you tell anyone
-- [ ] Passwords changed (step 1)
-- [ ] You can open the live site in an incognito window
-- [ ] You can make a test booking end to end
-- [ ] Emails arrive (if SMTP is set)
-- [ ] Your domain (e.g. crewbase.ie) points to the host
+### 5. Final checks
+- [ ] Database on a paid plan (step 1) — no 90-day time bomb
+- [ ] Blueprint synced; cron job triggered once by hand and it reported success
+- [ ] Every account has a real password (no `password123` left anywhere)
+- [ ] Open https://crewbase.ie in an incognito window — listings and prices show
+- [ ] Make a test booking end to end and confirm the emails arrive
+- [ ] Then, and only then, flip `BOOKINGS_OPEN` to `true`
 
 ---
 
 ## Handy commands (local)
 - Start the site locally: `./start.sh`  (then open http://localhost:3000)
-- Run the reminder task: `bin/rails crewbase:auto_messages`
+- Run the reminder task by hand: `bin/rails crewbase:auto_messages`
 - Save your work to GitHub: `git add -A && git commit -m "..." && git push`
+  (Render redeploys automatically on every push to `main`.)
 
 ## Good to know
-- Payments and email are **feature-flagged**: the app checks whether keys exist and
-  adjusts what it promises to guests. Add the keys and those features light up on
-  their own — no code change needed.
-- Time zone is set to Europe/Dublin.
+- **Payments, email and bookings are all feature-flagged.** The app checks whether
+  the keys/flags exist and adjusts what it promises guests. This is why the site
+  can be live and safe before it can take money.
+- The map on listing pages uses Google's **free embed** — there's no Maps API key
+  to buy or configure.
+- Time zone is Europe/Dublin. Render's cron schedules are always in UTC.

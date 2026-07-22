@@ -1,8 +1,13 @@
 FactoryBot.define do
   factory :availability do
-    property { nil }
-    date { "2026-03-23" }
-    available { false }
-    custom_price { "9.99" }
+    property
+    date { Date.current + 5 }
+    available { false } # a blocked night
+    custom_price { nil }
+
+    trait :custom_priced do
+      available { true }
+      custom_price { "120.0" }
+    end
   end
 end

@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :review do
-    booking { nil }
-    rating { 1 }
-    comment { "MyText" }
-    reviewable_type { "MyString" }
-    reviewable_id { 1 }
+    booking
+    reviewer { booking.user }
+    reviewable { booking.property }
+    rating { 5 }
+    comment { "Spotless, quiet, and perfect for the crew. Would book again." }
   end
 end

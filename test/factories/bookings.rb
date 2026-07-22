@@ -1,13 +1,21 @@
 FactoryBot.define do
   factory :booking do
-    property { nil }
-    user { nil }
-    check_in { "2026-03-23" }
-    check_out { "2026-03-23" }
-    guests_count { 1 }
-    total_price { "9.99" }
-    status { 1 }
-    special_requests { "MyText" }
-    invoice_reference { "MyString" }
+    property
+    user
+    check_in  { Date.current + 7 }
+    check_out { Date.current + 10 }
+    guests_count { 2 }
+    status { :pending }
+
+    # total_price is calculated by a before_validation callback, so it's
+    # deliberately not set here.
+
+    trait :confirmed do
+      status { :confirmed }
+    end
+
+    trait :cancelled do
+      status { :cancelled }
+    end
   end
 end

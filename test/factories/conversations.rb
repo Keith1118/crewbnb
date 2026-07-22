@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :conversation do
-    property { nil }
+    association :participant_1, factory: :user
+    association :participant_2, factory: :user
+    property
   end
 end

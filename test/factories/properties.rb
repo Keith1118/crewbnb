@@ -1,24 +1,25 @@
 FactoryBot.define do
   factory :property do
-    user { nil }
-    title { "MyString" }
-    description { "MyText" }
-    property_type { "MyString" }
-    address { "MyString" }
-    city { "MyString" }
-    country { "MyString" }
-    latitude { 1.5 }
-    longitude { 1.5 }
-    price_per_night { "9.99" }
-    max_guests { 1 }
-    bedrooms { 1 }
+    user
+    sequence(:title) { |n| "Crew House #{n}" }
+    description { "A clean, quiet house set up for working crews." }
+    property_type { "house" }
+    address { "Main Street" }
+    city { "Edenderry" }
+    country { "Ireland" }
+    # Set explicitly so the after_validation geocode callback stays quiet —
+    # it only fires when the address changed and lat/lng didn't.
+    latitude  { 53.3428 }
+    longitude { -7.0489 }
+    price_per_night { "80.0" }
+    weekday_discount { 15 }
+    max_guests { 4 }
+    bedrooms { 2 }
     bathrooms { 1 }
-    wifi_speed { "MyString" }
-    has_desk { false }
-    has_meeting_room { false }
-    has_printer { false }
-    has_parking { false }
-    status { 1 }
-    instant_book { false }
+    status { :published }
+
+    trait :draft do
+      status { :draft }
+    end
   end
 end

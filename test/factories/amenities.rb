@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :amenity do
-    name { "MyString" }
-    icon { "MyString" }
-    category { 1 }
+    sequence(:name) { |n| "Amenity #{n}" }
+    icon { "wifi" }
+    category { :work }
   end
 end

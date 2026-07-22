@@ -1,6 +1,13 @@
 namespace :crewbase do
   desc "Send scheduled host auto-messages: check-in reminders (day before) and review requests (after checkout). Run daily via cron."
   task auto_messages: :environment do
+    # Production runs the :async job adapter, which queues into an in-process
+    # thread pool. In a short-lived cron process that pool dies with the process,
+    # so the notification emails would be dropped silently — and because the
+    # in-app message already saved its "sent" timestamp, they'd never retry.
+    # Send inline instead: this task is a one-shot, nothing is waiting on it.
+    ActiveJob::Base.queue_adapter = :inline
+
     today = Date.current
     sent = { reminders: 0, review_requests: 0 }
 

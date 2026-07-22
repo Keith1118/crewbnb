@@ -15,7 +15,7 @@ services:
   - type: web
     name: crewbnb                # internal Render service label (see note above); public site is crewbase.ie
     runtime: docker            # uses the existing Dockerfile (builds JS/CSS + assets)
-    plan: free                 # upgrade to Starter for no cold-starts
+    plan: starter              # paid: no cold starts (free tier sleeps after 15 min idle)
     region: frankfurt
     healthCheckPath: /up
     # Single startup script: migrate the DB, then start Puma on Render's $PORT.
@@ -67,5 +67,62 @@ services:
         value: resend         # Resend's SMTP username is always the literal "resend"
       - key: SMTP_PASSWORD
         sync: false           # set in Render dashboard = your Resend API key (re_...)
+      - key: SMTP_DOMAIN
+        value: crewbase.ie
+
+  # --- Daily scheduled messages -------------------------------------------
+  # Sends check-in reminders (day before arrival) and review requests (after
+  # checkout). Without this, those messages never go out — the rest of the
+  # automatic messages (booking received / confirmed) fire inline from the web
+  # service and don't need a schedule.
+  #
+  # Runs at 08:00 UTC = 09:00 Irish summer time (08:00 in winter). Render cron
+  # schedules are always UTC and are a paid service — there is no free tier.
+  # The secrets below are marked "sync: false", so after the blueprint syncs you
+  # must paste the same values you already set on the web service into this
+  # service's own Environment tab. It won't send email until you do.
+  - type: cron
+    name: crewbase-auto-messages
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: frankfurt
+    schedule: "0 8 * * *"
+    dockerCommand: bundle exec rails crewbase:auto_messages
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: crewbnb-db
+          property: connectionString
+      - key: SECRET_KEY_BASE
+        generateValue: true    # its own value is fine — this job has no sessions or cookies
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: RAILS_ENV
+        value: production
+      - key: APP_HOST
+        value: crewbase.ie     # builds the links inside the messages it sends
+      # Photo URLs in the emails resolve through R2, so this job needs it too.
+      - key: ACTIVE_STORAGE_SERVICE
+        value: cloudflare
+      - key: R2_BUCKET
+        value: crewbase
+      - key: R2_ENDPOINT
+        value: https://102e53f283a173aa7a776728be1da450.r2.cloudflarestorage.com
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_REQUEST_CHECKSUM_CALCULATION
+        value: when_required
+      - key: AWS_RESPONSE_CHECKSUM_VALIDATION
+        value: when_required
+      - key: SMTP_ADDRESS
+        value: smtp.resend.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USERNAME
+        value: resend
+      - key: SMTP_PASSWORD
+        sync: false           # same Resend API key (re_...) as the web service
       - key: SMTP_DOMAIN
         value: crewbase.ie
