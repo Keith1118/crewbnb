@@ -7,7 +7,7 @@ databases:
   # These labels are invisible to users (the public site runs on crewbase.ie).
   - name: crewbnb-db
     databaseName: crewbnb
-    plan: free                 # upgrade to a paid plan before real launch (free DB expires after 90 days)
+    plan: basic-256mb          # paid plan (upgraded 2026-07 off free, which expires after 90 days)
     postgresMajorVersion: "16"
     region: frankfurt          # EU (closest to Ireland)
 
