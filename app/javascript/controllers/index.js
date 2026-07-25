@@ -4,6 +4,7 @@
 
 import { application } from "./application"
 
+import ApplicantTypeController from "./applicant_type_controller"
 import BookingCalcController from "./booking_calc_controller"
 import DismissableController from "./dismissable_controller"
 import DropdownController from "./dropdown_controller"
@@ -11,6 +12,7 @@ import MobileMenuController from "./mobile_menu_controller"
 import PaymentFormController from "./payment_form_controller"
 import PropertyMapController from "./property_map_controller"
 import SidebarController from "./sidebar_controller"
+application.register("applicant-type", ApplicantTypeController)
 application.register("booking-calc", BookingCalcController)
 application.register("dismissable", DismissableController)
 application.register("dropdown", DropdownController)

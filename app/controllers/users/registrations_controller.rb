@@ -34,4 +34,10 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def resolve_layout
     current_user&.host? || current_user&.admin? ? "host" : "application"
   end
+
+  # New hosts go straight to the application flow — they apply with proof + docs
+  # and staff build the first listing. Everyone else follows the normal path.
+  def after_sign_up_path_for(resource)
+    resource.host? ? new_host_application_path : super
+  end
 end

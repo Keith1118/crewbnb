@@ -39,4 +39,15 @@ module ApplicationHelper
     m = minutes % 60
     m.zero? ? "#{h} hr" : "#{h} hr #{m} min"
   end
+
+  # Render a user-supplied URL (a host's listing/iCal link) as a clickable link
+  # only when it's a plain http(s) URL — never a "javascript:" or other scheme —
+  # so viewing an application can't execute anything. Falls back to plain text.
+  def safe_external_link(url, **options)
+    if url.to_s.match?(%r{\Ahttps?://}i)
+      link_to(url, url, **options.reverse_merge(target: "_blank", rel: "noopener"))
+    else
+      content_tag(:span, url.to_s)
+    end
+  end
 end

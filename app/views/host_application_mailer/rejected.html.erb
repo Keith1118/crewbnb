@@ -1,0 +1,13 @@
+<h1>An update on your application</h1>
+
+<p>Hi <%= @applicant.first_name || @applicant.email.split("@").first %>,</p>
+
+<p>Thanks for applying to host on Crewbase. After reviewing your application for <strong><%= @application.property_address %></strong>, we're not able to approve it at this time.</p>
+
+<% if @application.review_notes.present? %>
+  <div class="detail-box">
+    <p style="margin: 0; color: #111c2d;"><%= simple_format(@application.review_notes) %></p>
+  </div>
+<% end %>
+
+<p>If you think this was a mistake or you'd like to provide more information, just reply to this email.</p>

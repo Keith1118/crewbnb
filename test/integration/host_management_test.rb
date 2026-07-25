@@ -15,18 +15,31 @@ class HostManagementTest < ActionDispatch::IntegrationTest
     }
   end
 
-  test "a host can create a listing" do
+  # Once onboarded (an approved application), a host can self-serve new listings.
+  test "an onboarded host can create a listing" do
+    create(:host_application, :approved, user: @host)
+
     assert_difference "@host.properties.count", 1 do
       post host_properties_path, params: { property: valid_property_params }
     end
   end
 
   test "an invalid listing is re-rendered, not saved" do
+    create(:host_application, :approved, user: @host)
+
     assert_no_difference "Property.count" do
       post host_properties_path, params: { property: valid_property_params.merge(title: "", price_per_night: 0) }
     end
 
     assert_response :unprocessable_entity
+  end
+
+  test "a new host without an approved application is sent to apply" do
+    assert_no_difference "Property.count" do
+      post host_properties_path, params: { property: valid_property_params }
+    end
+
+    assert_redirected_to new_host_application_path
   end
 
   test "a host can edit their own listing" do

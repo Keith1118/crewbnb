@@ -1,0 +1,13 @@
+<h1>You're approved to host</h1>
+
+<p>Hi <%= @applicant.first_name || @applicant.email.split("@").first %>,</p>
+
+<p>Good news — your application for <strong><%= @application.property_address %></strong> has been approved. Our team is setting up your listing now, and you'll be able to review and edit every detail once it's ready.</p>
+
+<% if @application.review_notes.present? %>
+  <div class="detail-box">
+    <p style="margin: 0; color: #111c2d;"><%= simple_format(@application.review_notes) %></p>
+  </div>
+<% end %>
+
+<p><%= link_to "Go to your host dashboard", host_root_url %></p>

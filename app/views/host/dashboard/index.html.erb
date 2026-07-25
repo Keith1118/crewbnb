@@ -1,5 +1,20 @@
 <% content_for(:page_title, "Dashboard") %>
 
+<%# ===== Pending application banner ===== %>
+<% if (pending_app = current_user.host_applications.pending.order(:created_at).last) %>
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-8">
+    <div class="flex items-center gap-3">
+      <span class="material-symbols-outlined text-amber-600">hourglass_top</span>
+      <div>
+        <p class="text-sm font-bold text-amber-900">Your host application is under review</p>
+        <p class="text-xs text-amber-800">We're checking your details for <%= pending_app.property_address %> and building your listing. We'll email you when it's ready.</p>
+      </div>
+    </div>
+    <%= link_to "View application", host_application_path(pending_app),
+        class: "shrink-0 inline-flex items-center gap-1.5 bg-white border border-amber-300 text-amber-900 px-4 py-2 rounded-xl font-bold text-xs hover:bg-amber-100 transition-colors" %>
+  </div>
+<% end %>
+
 <%# ===== Greeting ===== %>
 <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
   <div>

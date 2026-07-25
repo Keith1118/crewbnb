@@ -1,6 +1,39 @@
-<% form_url = property.persisted? ? host_property_path(property) : host_properties_path %>
+<% admin = local_assigns.fetch(:admin, false) %>
+<% form_url = local_assigns.fetch(:url, property.persisted? ? host_property_path(property) : host_properties_path) %>
+<% cancel_path = local_assigns.fetch(:cancel_path, property.persisted? ? host_property_path(property) : host_properties_path) %>
 
 <%= form_with(model: property, url: form_url, class: "space-y-8", local: true) do |f| %>
+  <%# Admin-only: who owns this listing + the external links staff work from %>
+  <% if admin %>
+    <section class="bg-white rounded-2xl border border-line p-6">
+      <div class="flex items-center gap-2 mb-6">
+        <span class="material-symbols-outlined text-brand text-xl">manage_accounts</span>
+        <h3 class="font-headline text-lg font-bold text-ink">Owner &amp; source (staff)</h3>
+      </div>
+      <div class="space-y-5">
+        <% unless property.persisted? %>
+          <div>
+            <label for="property_user_id" class="block text-sm font-semibold text-ink mb-1.5">Host (owner) <span class="text-error">*</span></label>
+            <%= f.collection_select :user_id,
+                User.where(role: [ :host, :admin ]).order(:email), :id, :email,
+                { include_blank: "Select host..." },
+                class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body appearance-none focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
+          </div>
+        <% end %>
+        <div>
+          <label for="property_listing_url" class="block text-sm font-semibold text-ink mb-1.5">Original listing URL</label>
+          <%= f.url_field :listing_url,
+              class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
+        </div>
+        <div>
+          <label for="property_ical_url" class="block text-sm font-semibold text-ink mb-1.5">Calendar (iCal) URL</label>
+          <%= f.url_field :ical_url,
+              class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
+        </div>
+      </div>
+    </section>
+  <% end %>
+
   <%# Error Messages %>
   <% if property.errors.any? %>
     <div class="bg-error-container/20 border border-error/30 rounded-2xl p-5">
@@ -313,7 +346,7 @@
   <div class="flex items-center gap-4 pt-2">
     <%= f.submit property.persisted? ? "Update Property" : "Create Property",
         class: "bg-brand text-white px-8 py-3.5 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform cursor-pointer" %>
-    <%= link_to "Cancel", property.persisted? ? host_property_path(property) : host_properties_path,
+    <%= link_to "Cancel", cancel_path,
         class: "text-muted font-medium text-sm hover:text-ink transition-colors px-4 py-3.5" %>
   </div>
 <% end %>

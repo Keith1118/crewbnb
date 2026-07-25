@@ -64,6 +64,12 @@ class Property < ApplicationRecord
     (price_per_night / (1 - (weekday_discount / 100.0))).round
   end
 
+  # Pull the latest busy dates from this property's external iCal feed
+  # (Airbnb/Booking/VRBO) and block them on the Crewbase calendar.
+  def sync_ical!
+    IcalSyncService.new(self).call
+  end
+
   def available_between?(check_in, check_out)
     return false if bookings.blocking.overlapping(check_in, check_out).exists?
     return false if availabilities.where(available: false, date: check_in...check_out).exists?

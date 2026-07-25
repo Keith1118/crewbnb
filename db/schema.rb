@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_19_135616) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_25_003315) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -57,6 +57,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_135616) do
     t.decimal "custom_price"
     t.date "date"
     t.bigint "property_id", null: false
+    t.integer "source", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["property_id", "date"], name: "index_availabilities_on_property_id_and_date", unique: true
     t.index ["property_id"], name: "index_availabilities_on_property_id"
@@ -119,6 +120,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_135616) do
     t.index ["user_id"], name: "index_favorites_on_user_id"
   end
 
+  create_table "host_applications", force: :cascade do |t|
+    t.integer "applicant_type", default: 0, null: false
+    t.string "company_name"
+    t.datetime "created_at", null: false
+    t.integer "entity_type"
+    t.string "ical_url"
+    t.string "listing_url"
+    t.string "property_address"
+    t.bigint "property_id"
+    t.text "review_notes"
+    t.datetime "reviewed_at"
+    t.bigint "reviewed_by_id"
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["property_id"], name: "index_host_applications_on_property_id"
+    t.index ["reviewed_by_id"], name: "index_host_applications_on_reviewed_by_id"
+    t.index ["status"], name: "index_host_applications_on_status"
+    t.index ["user_id"], name: "index_host_applications_on_user_id"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.text "body"
     t.bigint "conversation_id", null: false
@@ -158,8 +180,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_135616) do
     t.boolean "has_parking", default: false
     t.boolean "has_printer", default: false
     t.text "house_rules"
+    t.datetime "ical_last_synced_at"
+    t.string "ical_url"
     t.boolean "instant_book", default: false
     t.float "latitude"
+    t.string "listing_url"
     t.float "longitude"
     t.integer "max_guests"
     t.text "nearby_attractions"
@@ -243,6 +268,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_19_135616) do
   add_foreign_key "conversations", "users", column: "participant_2_id"
   add_foreign_key "favorites", "properties"
   add_foreign_key "favorites", "users"
+  add_foreign_key "host_applications", "properties", on_delete: :nullify
+  add_foreign_key "host_applications", "users"
+  add_foreign_key "host_applications", "users", column: "reviewed_by_id", on_delete: :nullify
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users"
   add_foreign_key "payments", "bookings"

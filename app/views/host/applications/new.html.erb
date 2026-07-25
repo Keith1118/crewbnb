@@ -1,0 +1,140 @@
+<% content_for(:page_title, "Apply to host") %>
+<% content_for(:title, "Apply to host - Crewbase") %>
+
+<div class="max-w-3xl">
+  <%# Header %>
+  <div class="mb-8">
+    <h2 class="font-headline text-2xl font-extrabold text-ink tracking-tight mb-2">List your property with Crewbase</h2>
+    <p class="text-sm text-muted">Tell us about your place and upload proof you manage it. Our team reviews every application by hand and builds your listing for you — you'll be able to edit every detail once it's live.</p>
+  </div>
+
+  <%= form_with model: @application, url: host_applications_path, method: :post,
+        class: "space-y-8", data: { controller: "applicant-type" } do |f| %>
+
+    <%# Errors %>
+    <% if @application.errors.any? %>
+      <div class="bg-error-container/20 border border-error/30 rounded-2xl p-5">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="material-symbols-outlined text-error text-xl">error</span>
+          <h4 class="font-headline font-bold text-error text-sm">
+            <%= pluralize(@application.errors.count, "error") %> stopped your application from being submitted:
+          </h4>
+        </div>
+        <ul class="list-disc list-inside space-y-1">
+          <% @application.errors.full_messages.each do |message| %>
+            <li class="text-sm text-error/80"><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%# Section 1: Who are you applying as %>
+    <section class="bg-white rounded-2xl border border-line p-6">
+      <div class="flex items-center gap-2 mb-6">
+        <span class="material-symbols-outlined text-brand text-xl">badge</span>
+        <h3 class="font-headline text-lg font-bold text-ink">Who's listing?</h3>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <label class="flex items-center gap-3 p-4 rounded-xl bg-neutral-100 border border-line cursor-pointer hover:border-brand/40 transition-colors">
+          <%= f.radio_button :applicant_type, "individual", checked: @application.applicant_type != "company",
+              class: "w-4 h-4 text-brand focus:ring-brand", data: { action: "applicant-type#toggle" } %>
+          <div>
+            <span class="text-sm font-semibold text-ink">An individual</span>
+            <p class="text-xs text-muted mt-0.5">You personally own or manage the property.</p>
+          </div>
+        </label>
+        <label class="flex items-center gap-3 p-4 rounded-xl bg-neutral-100 border border-line cursor-pointer hover:border-brand/40 transition-colors">
+          <%= f.radio_button :applicant_type, "company", checked: @application.applicant_type == "company",
+              class: "w-4 h-4 text-brand focus:ring-brand", data: { action: "applicant-type#toggle" } %>
+          <div>
+            <span class="text-sm font-semibold text-ink">A company</span>
+            <p class="text-xs text-muted mt-0.5">Sole trader, Ltd, PLC, partnership, etc.</p>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <%# Section 2: The property %>
+    <section class="bg-white rounded-2xl border border-line p-6">
+      <div class="flex items-center gap-2 mb-6">
+        <span class="material-symbols-outlined text-brand text-xl">home_work</span>
+        <h3 class="font-headline text-lg font-bold text-ink">Your property</h3>
+      </div>
+
+      <div class="space-y-5">
+        <div>
+          <label for="host_application_property_address" class="block text-sm font-semibold text-ink mb-1.5">Property address <span class="text-error">*</span></label>
+          <%= f.text_field :property_address, placeholder: "Full address of the place you're listing",
+              class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
+        </div>
+
+        <div>
+          <label for="host_application_listing_url" class="block text-sm font-semibold text-ink mb-1.5">Existing listing link <span class="text-error">*</span></label>
+          <p class="text-xs text-muted mb-1.5">Your Airbnb, Booking.com or VRBO listing for this property.</p>
+          <%= f.url_field :listing_url, placeholder: "https://www.airbnb.com/rooms/...",
+              class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
+        </div>
+
+        <div>
+          <label for="host_application_ical_url" class="block text-sm font-semibold text-ink mb-1.5">Calendar (iCal) link <span class="text-error">*</span></label>
+          <p class="text-xs text-muted mb-1.5">The iCal export URL from that listing — we use it to keep your Crewbase calendar in sync automatically.</p>
+          <%= f.url_field :ical_url, placeholder: "https://www.airbnb.com/calendar/ical/...",
+              class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
+        </div>
+
+        <div>
+          <label for="host_application_proof_documents" class="block text-sm font-semibold text-ink mb-1.5">Proof you manage this place <span class="text-error">*</span></label>
+          <p class="text-xs text-muted mb-1.5">Upload anything that shows control of the property — a utility bill, deed, management agreement, or a screenshot of your host dashboard. You can add more than one.</p>
+          <%= f.file_field :proof_documents, multiple: true, accept: "image/*,application/pdf",
+              class: "block w-full text-sm text-muted file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-brand file:text-white hover:file:bg-brand/80 file:cursor-pointer file:transition-colors" %>
+        </div>
+      </div>
+    </section>
+
+    <%# Section 3: Company verification (only for companies) %>
+    <section class="bg-white rounded-2xl border border-line p-6 hidden" data-applicant-type-target="company">
+      <div class="flex items-center gap-2 mb-6">
+        <span class="material-symbols-outlined text-brand text-xl">corporate_fare</span>
+        <h3 class="font-headline text-lg font-bold text-ink">Company verification</h3>
+      </div>
+
+      <div class="space-y-5">
+        <div>
+          <label for="host_application_company_name" class="block text-sm font-semibold text-ink mb-1.5">Company name</label>
+          <%= f.text_field :company_name, placeholder: "e.g., Musgrave Group",
+              class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
+        </div>
+
+        <div>
+          <label for="host_application_entity_type" class="block text-sm font-semibold text-ink mb-1.5">Entity type</label>
+          <%= f.select :entity_type,
+                options_for_select([
+                  [ "Sole trader", "sole_trader" ],
+                  [ "Limited company (Ltd)", "limited_company" ],
+                  [ "Public limited company (PLC)", "plc" ],
+                  [ "Partnership", "partnership" ],
+                  [ "Other", "other" ]
+                ], @application.entity_type),
+                { include_blank: "Select entity type..." },
+                class: "w-full px-4 py-3 rounded-xl bg-neutral-100 border border-line text-ink text-sm font-body appearance-none focus:outline-none focus:ring-2 focus:ring-brand focus:border-brand transition-colors" %>
+        </div>
+
+        <div>
+          <label for="host_application_business_documents" class="block text-sm font-semibold text-ink mb-1.5">Registration documents</label>
+          <p class="text-xs text-muted mb-1.5">Upload documents that verify your business — e.g. a certificate of incorporation, CRO registration, or VAT registration.</p>
+          <%= f.file_field :business_documents, multiple: true, accept: "image/*,application/pdf",
+              class: "block w-full text-sm text-muted file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-brand file:text-white hover:file:bg-brand/80 file:cursor-pointer file:transition-colors" %>
+        </div>
+      </div>
+    </section>
+
+    <%# Submit %>
+    <div class="flex items-center gap-4 pt-2">
+      <%= f.submit "Submit application",
+          class: "bg-brand text-white px-8 py-3.5 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform cursor-pointer" %>
+      <%= link_to "Cancel", host_root_path,
+          class: "text-muted font-medium text-sm hover:text-ink transition-colors px-4 py-3.5" %>
+    </div>
+  <% end %>
+</div>

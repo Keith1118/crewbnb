@@ -1,0 +1,14 @@
+<% content_for(:page_title, "Build a listing") %>
+
+<nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-8">
+  <%= link_to "Properties", admin_properties_path, class: "hover:text-primary-container transition-colors" %>
+  <span class="material-symbols-outlined text-base">chevron_right</span>
+  <span class="text-on-surface font-medium">New listing</span>
+</nav>
+
+<div class="max-w-3xl">
+  <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight mb-8">Build a listing</h2>
+
+  <%= render "host/properties/form", property: @property, admin: true,
+        url: admin_properties_path, cancel_path: admin_properties_path %>
+</div>

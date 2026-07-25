@@ -45,7 +45,10 @@ Rails.application.routes.draw do
 
   namespace :host do
     root "dashboard#index"
-    resources :properties
+    resources :applications, only: [ :new, :create, :show ]
+    resources :properties do
+      member { post :sync_ical }
+    end
     resources :bookings, only: [ :index, :show, :update ]
     get "calendar", to: "calendar#index", as: :calendar
     patch "calendar/toggle", to: "calendar#toggle", as: :calendar_toggle
@@ -58,7 +61,15 @@ Rails.application.routes.draw do
   namespace :admin do
     root "dashboard#index"
     resources :users
-    resources :properties, only: [ :index, :show, :update, :destroy ]
+    resources :host_applications, only: [ :index, :show ] do
+      member do
+        post :approve
+        post :reject
+      end
+    end
+    resources :properties, only: [ :index, :show, :new, :create, :edit, :update, :destroy ] do
+      member { post :sync_ical }
+    end
     resources :bookings, only: [ :index, :show ]
     resources :reviews, only: [ :index, :destroy ]
     resources :contact_submissions, only: [ :index, :show, :destroy ]

@@ -1,0 +1,72 @@
+<% content_for(:page_title, "Your application") %>
+<% content_for(:title, "Your host application - Crewbase") %>
+
+<%
+  status_styles = {
+    "pending"  => { chip: "bg-amber-100 text-amber-800", icon: "hourglass_top", label: "Under review" },
+    "approved" => { chip: "bg-green-100 text-green-800", icon: "check_circle", label: "Approved" },
+    "rejected" => { chip: "bg-error-container/30 text-error", icon: "cancel", label: "Not approved" }
+  }
+  style = status_styles.fetch(@application.status, status_styles["pending"])
+%>
+
+<div class="max-w-2xl">
+  <div class="mb-8">
+    <h2 class="font-headline text-2xl font-extrabold text-ink tracking-tight mb-2">Your host application</h2>
+    <p class="text-sm text-muted"><%= @application.property_address %></p>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-line p-6 mb-6">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold <%= style[:chip] %>">
+        <span class="material-symbols-outlined text-sm"><%= style[:icon] %></span>
+        <%= style[:label] %>
+      </span>
+    </div>
+
+    <% if @application.pending? %>
+      <p class="text-sm text-ink">Thanks for applying. Our team is reviewing your details and documents — we'll email you as soon as your listing is ready. This usually takes a day or two.</p>
+    <% elsif @application.approved? %>
+      <p class="text-sm text-ink">You're approved! We're setting up your listing. Once it's ready you can edit every detail from your properties page.</p>
+      <% if @application.property %>
+        <div class="mt-4">
+          <%= link_to "View your listing", host_property_path(@application.property),
+              class: "inline-flex items-center gap-1.5 bg-brand text-white px-5 py-2.5 rounded-xl font-headline font-bold text-sm" %>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="text-sm text-ink">We weren't able to approve this application. See the note below, and feel free to reply to our email if you'd like to follow up.</p>
+    <% end %>
+
+    <% if @application.review_notes.present? %>
+      <div class="mt-4 p-4 rounded-xl bg-neutral-100 border border-line">
+        <p class="text-xs font-semibold text-muted uppercase tracking-widest mb-1">Note from our team</p>
+        <p class="text-sm text-ink"><%= simple_format(@application.review_notes) %></p>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-line p-6">
+    <h3 class="font-headline text-sm font-bold text-ink mb-4">What you submitted</h3>
+    <dl class="space-y-3 text-sm">
+      <div class="flex justify-between gap-4">
+        <dt class="text-muted">Applying as</dt>
+        <dd class="text-ink font-semibold text-right"><%= @application.applicant_type.titleize %></dd>
+      </div>
+      <div class="flex justify-between gap-4">
+        <dt class="text-muted">Listing link</dt>
+        <dd class="text-ink font-semibold text-right break-all"><%= safe_external_link @application.listing_url, class: "text-brand hover:underline" %></dd>
+      </div>
+      <% if @application.company? %>
+        <div class="flex justify-between gap-4">
+          <dt class="text-muted">Company</dt>
+          <dd class="text-ink font-semibold text-right"><%= @application.company_name %> · <%= @application.entity_type&.titleize %></dd>
+        </div>
+      <% end %>
+      <div class="flex justify-between gap-4">
+        <dt class="text-muted">Documents</dt>
+        <dd class="text-ink font-semibold text-right"><%= @application.proof_documents.count + @application.business_documents.count %> uploaded</dd>
+      </div>
+    </dl>
+  </div>
+</div>

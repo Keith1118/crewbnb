@@ -30,6 +30,9 @@ gem "stripe"
 gem "geocoder"
 gem "pg_search"
 
+# Parse iCal feeds (Airbnb/Booking/VRBO calendar sync)
+gem "icalendar"
+
 # Pagination
 gem "pagy", "~> 9.0"
 

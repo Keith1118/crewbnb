@@ -1,0 +1,130 @@
+<% content_for(:page_title, "Host application") %>
+
+<nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-8">
+  <%= link_to "Host applications", admin_host_applications_path, class: "hover:text-primary-container transition-colors" %>
+  <span class="material-symbols-outlined text-base">chevron_right</span>
+  <span class="text-on-surface font-medium"><%= truncate(@application.property_address, length: 40) %></span>
+</nav>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <div class="lg:col-span-2 space-y-6">
+    <%# Applicant + property %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-8">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight mb-1">
+            <%= @application.user.first_name.present? ? "#{@application.user.first_name} #{@application.user.last_name}" : @application.user.email.split("@").first %>
+          </h2>
+          <p class="text-sm text-on-surface-variant"><%= @application.user.email %><%= " · #{@application.user.phone}" if @application.user.phone.present? %></p>
+        </div>
+        <% status_classes = case @application.status
+           when "approved" then "bg-green-100 text-green-800"
+           when "rejected" then "bg-red-100 text-red-800"
+           else "bg-amber-100 text-amber-800"
+           end %>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold <%= status_classes %>"><%= @application.status.titleize %></span>
+      </div>
+
+      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
+        <div>
+          <dt class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Applying as</dt>
+          <dd class="text-on-surface font-semibold"><%= @application.applicant_type.titleize %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Property address</dt>
+          <dd class="text-on-surface font-semibold"><%= @application.property_address %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Existing listing</dt>
+          <dd class="font-semibold break-all"><%= safe_external_link @application.listing_url, class: "text-primary-container hover:underline" %></dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">iCal link</dt>
+          <dd class="font-semibold break-all"><%= safe_external_link @application.ical_url, class: "text-primary-container hover:underline" %></dd>
+        </div>
+        <% if @application.company? %>
+          <div>
+            <dt class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Company</dt>
+            <dd class="text-on-surface font-semibold"><%= @application.company_name %></dd>
+          </div>
+          <div>
+            <dt class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Entity type</dt>
+            <dd class="text-on-surface font-semibold"><%= @application.entity_type&.titleize %></dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+
+    <%# Documents %>
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+      <h3 class="font-headline font-bold text-on-surface mb-4">Documents</h3>
+
+      <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2">Proof of property</p>
+      <% if @application.proof_documents.attached? %>
+        <ul class="space-y-2 mb-5">
+          <% @application.proof_documents.each do |doc| %>
+            <li>
+              <%= link_to rails_blob_path(doc, disposition: "attachment"), class: "inline-flex items-center gap-2 text-sm text-primary-container hover:underline" do %>
+                <span class="material-symbols-outlined text-base">description</span>
+                <%= doc.filename %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-sm text-on-surface-variant mb-5">None uploaded.</p>
+      <% end %>
+
+      <% if @application.company? %>
+        <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-2">Business registration</p>
+        <% if @application.business_documents.attached? %>
+          <ul class="space-y-2">
+            <% @application.business_documents.each do |doc| %>
+              <li>
+                <%= link_to rails_blob_path(doc, disposition: "attachment"), class: "inline-flex items-center gap-2 text-sm text-primary-container hover:underline" do %>
+                  <span class="material-symbols-outlined text-base">description</span>
+                  <%= doc.filename %>
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="text-sm text-on-surface-variant">None uploaded.</p>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Review actions %>
+  <div class="space-y-6">
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6">
+      <h3 class="font-headline font-bold text-on-surface mb-4">Review</h3>
+
+      <% if @application.pending? %>
+        <%= form_with url: approve_admin_host_application_path(@application), method: :post, class: "space-y-3 mb-6" do %>
+          <label class="block text-xs font-medium text-on-surface-variant uppercase tracking-widest">Note (optional, sent to host)</label>
+          <textarea name="review_notes" rows="3" class="w-full px-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/30 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-surface-tint"></textarea>
+          <%= submit_tag "Approve & build listing", class: "w-full bg-green-600 text-white px-5 py-3 rounded-xl font-headline font-bold text-sm hover:bg-green-700 transition-colors cursor-pointer" %>
+        <% end %>
+
+        <%= form_with url: reject_admin_host_application_path(@application), method: :post, class: "space-y-3" do %>
+          <label class="block text-xs font-medium text-on-surface-variant uppercase tracking-widest">Reason (optional, sent to host)</label>
+          <textarea name="review_notes" rows="3" class="w-full px-3 py-2 rounded-xl bg-surface-container-low border border-outline-variant/30 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-surface-tint"></textarea>
+          <%= submit_tag "Reject", class: "w-full bg-surface-container border border-outline-variant/30 text-on-surface px-5 py-3 rounded-xl font-headline font-bold text-sm hover:bg-surface-container-high transition-colors cursor-pointer",
+              data: { turbo_confirm: "Reject this application?" } %>
+        <% end %>
+      <% else %>
+        <p class="text-sm text-on-surface-variant mb-2">
+          <%= @application.status.titleize %><%= " on #{@application.reviewed_at.strftime('%b %d, %Y')}" if @application.reviewed_at %><%= " by #{@application.reviewed_by.email}" if @application.reviewed_by %>.
+        </p>
+        <% if @application.review_notes.present? %>
+          <div class="p-3 rounded-xl bg-surface-container-low border border-outline-variant/20 text-sm text-on-surface mb-4"><%= simple_format(@application.review_notes) %></div>
+        <% end %>
+        <% if @application.property %>
+          <%= link_to "Open the listing", edit_admin_property_path(@application.property),
+              class: "block text-center w-full bg-primary-container text-on-primary-container px-5 py-3 rounded-xl font-headline font-bold text-sm" %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

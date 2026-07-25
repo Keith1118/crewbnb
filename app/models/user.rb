@@ -9,6 +9,7 @@ class User < ApplicationRecord
 
   # Associations
   has_many :properties, dependent: :destroy
+  has_many :host_applications, dependent: :destroy
   has_many :bookings, dependent: :destroy
   has_many :reviews, foreign_key: :reviewer_id, dependent: :destroy
   has_many :favorites, dependent: :destroy
@@ -20,5 +21,16 @@ class User < ApplicationRecord
   # A guest must be a verified business (valid VAT number) before booking.
   def business_verified?
     business_verified_at.present?
+  end
+
+  # A host is "onboarded" once staff have approved an application (or they
+  # already have a listing). Until then they're steered to the application flow
+  # and can't create listings directly — staff build the first one for them.
+  def host_onboarded?
+    properties.exists? || host_applications.approved.exists?
+  end
+
+  def latest_host_application
+    host_applications.order(:created_at).last
   end
 end

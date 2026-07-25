@@ -1,0 +1,59 @@
+<% content_for(:page_title, "Host applications") %>
+
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">Host applications</h2>
+    <p class="text-on-surface-variant mt-1">Review property submissions and build the listings.</p>
+  </div>
+</div>
+
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-outline-variant/15 text-left">
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Applicant</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Property</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Type</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Status</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Submitted</th>
+          <th class="px-6 py-4 text-xs font-medium text-on-surface-variant uppercase tracking-widest">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-outline-variant/10">
+        <% @applications.each do |application| %>
+          <tr class="hover:bg-surface-container/30 transition-colors">
+            <td class="px-6 py-4 font-medium text-on-surface">
+              <%= application.user.first_name.present? ? "#{application.user.first_name} #{application.user.last_name}" : application.user.email.split("@").first %>
+              <div class="text-xs text-on-surface-variant"><%= application.user.email %></div>
+            </td>
+            <td class="px-6 py-4 text-on-surface-variant"><%= truncate(application.property_address, length: 40) %></td>
+            <td class="px-6 py-4 text-on-surface-variant"><%= application.applicant_type.titleize %></td>
+            <td class="px-6 py-4">
+              <% status_classes = case application.status
+                 when "approved" then "bg-green-100 text-green-800"
+                 when "rejected" then "bg-red-100 text-red-800"
+                 else "bg-amber-100 text-amber-800"
+                 end %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold <%= status_classes %>">
+                <%= application.status.titleize %>
+              </span>
+            </td>
+            <td class="px-6 py-4 text-on-surface-variant whitespace-nowrap"><%= application.created_at.strftime("%b %d, %Y") %></td>
+            <td class="px-6 py-4">
+              <%= link_to "Review", admin_host_application_path(application), class: "text-primary-container hover:underline font-medium text-xs" %>
+            </td>
+          </tr>
+        <% end %>
+
+        <% if @applications.empty? %>
+          <tr><td colspan="6" class="px-6 py-12 text-center text-on-surface-variant">No applications yet.</td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="mt-8 flex justify-center">
+  <%== pagy_nav(@pagy) if @pagy.pages > 1 %>
+</div>

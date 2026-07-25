@@ -1,0 +1,20 @@
+<% content_for(:page_title, "Edit listing") %>
+
+<nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-8">
+  <%= link_to "Properties", admin_properties_path, class: "hover:text-primary-container transition-colors" %>
+  <span class="material-symbols-outlined text-base">chevron_right</span>
+  <%= link_to truncate(@property.title, length: 30), admin_property_path(@property), class: "hover:text-primary-container transition-colors" %>
+  <span class="material-symbols-outlined text-base">chevron_right</span>
+  <span class="text-on-surface font-medium">Edit</span>
+</nav>
+
+<div class="max-w-3xl">
+  <div class="flex items-center justify-between mb-8">
+    <h2 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight">Edit listing</h2>
+    <%= button_to "Sync calendar now", sync_ical_admin_property_path(@property), method: :post,
+        class: "inline-flex items-center gap-1.5 bg-surface-container border border-outline-variant/30 text-on-surface px-4 py-2 rounded-xl font-headline font-bold text-xs hover:bg-surface-container-high transition-colors cursor-pointer" %>
+  </div>
+
+  <%= render "host/properties/form", property: @property, admin: true,
+        url: admin_property_path(@property), cancel_path: admin_property_path(@property) %>
+</div>

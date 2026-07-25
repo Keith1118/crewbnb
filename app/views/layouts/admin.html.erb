@@ -58,6 +58,15 @@
             <span class="text-sm">Properties</span>
           <% end %>
 
+          <%= link_to admin_host_applications_path, class: "flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors duration-200 #{ request.path.start_with?('/admin/host_applications') ? 'bg-tertiary-container text-on-primary-container font-bold' : 'text-on-tertiary-container hover:bg-tertiary-container/40 hover:text-on-primary-container' }" do %>
+            <span class="material-symbols-outlined text-xl">how_to_reg</span>
+            <span class="text-sm">Applications</span>
+            <% pending_apps = HostApplication.pending.count %>
+            <% if pending_apps > 0 %>
+              <span class="ml-auto bg-error text-on-error text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"><%= pending_apps %></span>
+            <% end %>
+          <% end %>
+
           <%= link_to admin_bookings_path, class: "flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors duration-200 #{ request.path.start_with?('/admin/bookings') ? 'bg-tertiary-container text-on-primary-container font-bold' : 'text-on-tertiary-container hover:bg-tertiary-container/40 hover:text-on-primary-container' }" do %>
             <span class="material-symbols-outlined text-xl">calendar_month</span>
             <span class="text-sm">Bookings</span>
