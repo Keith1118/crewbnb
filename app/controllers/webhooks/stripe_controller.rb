@@ -21,12 +21,28 @@ module Webhooks
         handle_payment_succeeded(event.data.object)
       when "payment_intent.payment_failed"
         handle_payment_failed(event.data.object)
+      when "account.updated"
+        handle_account_updated(event.data.object)
       end
 
       head :ok
     end
 
     private
+
+    # A host's Express account changed — keep their payout-readiness in sync so
+    # bookings route money correctly even if they finished onboarding elsewhere.
+    def handle_account_updated(account)
+      user = User.find_by(stripe_account_id: account.id)
+      return unless user
+
+      user.update!(
+        stripe_charges_enabled: account.charges_enabled,
+        stripe_onboarded_at: account.charges_enabled ? (user.stripe_onboarded_at || Time.current) : nil
+      )
+    rescue => e
+      Rails.logger.error "Stripe webhook error (account.updated): #{e.message}"
+    end
 
     def handle_payment_succeeded(payment_intent)
       payment = Payment.find_by(stripe_payment_intent_id: payment_intent.id)

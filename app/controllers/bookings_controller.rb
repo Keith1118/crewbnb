@@ -43,7 +43,7 @@ class BookingsController < ApplicationController
     @booking.status = :pending
 
     if @booking.save
-      if @property.instant_book? && StripeConfig.configured?
+      if @property.instant_book? && StripeConfig.configured? && @property.user.stripe_ready?
         redirect_to new_booking_payment_path(@booking), notice: "Booking created — complete payment to confirm your stay."
       else
         # No online payment available (or request-to-book listing): route through host approval.

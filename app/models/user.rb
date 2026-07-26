@@ -33,4 +33,15 @@ class User < ApplicationRecord
   def latest_host_application
     host_applications.order(:created_at).last
   end
+
+  # Stripe Connect (Express) payouts.
+  def stripe_connected?
+    stripe_account_id.present?
+  end
+
+  # True once onboarding is complete and the host can actually receive money —
+  # only then do we route guest payments to them.
+  def stripe_ready?
+    stripe_charges_enabled?
+  end
 end

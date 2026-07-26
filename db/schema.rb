@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_25_003315) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_26_230743) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -250,7 +250,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_25_003315) do
     t.string "reset_password_token"
     t.integer "role"
     t.string "stripe_account_id"
+    t.boolean "stripe_charges_enabled", default: false, null: false
     t.string "stripe_customer_id"
+    t.datetime "stripe_onboarded_at"
     t.datetime "updated_at", null: false
     t.string "vat_number"
     t.decimal "vat_rate", precision: 5, scale: 2

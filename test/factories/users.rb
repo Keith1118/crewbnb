@@ -17,6 +17,13 @@ FactoryBot.define do
       role { :host }
     end
 
+    # A host who has finished Stripe Connect onboarding and can receive payouts.
+    trait :stripe_ready do
+      role { :host }
+      stripe_account_id { "acct_test123" }
+      stripe_charges_enabled { true }
+    end
+
     trait :admin do
       role { :admin }
     end

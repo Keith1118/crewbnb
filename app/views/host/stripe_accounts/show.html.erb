@@ -1,0 +1,41 @@
+<% content_for(:page_title, "Payouts") %>
+<% content_for(:title, "Payouts - Crewbase Host") %>
+
+<div class="max-w-2xl">
+  <div class="mb-8">
+    <h2 class="font-headline text-2xl font-extrabold text-ink tracking-tight mb-2">Getting paid</h2>
+    <p class="text-sm text-muted">Guests pay through Crewbase and the money goes straight to your bank. Connect your account with Stripe (our payments partner) so we can pay you out.</p>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-line p-6">
+    <% if current_user.stripe_ready? %>
+      <div class="flex items-start gap-3">
+        <span class="material-symbols-outlined text-green-600 text-2xl">verified</span>
+        <div>
+          <p class="font-headline font-bold text-ink">Payouts connected</p>
+          <p class="text-sm text-muted mt-1">You're all set — payments for your bookings will be sent to your connected account, minus Crewbase's <%= number_to_percentage(Booking::COMMISSION_RATE * 100, precision: 1) %> commission.</p>
+        </div>
+      </div>
+    <% elsif current_user.stripe_connected? %>
+      <div class="flex items-start gap-3 mb-5">
+        <span class="material-symbols-outlined text-amber-500 text-2xl">pending</span>
+        <div>
+          <p class="font-headline font-bold text-ink">Almost there</p>
+          <p class="text-sm text-muted mt-1">Stripe still needs a few more details before you can receive payouts. Pick up where you left off.</p>
+        </div>
+      </div>
+      <%= button_to "Continue payout setup", host_stripe_account_path, method: :post,
+          class: "inline-flex items-center gap-2 bg-brand text-white px-6 py-3 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform cursor-pointer" %>
+    <% else %>
+      <div class="flex items-start gap-3 mb-5">
+        <span class="material-symbols-outlined text-muted text-2xl">account_balance</span>
+        <div>
+          <p class="font-headline font-bold text-ink">Connect your payouts</p>
+          <p class="text-sm text-muted mt-1">Takes about two minutes. You'll enter your bank details securely on Stripe, then come straight back here.</p>
+        </div>
+      </div>
+      <%= button_to "Connect payouts", host_stripe_account_path, method: :post,
+          class: "inline-flex items-center gap-2 bg-brand text-white px-6 py-3 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform cursor-pointer" %>
+    <% end %>
+  </div>
+</div>

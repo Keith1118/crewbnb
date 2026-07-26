@@ -12,14 +12,7 @@ class PaymentsController < ApplicationController
     intent = reusable_intent(amount_cents)
 
     if intent.nil?
-      intent = Stripe::PaymentIntent.create(
-        amount: amount_cents,
-        currency: "eur",
-        metadata: {
-          booking_id: @booking.id,
-          user_id: current_user.id
-        }
-      )
+      intent = Stripe::PaymentIntent.create(payment_intent_params(amount_cents))
 
       @payment = @booking.payments.create!(
         amount: @booking.total_price,
@@ -50,10 +43,31 @@ class PaymentsController < ApplicationController
     @booking = current_user.bookings.find(params[:booking_id])
   end
 
+  # A destination charge: the guest pays the listed total, Crewbase keeps its
+  # commission as the application fee, and the remainder settles to the host's
+  # connected account.
+  def payment_intent_params(amount_cents)
+    {
+      amount: amount_cents,
+      currency: "eur",
+      metadata: {
+        booking_id: @booking.id,
+        user_id: current_user.id
+      },
+      application_fee_amount: (@booking.commission_amount * 100).to_i,
+      transfer_data: {
+        destination: @booking.property.user.stripe_account_id
+      }
+    }
+  end
+
   def ensure_payable
     if !StripeConfig.configured?
       redirect_to booking_path(@booking),
                   notice: "Online payment isn't available yet — your booking request has been sent to the host for confirmation."
+    elsif !@booking.property.user.stripe_ready?
+      redirect_to booking_path(@booking),
+                  notice: "This host hasn't finished setting up payouts yet — your booking request has been sent to them for confirmation."
     elsif @booking.cancelled?
       redirect_to booking_path(@booking), alert: "This booking has been cancelled and can't be paid."
     elsif @booking.paid?

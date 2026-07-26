@@ -45,6 +45,10 @@ Rails.application.routes.draw do
 
   namespace :host do
     root "dashboard#index"
+    resource :stripe_account, only: [ :show, :create ] do
+      get :refresh
+      get :complete
+    end
     resources :applications, only: [ :new, :create, :show ]
     resources :properties do
       member { post :sync_ical }

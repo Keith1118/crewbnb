@@ -15,6 +15,21 @@
   </div>
 <% end %>
 
+<%# ===== Payouts prompt ===== %>
+<% unless current_user.stripe_ready? %>
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-brand/5 border border-brand/30 rounded-2xl p-5 mb-8">
+    <div class="flex items-center gap-3">
+      <span class="material-symbols-outlined text-brand">account_balance</span>
+      <div>
+        <p class="text-sm font-bold text-ink">Connect your payouts to get paid</p>
+        <p class="text-xs text-muted">Guests can't be charged for your listings until you've connected a payout account with Stripe. Takes about two minutes.</p>
+      </div>
+    </div>
+    <%= link_to "Connect payouts", host_stripe_account_path,
+        class: "shrink-0 inline-flex items-center gap-1.5 bg-brand text-white px-4 py-2 rounded-xl font-bold text-xs active:scale-95 transition-transform" %>
+  </div>
+<% end %>
+
 <%# ===== Greeting ===== %>
 <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
   <div>
