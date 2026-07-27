@@ -106,4 +106,26 @@ class HostManagementTest < ActionDispatch::IntegrationTest
     assert_response :not_found
     assert_not other_booking.reload.confirmed?
   end
+
+  # require_host lets admins into the host area, but they own no properties —
+  # scoping to current_user.properties 404'd every booking for them, including
+  # the "Review Request" link in the host's own email.
+  test "an admin can open any host booking" do
+    booking = create(:booking, property: create(:property, user: create(:user, :host)))
+    sign_in create(:user, :admin)
+
+    get host_booking_path(booking)
+
+    assert_response :success
+  end
+
+  test "an admin sees bookings in the host list" do
+    booking = create(:booking, property: create(:property, user: create(:user, :host)))
+    sign_in create(:user, :admin)
+
+    get host_bookings_path
+
+    assert_response :success
+    assert_select "body", text: /#{Regexp.escape(booking.property.title)}/
+  end
 end

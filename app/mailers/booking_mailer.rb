@@ -18,7 +18,7 @@ class BookingMailer < ApplicationMailer
 
     mail(
       to: @host.email,
-      subject: "New booking request - #{@property.title}"
+      subject: "New booking request - #{@property.title} (awaiting your approval)"
     )
   end
 

@@ -6,9 +6,7 @@ module Host
     before_action :set_booking, only: [ :show, :update ]
 
     def index
-      bookings = Booking.where(property: current_user.properties)
-                        .includes(:property, :user)
-                        .order(created_at: :desc)
+      bookings = visible_bookings.includes(:property, :user).order(created_at: :desc)
 
       @pagy, @bookings = pagy(bookings, limit: 10)
     end
@@ -36,7 +34,14 @@ module Host
     private
 
     def set_booking
-      @booking = Booking.where(property: current_user.properties).find(params[:id])
+      @booking = visible_bookings.find(params[:id])
+    end
+
+    # Admins are allowed into the host area by require_host, but they own no
+    # properties — scoping to current_user.properties 404'd every booking for
+    # them, including from the "View Booking" link in the host email.
+    def visible_bookings
+      current_user.admin? ? Booking.all : Booking.where(property: current_user.properties)
     end
 
     def require_host
