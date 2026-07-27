@@ -13,9 +13,13 @@
 #     awaiting_payment, the guest gets a pay-by-hand link, and they have
 #     MANUAL_PAYMENT_GRACE to use it before the stay is released.
 #
-# Money still moves as a destination charge, exactly as an at-the-till payment
-# would: the guest pays the listed total, Crewbase keeps its commission as the
-# application fee, the rest settles to the host.
+# The money lands in Crewbase's own balance, NOT the host's. Separate charges
+# and transfers, rather than a destination charge, because the guest is charged
+# at T-10 but can still cancel for a full refund until T-7. Paying the host on
+# the way in would mean clawing it back out of their balance days later — and if
+# they'd already been paid out to their bank, Stripe would push them negative.
+# HostPayoutsJob transfers their share the day after check-in instead, once the
+# stay is real and no refund can be owed.
 class BookingCharger
   Result = Struct.new(:ok?, :error, :payment)
 
@@ -66,8 +70,8 @@ class BookingCharger
       off_session: true,
       confirm: true,
       metadata: { booking_id: @booking.id, user_id: @booking.user_id },
-      application_fee_amount: (@booking.commission_amount * 100).to_i,
-      transfer_data: { destination: @property.user.stripe_account_id }
+      # Ties the charge to the later transfer so Stripe can report the pair.
+      transfer_group: "booking_#{@booking.id}"
     }
   end
 

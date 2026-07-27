@@ -97,6 +97,75 @@ class ScheduledChargingTest < ActiveSupport::TestCase
     assert [ doomed.reload, fine.reload ].one?(&:paid?)
   end
 
+  # ----- paying the host ----------------------------------------------------
+  #
+  # Held on the platform until the day after check-in, so a cancellation refund
+  # never has to be clawed out of a host's balance.
+
+  def finished_stay(days_ago, paid: true)
+    booking = create(:booking, property: @property, user: @guest, status: :confirmed,
+                     check_in: Date.current + 30, check_out: Date.current + 33)
+    booking.update_columns(check_in: Date.current - days_ago, check_out: Date.current - days_ago + 3)
+    create(:payment, booking: booking, status: :succeeded, amount: booking.total_price,
+           stripe_payment_intent_id: "pi_1") if paid
+    booking
+  end
+
+  def stub_transfer(&block)
+    @transfer = nil
+    stub_class_method(Stripe::Transfer, :create, ->(args) { @transfer = args; Struct.new(:id).new("tr_1") }, &block)
+  end
+
+  test "the host is paid the day after check-in, less commission" do
+    booking = finished_stay(1)
+
+    stub_transfer { HostPayoutsJob.perform_now }
+
+    assert_equal "tr_1", booking.reload.host_transfer_id
+    assert_equal (booking.host_payout * 100).to_i, @transfer[:amount]
+    assert_equal @host.stripe_account_id, @transfer[:destination]
+  end
+
+  test "a guest who hasn't checked in yet leaves the host unpaid" do
+    booking = booking_checking_in(5)
+    create(:payment, booking: booking, status: :succeeded, amount: booking.total_price)
+
+    stub_transfer { HostPayoutsJob.perform_now }
+
+    assert_nil booking.reload.host_transfer_id
+    assert_nil @transfer
+  end
+
+  test "an unpaid stay never pays the host" do
+    booking = finished_stay(1, paid: false)
+
+    stub_transfer { HostPayoutsJob.perform_now }
+
+    assert_nil booking.reload.host_transfer_id
+  end
+
+  test "a host is never paid twice for the same stay" do
+    finished_stay(1)
+    calls = 0
+
+    stub_class_method(Stripe::Transfer, :create, ->(*) { calls += 1; Struct.new(:id).new("tr_1") }) do
+      HostPayoutsJob.perform_now
+      HostPayoutsJob.perform_now
+    end
+
+    assert_equal 1, calls
+  end
+
+  test "a refunded stay pays the host only their share of what's left" do
+    booking = finished_stay(1)
+    booking.payments.first.update!(refunded_amount: 200)
+
+    stub_transfer { HostPayoutsJob.perform_now }
+
+    remaining = booking.total_price - 200
+    assert_equal ((remaining * (1 - Booking::COMMISSION_RATE)).round(2) * 100).to_i, @transfer[:amount]
+  end
+
   # ----- releasing stays nobody paid for ------------------------------------
 
   test "an expired grace period releases the dates" do

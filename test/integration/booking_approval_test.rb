@@ -63,8 +63,11 @@ class BookingApprovalTest < ActionDispatch::IntegrationTest
     assert booking.paid?
     assert_equal "pm_1", captured[:payment_method]
     assert captured[:off_session], "a charge with no guest present must be off-session"
-    assert_equal @host.stripe_account_id, captured.dig(:transfer_data, :destination)
-    assert_equal (booking.commission_amount * 100).to_i, captured[:application_fee_amount]
+    # Separate charges and transfers: the money stays in Crewbase's balance
+    # until HostPayoutsJob pays the host the day after check-in.
+    assert_nil captured[:transfer_data], "the host must not be paid on the way in"
+    assert_nil captured[:application_fee_amount]
+    assert_equal "booking_#{booking.id}", captured[:transfer_group]
   end
 
   test "a declined card moves the stay to awaiting payment with a deadline" do

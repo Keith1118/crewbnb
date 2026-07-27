@@ -100,12 +100,33 @@ class CancellationRefundsTest < ActionDispatch::IntegrationTest
     assert booking.reload.cancelled?
   end
 
-  test "the refund reverses the host's payout and our commission" do
+  # The host isn't paid until the day after check-in, so a cancellation before
+  # then is refunded straight out of Crewbase's balance with nothing to reverse.
+  test "a refund before the host is paid touches only our own balance" do
     booking = paid_booking(30)
+    reversed = false
 
-    cancel_as @guest, booking, booking_path(booking)
+    sign_in @guest
+    stub_class_method(Stripe::Transfer, :create_reversal, ->(*) { reversed = true }) do
+      stub_refund { patch booking_path(booking), params: { booking: { status: "cancelled" } } }
+    end
 
-    assert @captured[:reverse_transfer]
-    assert @captured[:refund_application_fee]
+    assert_equal 40_000, @captured[:amount]
+    assert_not reversed, "nothing has left our balance yet, so nothing to claw back"
+  end
+
+  test "a refund after the host is paid claws back their share" do
+    booking = paid_booking(30)
+    booking.update!(host_transfer_id: "tr_1", host_paid_at: Time.current)
+    reversal = nil
+
+    sign_in @guest
+    stub_class_method(Stripe::Transfer, :create_reversal, ->(id, args) { reversal = [ id, args ] }) do
+      stub_refund { patch booking_path(booking), params: { booking: { status: "cancelled" } } }
+    end
+
+    assert_equal "tr_1", reversal.first
+    # 92.5% of the €400 refunded — the host's share, leaving our commission.
+    assert_equal 37_000, reversal.last[:amount]
   end
 end

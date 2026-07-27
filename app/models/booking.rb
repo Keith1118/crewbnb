@@ -157,6 +157,19 @@ class Booking < ApplicationRecord
     payments.succeeded.sum(:amount) - payments.sum(:refunded_amount).to_d
   end
 
+  # What the host is owed once the stay has happened: their share of whatever
+  # the guest actually paid — so a partial refund shrinks it — less commission.
+  def host_payout_due
+    net = amount_paid
+    return 0 unless net.positive?
+
+    (net * (1 - COMMISSION_RATE)).round(2)
+  end
+
+  def host_paid?
+    host_transfer_id.present?
+  end
+
   def calculate_total
     return 0 unless property && check_in && check_out
 

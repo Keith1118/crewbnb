@@ -26,16 +26,30 @@ class AdminRefundsTest < ActionDispatch::IntegrationTest
     stub_class_method(Stripe::Refund, :create, ->(args) { @captured = args; Struct.new(:id).new("re_1") }, &block)
   end
 
-  test "a full refund reverses the host transfer and the application fee" do
-    stub_refund do
-      post refund_admin_payment_path(@payment)
+  test "a full refund before the host is paid comes from our own balance" do
+    reversed = false
+
+    stub_class_method(Stripe::Transfer, :create_reversal, ->(*) { reversed = true }) do
+      stub_refund { post refund_admin_payment_path(@payment) }
     end
 
     assert_equal 40_000, @captured[:amount]
-    assert @captured[:reverse_transfer], "host's payout must be pulled back"
-    assert @captured[:refund_application_fee], "Crewbase's commission must be returned too"
+    assert_not reversed, "the host hasn't been paid, so there's nothing to reverse"
     assert @payment.reload.refunded?
     assert_equal 400, @payment.refunded_amount
+  end
+
+  test "a refund after the host is paid pulls their share back first" do
+    @booking.update!(host_transfer_id: "tr_1", host_paid_at: Time.current)
+    reversal = nil
+
+    stub_class_method(Stripe::Transfer, :create_reversal, ->(id, args) { reversal = [ id, args ] }) do
+      stub_refund { post refund_admin_payment_path(@payment), params: { amount: "100.00" } }
+    end
+
+    assert_equal 10_000, @captured[:amount]
+    assert_equal "tr_1", reversal.first
+    assert_equal 9_250, reversal.last[:amount], "92.5% of the refund — the host's share"
   end
 
   test "a partial refund leaves the payment succeeded and tracks the balance" do

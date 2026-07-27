@@ -29,3 +29,9 @@ production:
   release_unpaid_bookings:
     class: ReleaseUnpaidBookingsJob
     schedule: every day at 7am
+
+  # Pay hosts the day after check-in. Their money is held on the platform until
+  # then so a cancellation refund never has to be clawed out of their balance.
+  pay_hosts:
+    class: HostPayoutsJob
+    schedule: every day at 8am

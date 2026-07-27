@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_27_222432) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_27_222829) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -70,6 +70,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_222432) do
     t.datetime "confirmation_sent_at"
     t.datetime "created_at", null: false
     t.integer "guests_count"
+    t.datetime "host_paid_at"
+    t.string "host_transfer_id"
     t.string "invoice_reference"
     t.datetime "invoice_sent_at"
     t.datetime "payment_due_by"
