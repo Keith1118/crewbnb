@@ -29,17 +29,31 @@ module BookingsHelper
     }
   }.freeze
 
+  # A status with no entry here must degrade to a plain badge, never to nil —
+  # adding an enum value once left `case` statements returning nil and took the
+  # host dashboard down with `undefined method [] for nil`.
+  UNKNOWN_STYLE = {
+    base: "bg-neutral-100 text-neutral-700", border: "border-neutral-200",
+    icon: "help", label: nil
+  }.freeze
+
   def booking_status_badge_classes(status, bordered: false)
-    style = STATUS_STYLES[status.to_s] or return nil
+    style = style_for(status)
 
     bordered ? "#{style[:base]} #{style[:border]}" : style[:base]
   end
 
   def booking_status_icon(status)
-    STATUS_STYLES.dig(status.to_s, :icon)
+    style_for(status)[:icon]
   end
 
   def booking_status_label(status)
-    STATUS_STYLES.dig(status.to_s, :label) || status.to_s.humanize
+    style_for(status)[:label] || status.to_s.humanize
+  end
+
+  private
+
+  def style_for(status)
+    STATUS_STYLES.fetch(status.to_s, UNKNOWN_STYLE)
   end
 end

@@ -88,14 +88,8 @@
     <div class="bg-white rounded-2xl border border-line p-5">
       <p class="text-xs font-bold text-muted uppercase tracking-wider mb-3">Booking</p>
       <% if @booking %>
-        <% badge = case @booking.status
-           when "pending" then ["bg-amber-400/15 text-amber-600", "pending"]
-           when "confirmed" then ["bg-brand/10 text-brand", "confirmed"]
-           when "cancelled" then ["bg-red-100 text-red-700", "cancelled"]
-           when "completed" then ["bg-blue-500/10 text-blue-600", "completed"]
-           end %>
         <div class="flex items-center justify-between mb-3">
-          <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider <%= badge[0] %>"><%= badge[1] %></span>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider <%= booking_status_badge_classes(@booking.status) %>"><%= booking_status_label(@booking.status) %></span>
           <span class="text-xs text-muted font-mono"><%= @booking.invoice_reference %></span>
         </div>
         <div class="space-y-1.5 text-sm">

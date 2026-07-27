@@ -218,13 +218,7 @@
     <div class="divide-y divide-line">
       <% @recent_bookings.each do |b| %>
         <%= link_to host_booking_path(b), class: "flex items-center gap-4 px-6 py-3.5 hover:bg-neutral-100 transition-colors" do %>
-          <% badge = case b.status
-             when "pending" then ["bg-amber-400/15 text-amber-600", "pending"]
-             when "confirmed" then ["bg-brand/10 text-brand", "confirmed"]
-             when "cancelled" then ["bg-error-container/20 text-error", "cancelled"]
-             when "completed" then ["bg-blue-500/10 text-blue-600", "completed"]
-             end %>
-          <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider flex-shrink-0 <%= badge[0] %>"><%= badge[1] %></span>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider flex-shrink-0 <%= booking_status_badge_classes(b.status) %>"><%= booking_status_label(b.status) %></span>
           <div class="flex-1 min-w-0">
             <p class="text-sm font-semibold text-ink truncate"><%= b.user.first_name.presence || b.user.email %> · <%= truncate(b.property.title, length: 32) %></p>
           </div>
