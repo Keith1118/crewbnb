@@ -16,6 +16,16 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # Guest and host accounts are separate entities: a host account books nothing,
+  # and there is no switching between the two. Admins keep both sides so they can
+  # act on a guest's behalf for support.
+  def require_guest_account
+    return if current_user.nil? || current_user.guest? || current_user.admin?
+
+    redirect_to host_root_path,
+                alert: "That's a guest area. Host accounts manage listings and bookings from here."
+  end
+
   # After sign-in, send hosts/admins straight to their management area (their
   # "extranet"), unless Devise saved a page they were originally trying to reach.
   def after_sign_in_path_for(resource)

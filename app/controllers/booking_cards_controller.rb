@@ -8,6 +8,7 @@
 # host can't ever be paid for isn't worth their attention.
 class BookingCardsController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_guest_account
   before_action :set_booking
   before_action :ensure_card_needed, only: [ :new ]
 

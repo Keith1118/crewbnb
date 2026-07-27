@@ -1,5 +1,6 @@
 class BusinessVerificationsController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_guest_account
 
   def new
     redirect_to(after_path, notice: "Your business is already verified.") and return if current_user.business_verified?

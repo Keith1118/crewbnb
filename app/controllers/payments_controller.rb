@@ -1,5 +1,6 @@
 class PaymentsController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_guest_account
   before_action :set_booking
   before_action :ensure_payable, only: [ :new ]
 
@@ -43,9 +44,10 @@ class PaymentsController < ApplicationController
     @booking = current_user.bookings.find(params[:booking_id])
   end
 
-  # A destination charge: the guest pays the listed total, Crewbase keeps its
-  # commission as the application fee, and the remainder settles to the host's
-  # connected account.
+  # Paying by hand must land the money in the same place an automatic charge
+  # does — Crewbase's balance, held until HostPayoutsJob pays the host the day
+  # after check-in. A destination charge here would quietly pay the host on the
+  # way in and reopen the clawback problem for exactly these bookings.
   def payment_intent_params(amount_cents)
     {
       amount: amount_cents,
@@ -54,10 +56,7 @@ class PaymentsController < ApplicationController
         booking_id: @booking.id,
         user_id: current_user.id
       },
-      application_fee_amount: (@booking.commission_amount * 100).to_i,
-      transfer_data: {
-        destination: @booking.property.user.stripe_account_id
-      }
+      transfer_group: "booking_#{@booking.id}"
     }
   end
 

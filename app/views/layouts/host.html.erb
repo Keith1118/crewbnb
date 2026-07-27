@@ -90,9 +90,6 @@
                 <%= link_to edit_user_registration_path, class: "flex items-center gap-3 px-4 py-2.5 text-sm text-ink hover:bg-neutral-50" do %>
                   <span class="material-symbols-outlined text-lg text-muted">settings</span> Account &amp; password
                 <% end %>
-                <%= link_to root_path, class: "flex items-center gap-3 px-4 py-2.5 text-sm text-ink hover:bg-neutral-50" do %>
-                  <span class="material-symbols-outlined text-lg text-muted">public</span> Switch to guest site
-                <% end %>
                 <% if current_user.admin? %>
                   <%= link_to admin_root_path, class: "flex items-center gap-3 px-4 py-2.5 text-sm text-ink hover:bg-neutral-50" do %>
                     <span class="material-symbols-outlined text-lg text-muted">shield_person</span> Admin

@@ -35,15 +35,19 @@ class ConnectPaymentsTest < ActionDispatch::IntegrationTest
     ENV["BOOKINGS_OPEN"] = previous
   end
 
-  test "the payment intent routes money to the host with the commission as the app fee" do
+  # Paying by hand must land where an automatic charge does: Crewbase's balance,
+  # held until the host is paid the day after check-in. A destination charge here
+  # would quietly pay the host on the way in.
+  test "paying by hand holds the money on the platform, not the host" do
     captured = nil
     stub_class_method(Stripe::PaymentIntent, :create, ->(args) { captured = args; fake_intent }) do
       get new_booking_payment_path(@booking)
     end
 
     assert_response :success
-    assert_equal @host.stripe_account_id, captured.dig(:transfer_data, :destination)
-    assert_equal (@booking.commission_amount * 100).to_i, captured[:application_fee_amount]
+    assert_nil captured[:transfer_data]
+    assert_nil captured[:application_fee_amount]
+    assert_equal "booking_#{@booking.id}", captured[:transfer_group]
   end
 
   test "payment falls back to request-to-book when the host isn't payout-ready" do

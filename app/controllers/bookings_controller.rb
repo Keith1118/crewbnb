@@ -1,5 +1,6 @@
 class BookingsController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_guest_account
   before_action :ensure_bookings_open, only: [ :new, :create ]
   before_action :require_business_verification, only: [ :new, :create ]
   rate_limit to: 10, within: 1.minute, only: :create,
