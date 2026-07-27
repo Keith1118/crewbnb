@@ -5,6 +5,7 @@
 class AutoMessenger
   def self.booking_requested(booking) = new(booking).booking_requested
   def self.booking_confirmed(booking) = new(booking).booking_confirmed
+  def self.payment_requested(booking) = new(booking).payment_requested
   def self.checkin_reminder(booking)  = new(booking).checkin_reminder
   def self.review_request(booking)    = new(booking).review_request
 
@@ -21,6 +22,10 @@ class AutoMessenger
 
   def booking_confirmed
     once(:confirmation_sent_at) { confirmation_body }
+  end
+
+  def payment_requested
+    once(:payment_requested_sent_at) { payment_requested_body }
   end
 
   def checkin_reminder
@@ -83,6 +88,16 @@ class AutoMessenger
     lines << ""
     lines << "Looking forward to having you. Reply here any time if you need anything."
     lines.join("\n")
+  end
+
+  def payment_requested_body
+    "Hi #{guest_name}, good news — I've approved your stay at #{@property.title} (#{dates}). " \
+    "To lock it in, just complete payment from your booking page: #{booking_url}. " \
+    "I'm holding the dates for you in the meantime."
+  end
+
+  def booking_url
+    Rails.application.routes.url_helpers.booking_url(@booking, ApplicationMailer.default_url_options)
   end
 
   def reminder_body

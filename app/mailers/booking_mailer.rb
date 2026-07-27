@@ -22,6 +22,19 @@ class BookingMailer < ApplicationMailer
     )
   end
 
+  # The host approved a request-to-book stay — the guest now needs to pay to
+  # lock it in.
+  def payment_requested(booking)
+    @booking = booking
+    @property = booking.property
+    @guest = booking.user
+
+    mail(
+      to: @guest.email,
+      subject: "Approved — complete payment for #{@property.title}"
+    )
+  end
+
   def cancellation(booking)
     @booking = booking
     @property = booking.property

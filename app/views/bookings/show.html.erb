@@ -26,22 +26,11 @@
           </div>
 
           <%# Status Badge %>
-          <% badge_classes = case @booking.status
-             when "pending" then "bg-yellow-100 text-yellow-800 border-yellow-200"
-             when "confirmed" then "bg-green-100 text-green-800 border-green-200"
-             when "cancelled" then "bg-red-100 text-red-800 border-red-200"
-             when "completed" then "bg-blue-100 text-blue-800 border-blue-200"
-             end %>
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border <%= badge_classes %>">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border <%= booking_status_badge_classes(@booking.status, bordered: true) %>">
             <span class="material-symbols-outlined text-base mr-1.5">
-              <%= case @booking.status
-                  when "pending" then "schedule"
-                  when "confirmed" then "check_circle"
-                  when "cancelled" then "cancel"
-                  when "completed" then "task_alt"
-                  end %>
+              <%= booking_status_icon(@booking.status) %>
             </span>
-            <%= @booking.status.capitalize %>
+            <%= booking_status_label(@booking.status) %>
           </span>
         </div>
 
@@ -95,8 +84,18 @@
 
       <%# What happens next %>
       <% can_pay_online = StripeConfig.configured? %>
-      <% if @booking.user_id == current_user.id && !@booking.paid? && (@booking.pending? || @booking.confirmed?) %>
-        <% if @booking.pending? && !(can_pay_online && @booking.property.instant_book?) %>
+      <% if @booking.user_id == current_user.id && !@booking.paid? && (@booking.pending? || @booking.confirmed? || @booking.awaiting_payment?) %>
+        <% if @booking.awaiting_payment? %>
+          <div class="bg-orange-50 border border-orange-200 rounded-2xl p-5 flex items-start gap-3">
+            <span class="material-symbols-outlined text-orange-700" aria-hidden="true">credit_card</span>
+            <div>
+              <p class="text-sm font-bold text-orange-900 mb-1">The host approved your stay — complete payment to confirm it.</p>
+              <p class="text-sm text-orange-800">
+                Your dates are held while you pay, but they're not fully yours until it goes through.
+              </p>
+            </div>
+          </div>
+        <% elsif @booking.pending? && !(can_pay_online && @booking.property.instant_book?) %>
           <div class="bg-surface-container-lowest border border-outline-variant/15 rounded-2xl p-6">
             <h3 class="font-headline font-bold text-on-surface mb-4 flex items-center gap-2">
               <span class="material-symbols-outlined text-primary-container" aria-hidden="true">route</span>
@@ -143,7 +142,7 @@
             View invoice
           <% end %>
         <% end %>
-        <% if StripeConfig.configured? && @booking.user_id == current_user.id && !@booking.paid? && (@booking.confirmed? || (@booking.pending? && @booking.property.instant_book?)) %>
+        <% if StripeConfig.configured? && @booking.user_id == current_user.id && !@booking.paid? && (@booking.confirmed? || @booking.awaiting_payment? || (@booking.pending? && @booking.property.instant_book?)) %>
           <%= link_to new_booking_payment_path(@booking),
               class: "inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold hover:bg-primary transition-colors active:scale-95" do %>
             <span class="material-symbols-outlined text-lg" aria-hidden="true">payment</span>
@@ -151,7 +150,7 @@
           <% end %>
         <% end %>
 
-        <% if @booking.pending? || @booking.confirmed? %>
+        <% if @booking.pending? || @booking.confirmed? || @booking.awaiting_payment? %>
           <%= button_to booking_path(@booking), method: :patch,
               params: { booking: { status: "cancelled" } },
               class: "inline-flex items-center gap-2 border border-red-300 text-red-700 px-6 py-3 rounded-xl font-bold hover:bg-red-50 active:scale-95 transition-all",

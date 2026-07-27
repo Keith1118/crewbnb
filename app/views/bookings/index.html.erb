@@ -28,14 +28,8 @@
                     class: "font-headline text-lg font-bold text-on-surface hover:text-primary-container transition-colors" %>
 
                 <%# Status Badge %>
-                <% badge_classes = case booking.status
-                   when "pending" then "bg-yellow-100 text-yellow-800 border-yellow-200"
-                   when "confirmed" then "bg-green-100 text-green-800 border-green-200"
-                   when "cancelled" then "bg-red-100 text-red-800 border-red-200"
-                   when "completed" then "bg-blue-100 text-blue-800 border-blue-200"
-                   end %>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border <%= badge_classes %>">
-                  <%= booking.status.capitalize %>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border <%= booking_status_badge_classes(booking.status, bordered: true) %>">
+                  <%= booking_status_label(booking.status) %>
                 </span>
               </div>
 

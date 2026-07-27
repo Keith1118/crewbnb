@@ -10,7 +10,10 @@ class Booking < ApplicationRecord
   has_one :review
 
   # Enums
-  enum :status, { pending: 0, confirmed: 1, cancelled: 2, completed: 3 }, default: :pending
+  # awaiting_payment: the host approved a request-to-book stay and we've asked the
+  # guest to pay. It still holds the dates — the guest shouldn't lose them while
+  # they reach for a card — and becomes confirmed once payment succeeds.
+  enum :status, { pending: 0, confirmed: 1, cancelled: 2, completed: 3, awaiting_payment: 4 }, default: :pending
 
   # Validations
   validates :check_in, presence: true
@@ -28,7 +31,7 @@ class Booking < ApplicationRecord
   before_validation :generate_invoice_reference, on: :create
 
   # Scopes
-  scope :blocking, -> { where(status: [ :pending, :confirmed ]) }
+  scope :blocking, -> { where(status: [ :pending, :confirmed, :awaiting_payment ]) }
   scope :overlapping, ->(check_in, check_out) { where("check_in < ? AND check_out > ?", check_out, check_in) }
 
   # Methods
@@ -90,6 +93,13 @@ class Booking < ApplicationRecord
 
   def paid?
     payments.succeeded.exists?
+  end
+
+  # Can this booking be charged online right now? Needs Stripe wired up and the
+  # host able to receive money — otherwise the stay is settled off-platform and
+  # host approval alone confirms it.
+  def payable_online?
+    StripeConfig.configured? && property.user.stripe_ready? && !paid?
   end
 
   def calculate_total

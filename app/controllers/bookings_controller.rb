@@ -69,6 +69,13 @@ class BookingsController < ApplicationController
       redirect_to @booking, alert: "That booking change isn't allowed." and return
     end
 
+    # Approving a request-to-book stay may need payment collected first, so it
+    # goes through the same path as the host dashboard rather than confirming here.
+    if new_status == "confirmed" && @booking.pending? && @booking.payable_online?
+      BookingApprover.call(@booking)
+      redirect_to @booking, notice: "Booking approved — the guest has been asked to pay." and return
+    end
+
     if @booking.update(status: new_status)
       if @booking.cancelled?
         BookingMailer.cancellation(@booking).deliver_later
@@ -137,7 +144,7 @@ class BookingsController < ApplicationController
   def allowed_status_changes
     if current_user.admin? || @booking.property.user_id == current_user.id
       %w[confirmed cancelled completed]
-    elsif @booking.user_id == current_user.id && (@booking.pending? || @booking.confirmed?)
+    elsif @booking.user_id == current_user.id && (@booking.pending? || @booking.confirmed? || @booking.awaiting_payment?)
       %w[cancelled]
     else
       []

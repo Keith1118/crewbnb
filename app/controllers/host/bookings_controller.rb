@@ -19,9 +19,12 @@ module Host
     def update
       case params[:booking][:status]
       when "confirmed"
-        @booking.confirmed!
-        AutoMessenger.booking_confirmed(@booking)
-        redirect_to host_booking_path(@booking), notice: "Booking approved — check-in details sent to the guest."
+        notice = if BookingApprover.call(@booking) == :payment_requested
+          "Booking approved — we've asked the guest to pay. You'll be notified once they do, and the dates stay held in the meantime."
+        else
+          "Booking approved — check-in details sent to the guest."
+        end
+        redirect_to host_booking_path(@booking), notice: notice
       when "cancelled"
         @booking.cancelled!
         redirect_to host_booking_path(@booking), notice: "Booking rejected."

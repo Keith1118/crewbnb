@@ -75,6 +75,9 @@ Rails.application.routes.draw do
       member { post :sync_ical }
     end
     resources :bookings, only: [ :index, :show ]
+    resources :payments, only: [] do
+      member { post :refund }
+    end
     resources :reviews, only: [ :index, :destroy ]
     resources :contact_submissions, only: [ :index, :show, :destroy ]
   end
