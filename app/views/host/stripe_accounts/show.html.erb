@@ -24,7 +24,10 @@
           <p class="text-sm text-muted mt-1">Stripe still needs a few more details before you can receive payouts. Pick up where you left off.</p>
         </div>
       </div>
+      <%# turbo: false — this posts to an action that redirects to Stripe's own
+          domain, and Turbo silently swallows cross-origin redirects. %>
       <%= button_to "Continue payout setup", host_stripe_account_path, method: :post,
+          form: { data: { turbo: false } },
           class: "inline-flex items-center gap-2 bg-brand text-white px-6 py-3 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform cursor-pointer" %>
     <% else %>
       <div class="flex items-start gap-3 mb-5">
@@ -34,7 +37,9 @@
           <p class="text-sm text-muted mt-1">Takes about two minutes. You'll enter your bank details securely on Stripe, then come straight back here.</p>
         </div>
       </div>
+      <%# turbo: false — see above; without it the button appears to do nothing. %>
       <%= button_to "Connect payouts", host_stripe_account_path, method: :post,
+          form: { data: { turbo: false } },
           class: "inline-flex items-center gap-2 bg-brand text-white px-6 py-3 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform cursor-pointer" %>
     <% end %>
   </div>

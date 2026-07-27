@@ -45,6 +45,20 @@ class HostStripeAccountsTest < ActionDispatch::IntegrationTest
     assert_redirected_to host_stripe_account_path
   end
 
+  # The connect action redirects to Stripe's own domain, and Turbo silently
+  # swallows cross-origin redirects — the button appears to do nothing at all.
+  # Both entry points must opt out of Turbo.
+  test "the connect buttons opt out of Turbo so the redirect to Stripe lands" do
+    sign_in(host = create(:user, :host))
+
+    get host_stripe_account_path
+    assert_select "form[action=?][data-turbo='false']", host_stripe_account_path
+
+    host.update!(stripe_account_id: "acct_partial")
+    get host_stripe_account_path
+    assert_select "form[action=?][data-turbo='false']", host_stripe_account_path
+  end
+
   test "a guest can't reach payout setup" do
     sign_in create(:user)
     get host_stripe_account_path
