@@ -135,7 +135,8 @@
 
       <%# Actions %>
       <div class="flex flex-wrap gap-3">
-        <% unless @booking.cancelled? %>
+        <%# Only after the stay — before that it's a quote, not an invoice. %>
+        <% if @booking.invoiceable? %>
           <%= link_to invoice_booking_path(@booking), target: "_blank",
               class: "inline-flex items-center gap-2 border border-outline-variant/30 text-on-surface px-6 py-3 rounded-xl font-bold hover:bg-surface-container active:scale-95 transition-all" do %>
             <span class="material-symbols-outlined text-lg" aria-hidden="true">receipt_long</span>

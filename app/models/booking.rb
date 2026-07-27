@@ -170,6 +170,16 @@ class Booking < ApplicationRecord
     host_transfer_id.present?
   end
 
+  # An invoice is only a real invoice once the stay has happened — before that
+  # it's a quote for something that might still be cancelled. It appears when
+  # the emailed copy goes out, after checkout.
+  def invoiceable?
+    return false if cancelled?
+    return false unless check_out
+
+    check_out <= Date.current
+  end
+
   def calculate_total
     return 0 unless property && check_in && check_out
 

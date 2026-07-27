@@ -1,6 +1,8 @@
 class BookingsController < ApplicationController
   before_action :authenticate_user!
-  before_action :require_guest_account
+  # :invoice is the exception — the invoice is FROM the host, so they need to
+  # reach it too. Ownership is checked inside the action.
+  before_action :require_guest_account, except: [ :invoice ]
   before_action :ensure_bookings_open, only: [ :new, :create ]
   before_action :require_business_verification, only: [ :new, :create ]
   rate_limit to: 10, within: 1.minute, only: :create,
@@ -94,12 +96,19 @@ class BookingsController < ApplicationController
     end
   end
 
-  # Printable invoice — visible to the guest, the host, or an admin.
+  # Printable invoice — visible to the guest, the host, or an admin, and only
+  # once the stay has actually happened.
   def invoice
     unless @booking.user_id == current_user.id ||
            @booking.property.user_id == current_user.id ||
            current_user.admin?
       redirect_to(bookings_path, alert: "You're not authorised to view that invoice.") and return
+    end
+
+    # Admins can pull it early for support; nobody else sees it before checkout.
+    unless @booking.invoiceable? || current_user.admin?
+      back = @booking.user_id == current_user.id ? booking_path(@booking) : host_booking_path(@booking)
+      redirect_to(back, notice: "The invoice is available after the stay — we'll email it out then.") and return
     end
 
     render layout: "invoice"
