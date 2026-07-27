@@ -27,6 +27,24 @@ module Admin
       redirect_to admin_users_path, notice: "User deleted."
     end
 
+    # Mark a guest's business as verified without a VIES lookup — for testing,
+    # and for the real case where a company checks out by hand but VIES won't
+    # confirm them (new registrations take weeks to appear).
+    def verify_business
+      @user = User.find(params[:id])
+      @user.update!(business_verified_at: Time.current)
+
+      redirect_to admin_user_path(@user), notice: "#{@user.email} is now verified to book."
+    end
+
+    # Undo the above, for a company that shouldn't have been let through.
+    def unverify_business
+      @user = User.find(params[:id])
+      @user.update!(business_verified_at: nil)
+
+      redirect_to admin_user_path(@user), notice: "#{@user.email} can no longer book."
+    end
+
     private
 
     def set_user

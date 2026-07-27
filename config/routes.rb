@@ -68,7 +68,12 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root "dashboard#index"
-    resources :users
+    resources :users do
+      member do
+        post :verify_business
+        post :unverify_business
+      end
+    end
     resources :host_applications, only: [ :index, :show ] do
       member do
         post :approve
