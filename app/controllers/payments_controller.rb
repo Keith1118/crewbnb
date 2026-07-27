@@ -68,11 +68,22 @@ class PaymentsController < ApplicationController
     elsif !@booking.property.user.stripe_ready?
       redirect_to booking_path(@booking),
                   notice: "This host hasn't finished setting up payouts yet — your booking request has been sent to them for confirmation."
+    elsif awaiting_host_approval?
+      redirect_to booking_path(@booking),
+                  notice: "This request is still with the host. We'll ask you to pay as soon as they approve it."
     elsif @booking.cancelled?
       redirect_to booking_path(@booking), alert: "This booking has been cancelled and can't be paid."
     elsif @booking.paid?
       redirect_to booking_path(@booking), notice: "This booking has already been paid."
     end
+  end
+
+  # A request-to-book stay isn't payable until the host approves it. The Pay Now
+  # button is already hidden for these, but the payment URL is guessable — and a
+  # guest who paid for a stay the host then rejected would leave us owing a
+  # refund on a booking that never existed.
+  def awaiting_host_approval?
+    @booking.pending? && !@booking.property.instant_book?
   end
 
   # Reuse the booking's existing pending PaymentIntent when it's still usable

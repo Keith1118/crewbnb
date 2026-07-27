@@ -71,6 +71,30 @@ class BookingApprovalTest < ActionDispatch::IntegrationTest
     assert @booking.reload.cancelled?
   end
 
+  # The Pay Now button is hidden for an unapproved request, but the payment URL
+  # is guessable — paying for a stay the host then rejects leaves us owing a
+  # refund on a booking that never existed.
+  test "a guest can't pay a request-to-book stay before the host approves it" do
+    sign_in @guest
+
+    get new_booking_payment_path(@booking)
+
+    assert_redirected_to booking_path(@booking)
+    assert_equal 0, @booking.payments.count
+  end
+
+  test "a guest can still pay an instant-book stay that's pending" do
+    @property.update!(instant_book: true)
+    sign_in @guest
+
+    stub_class_method(Stripe::PaymentIntent, :create,
+                      ->(*) { Struct.new(:id, :client_secret, :status, :amount).new("pi_x", "sec", "requires_payment_method", 0) }) do
+      get new_booking_payment_path(@booking)
+    end
+
+    assert_response :success
+  end
+
   test "the guest is offered the payment page while awaiting payment" do
     approve_as_host
 
