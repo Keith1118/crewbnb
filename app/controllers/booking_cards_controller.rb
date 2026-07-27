@@ -17,6 +17,10 @@ class BookingCardsController < ApplicationController
     intent = Stripe::SetupIntent.create(
       customer: customer_id,
       usage: "off_session",
+      # A SetupIntent doesn't turn these on by default the way a PaymentIntent
+      # does. Without it the Payment Element has nothing to render and throws
+      # while mounting — an empty card box and a submit button that hangs.
+      automatic_payment_methods: { enabled: true },
       metadata: { booking_id: @booking.id }
     )
 

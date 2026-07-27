@@ -12,6 +12,29 @@ export default class extends Controller {
   }
 
   connect() {
+    // A failure here used to be silent: no card fields, no message, and a submit
+    // button that span forever because this.stripe was never assigned.
+    try {
+      this.mount()
+    } catch (error) {
+      this.showFatal(error)
+    }
+  }
+
+  showFatal(error) {
+    const errorEl = document.getElementById("payment-errors")
+    if (errorEl) {
+      errorEl.textContent = `Payment form failed to load: ${error?.message || error}. Please refresh, or contact us if it keeps happening.`
+    }
+    if (this.hasSubmitButtonTarget) this.submitButtonTarget.disabled = true
+    console.error("Stripe payment form failed to initialise", error)
+  }
+
+  mount() {
+    if (typeof Stripe === "undefined") throw new Error("Stripe.js did not load")
+    if (!this.publishableKeyValue) throw new Error("missing publishable key")
+    if (!this.clientSecretValue) throw new Error("missing client secret")
+
     this.stripe = Stripe(this.publishableKeyValue)
     this.elements = this.stripe.elements({
       clientSecret: this.clientSecretValue,
@@ -31,6 +54,13 @@ export default class extends Controller {
 
   async submit(event) {
     event.preventDefault()
+
+    // Never spin against a form that never loaded.
+    if (!this.stripe || !this.elements) {
+      this.showFatal(new Error("the card form isn't ready"))
+      return
+    }
+
     this.setLoading(true)
 
     // Clear previous errors
