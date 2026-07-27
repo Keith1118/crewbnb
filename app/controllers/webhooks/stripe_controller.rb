@@ -4,17 +4,8 @@ module Webhooks
     skip_before_action :authenticate_user!, raise: false
 
     def create
-      payload = request.body.read
-      sig_header = request.env["HTTP_STRIPE_SIGNATURE"]
-      webhook_secret = ENV["STRIPE_WEBHOOK_SECRET"] || Rails.application.credentials.dig(:stripe, :webhook_secret)
-
-      begin
-        event = Stripe::Webhook.construct_event(payload, sig_header, webhook_secret)
-      rescue JSON::ParserError
-        head :bad_request and return
-      rescue Stripe::SignatureVerificationError
-        head :bad_request and return
-      end
+      event = construct_event(request.body.read, request.env["HTTP_STRIPE_SIGNATURE"])
+      head :bad_request and return if event.nil?
 
       case event.type
       when "payment_intent.succeeded"
@@ -29,6 +20,28 @@ module Webhooks
     end
 
     private
+
+    # Stripe splits our events across two endpoints that share this one URL: our
+    # own account's events (payment_intent.*) and our hosts' Connect events
+    # (account.updated). Each endpoint signs with its own secret, so a payload is
+    # genuine if EITHER secret verifies it. Returns nil when none does.
+    def construct_event(payload, sig_header)
+      webhook_secrets.each do |secret|
+        return Stripe::Webhook.construct_event(payload, sig_header, secret)
+      rescue Stripe::SignatureVerificationError
+        next
+      rescue JSON::ParserError
+        return nil
+      end
+      nil
+    end
+
+    def webhook_secrets
+      [
+        ENV["STRIPE_WEBHOOK_SECRET"] || Rails.application.credentials.dig(:stripe, :webhook_secret),
+        ENV["STRIPE_CONNECT_WEBHOOK_SECRET"] || Rails.application.credentials.dig(:stripe, :connect_webhook_secret)
+      ].compact_blank
+    end
 
     # A host's Express account changed — keep their payout-readiness in sync so
     # bookings route money correctly even if they finished onboarding elsewhere.

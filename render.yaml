@@ -58,6 +58,11 @@ services:
         sync: false
       - key: STRIPE_PUBLISHABLE_KEY
         sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false            # signing secret of the crewbase.ie webhook endpoint
+      - key: STRIPE_CONNECT_WEBHOOK_SECRET
+        sync: false            # second endpoint, same URL, for connected-account
+                               # events (account.updated) — signs with its own secret
       # --- Email via Resend (smtp.resend.com) ---
       - key: SMTP_ADDRESS
         value: smtp.resend.com
