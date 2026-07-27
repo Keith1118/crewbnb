@@ -10,6 +10,8 @@ export default class extends Controller {
   }
 
   recalculate() {
+    this.enforceCheckOutAfterCheckIn()
+
     const checkIn = this.parseDate(this.checkInTarget.value)
     const checkOut = this.parseDate(this.checkOutTarget.value)
 
@@ -27,6 +29,30 @@ export default class extends Controller {
 
     if (this.hasBreakdownTarget) this.breakdownTarget.classList.remove("hidden")
     if (this.hasEmptyTarget) this.emptyTarget.classList.add("hidden")
+  }
+
+  // A date input only knows the static `min` it was rendered with, so nothing
+  // stopped a check-out months BEFORE check-in — the form submitted and the
+  // model rejected it. Move the floor as check-in changes, and pull an already
+  // invalid check-out up to the first valid night rather than silently
+  // clearing it.
+  enforceCheckOutAfterCheckIn() {
+    const checkIn = this.checkInTarget.value
+    if (!checkIn) return
+
+    const firstNight = this.nextDay(checkIn)
+    this.checkOutTarget.min = firstNight
+
+    if (this.checkOutTarget.value && this.checkOutTarget.value <= checkIn) {
+      this.checkOutTarget.value = firstNight
+    }
+  }
+
+  // ISO date strings compare correctly as strings, so this stays in "YYYY-MM-DD".
+  nextDay(isoDate) {
+    const date = new Date(`${isoDate}T00:00:00`)
+    date.setDate(date.getDate() + 1)
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
   }
 
   showEmpty() {

@@ -5,18 +5,28 @@
 import { application } from "./application"
 
 import ApplicantTypeController from "./applicant_type_controller"
-import BookingCalcController from "./booking_calc_controller"
-import DismissableController from "./dismissable_controller"
-import DropdownController from "./dropdown_controller"
-import MobileMenuController from "./mobile_menu_controller"
-import PaymentFormController from "./payment_form_controller"
-import PropertyMapController from "./property_map_controller"
-import SidebarController from "./sidebar_controller"
 application.register("applicant-type", ApplicantTypeController)
+
+import BookingCalcController from "./booking_calc_controller"
 application.register("booking-calc", BookingCalcController)
+
+import DateRangeController from "./date_range_controller"
+application.register("date-range", DateRangeController)
+
+import DismissableController from "./dismissable_controller"
 application.register("dismissable", DismissableController)
+
+import DropdownController from "./dropdown_controller"
 application.register("dropdown", DropdownController)
+
+import MobileMenuController from "./mobile_menu_controller"
 application.register("mobile-menu", MobileMenuController)
+
+import PaymentFormController from "./payment_form_controller"
 application.register("payment-form", PaymentFormController)
+
+import PropertyMapController from "./property_map_controller"
 application.register("property-map", PropertyMapController)
+
+import SidebarController from "./sidebar_controller"
 application.register("sidebar", SidebarController)
