@@ -9,7 +9,7 @@ namespace :crewbase do
     ActiveJob::Base.queue_adapter = :inline
 
     today = Date.current
-    sent = { reminders: 0, review_requests: 0 }
+    sent = { reminders: 0, review_requests: 0, invoices: 0 }
 
     # Check-in reminders — confirmed stays starting tomorrow
     Booking.where(status: :confirmed, check_in: today + 1, reminder_sent_at: nil).find_each do |booking|
@@ -24,6 +24,16 @@ namespace :crewbase do
       sent[:review_requests] += 1
     end
 
-    puts "crewbase:auto_messages — #{sent[:reminders]} reminder(s), #{sent[:review_requests]} review request(s) sent."
+    # Invoices — sent once the stay is a fact, not when it was booked. Same
+    # 3-day catch-up window as review requests, so a missed cron run recovers.
+    Booking.where(status: [ :confirmed, :completed ], invoice_sent_at: nil)
+           .where(check_out: (today - 3)..today).find_each do |booking|
+      BookingMailer.invoice(booking).deliver_later
+      booking.update_column(:invoice_sent_at, Time.current)
+      sent[:invoices] += 1
+    end
+
+    puts "crewbase:auto_messages — #{sent[:reminders]} reminder(s), " \
+         "#{sent[:review_requests]} review request(s), #{sent[:invoices]} invoice(s) sent."
   end
 end

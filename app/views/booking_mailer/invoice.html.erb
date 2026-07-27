@@ -1,0 +1,56 @@
+<%
+  host_name = @host.company_name.presence ||
+              [ @host.first_name, @host.last_name ].compact_blank.join(" ").presence ||
+              @host.email
+  vat = @booking.vat_registered_supplier?
+%>
+
+<h1>Your Invoice</h1>
+
+<p>Hi <%= @guest.first_name || @guest.email.split("@").first %>,</p>
+
+<p>Thanks for staying at <strong><%= @property.title %></strong>. Your invoice is below — the printable version is linked at the bottom for your accounts team.</p>
+
+<div class="detail-box">
+  <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 14px;">
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Invoice no.</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right; font-family: monospace;"><%= @booking.invoice_reference %></td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">From</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right;"><%= host_name %></td>
+    </tr>
+    <tr>
+      <td style="padding: 6px 0; color: #6b7280;">Stay</td>
+      <td style="padding: 6px 0; color: #111c2d; font-weight: 600; text-align: right;">
+        <%= @booking.check_in.strftime("%d %b") %> – <%= @booking.check_out.strftime("%d %b %Y") %>
+        (<%= pluralize(@booking.nights, "night") %>)
+      </td>
+    </tr>
+    <% if vat %>
+      <tr>
+        <td style="padding: 6px 0; color: #6b7280;">Net</td>
+        <td style="padding: 6px 0; color: #111c2d; text-align: right;">&euro;<%= number_with_precision(@booking.invoice_net, precision: 2, delimiter: ",") %></td>
+      </tr>
+      <tr>
+        <td style="padding: 6px 0; color: #6b7280;">VAT (<%= number_with_precision(@booking.invoice_vat_rate, precision: 1) %>%)</td>
+        <td style="padding: 6px 0; color: #111c2d; text-align: right;">&euro;<%= number_with_precision(@booking.invoice_vat, precision: 2, delimiter: ",") %></td>
+      </tr>
+    <% end %>
+    <tr style="border-top: 1px solid #e5e7eb;">
+      <td style="padding: 10px 0 6px; color: #111c2d; font-weight: 700;">Total</td>
+      <td style="padding: 10px 0 6px; color: #111c2d; font-weight: 700; text-align: right; font-size: 16px;">&euro;<%= number_with_precision(@booking.invoice_gross, precision: 2, delimiter: ",") %></td>
+    </tr>
+  </table>
+</div>
+
+<% unless vat %>
+  <p style="font-size: 13px; color: #6b7280;">No VAT is charged on this stay.</p>
+<% end %>
+
+<p style="text-align: center; margin: 24px 0;">
+  <a href="<%= invoice_booking_url(@booking) %>" class="btn">View / print invoice</a>
+</p>
+
+<p>Thanks for using Crewbase.</p>

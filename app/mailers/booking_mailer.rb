@@ -22,6 +22,18 @@ class BookingMailer < ApplicationMailer
     )
   end
 
+  # Sent after checkout, not at booking: an invoice for a stay that hasn't
+  # happened yet is a quote, and the guest's accounts team wants it once the
+  # stay is a fact.
+  def invoice(booking)
+    @booking = booking
+    @property = booking.property
+    @guest = booking.user
+    @host = booking.supplier
+
+    mail(to: @guest.email, subject: "Invoice #{booking.invoice_reference} - #{@property.title}")
+  end
+
   # The scheduled charge went through — a receipt, not a request.
   def payment_taken(booking)
     @booking = booking
