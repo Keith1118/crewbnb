@@ -18,3 +18,14 @@ production:
   sync_property_icals:
     class: IcalSyncJob
     schedule: every hour at minute 42
+
+  # Take payment for stays reaching their charge date (10 days before check-in).
+  # Early morning so a failure leaves the whole day for the guest to react.
+  charge_due_bookings:
+    class: ChargeDueBookingsJob
+    schedule: every day at 6am
+
+  # Release stays whose guest never paid after their card was declined.
+  release_unpaid_bookings:
+    class: ReleaseUnpaidBookingsJob
+    schedule: every day at 7am

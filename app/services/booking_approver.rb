@@ -1,14 +1,15 @@
 # What happens when a host approves a request-to-book stay.
 #
-# Until now approval confirmed the booking outright, which meant a guest on a
-# request-to-book listing was never charged — the stay was blocked out and the
-# host was owed money with nothing collected. When the guest can be charged
-# online we now hold the booking in awaiting_payment and ask them for a card;
-# PaymentsController confirms it once the payment succeeds.
+# The guest's card is already on file — BookingCardsController took it when they
+# booked — so approval doesn't ask them for anything. It confirms the stay and
+# leaves ChargeDueBookingsJob to take the money CHARGE_LEAD_TIME before check-in.
 #
-# Where online payment isn't possible (Stripe unconfigured, or the host hasn't
-# finished payout onboarding) the old behaviour is still correct: the stay is
-# settled off-platform, so approval confirms it.
+# The exception is a stay approved inside that window, where the charge date has
+# already passed: that's charged on the spot, so a booking made a few days out
+# never slips through uncharged.
+#
+# Where no card was taken (Stripe unconfigured, or the host wasn't payout-ready
+# at booking time) approval simply confirms — that stay settles off-platform.
 class BookingApprover
   def self.call(booking) = new(booking).call
 
@@ -16,23 +17,13 @@ class BookingApprover
     @booking = booking
   end
 
-  # Returns :payment_requested or :confirmed so callers can word their flash.
+  # Returns :charged, :charge_failed, or :confirmed so callers can word a flash.
   def call
-    @booking.payable_online? ? request_payment : confirm
-  end
-
-  private
-
-  def request_payment
-    @booking.awaiting_payment!
-    BookingMailer.payment_requested(@booking).deliver_later
-    AutoMessenger.payment_requested(@booking)
-    :payment_requested
-  end
-
-  def confirm
     @booking.confirmed!
     AutoMessenger.booking_confirmed(@booking)
-    :confirmed
+
+    return :confirmed unless @booking.charge_due?
+
+    BookingCharger.call(@booking).ok? ? :charged : :charge_failed
   end
 end

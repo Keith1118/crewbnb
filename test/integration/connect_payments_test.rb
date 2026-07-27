@@ -54,14 +54,16 @@ class ConnectPaymentsTest < ActionDispatch::IntegrationTest
     assert_redirected_to booking_path(@booking)
   end
 
-  test "instant-book sends the guest to pay only when the host can be paid" do
+  # Nobody is charged at booking time any more — the guest saves a card and
+  # BookingCharger takes the money nearer check-in.
+  test "booking sends the guest to save a card when the host can be paid" do
     with_bookings_open do
       post property_bookings_path(@property), params: {
         booking: { check_in: Date.current + 20, check_out: Date.current + 23, guests_count: 2 }
       }
     end
 
-    assert_redirected_to new_booking_payment_path(@guest.bookings.last)
+    assert_redirected_to new_booking_card_path(@guest.bookings.last)
   end
 
   test "instant-book with an unconnected host routes to request-to-book" do

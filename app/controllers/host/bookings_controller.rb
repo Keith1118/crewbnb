@@ -17,15 +17,24 @@ module Host
     def update
       case params[:booking][:status]
       when "confirmed"
-        notice = if BookingApprover.call(@booking) == :payment_requested
-          "Booking approved — we've asked the guest to pay. You'll be notified once they do, and the dates stay held in the meantime."
+        notice = case BookingApprover.call(@booking)
+        when :charged
+          "Booking approved and payment taken — check-in details sent to the guest."
+        when :charge_failed
+          "Booking approved, but the guest's card was declined. They've been asked to pay by hand and have #{Booking::MANUAL_PAYMENT_GRACE.in_hours.to_i} hours before the dates are released."
         else
-          "Booking approved — check-in details sent to the guest."
+          "Booking approved — the guest's card is charged automatically #{Booking::CHARGE_LEAD_TIME.in_days.to_i} days before check-in."
         end
         redirect_to host_booking_path(@booking), notice: notice
       when "cancelled"
-        @booking.cancelled!
-        redirect_to host_booking_path(@booking), notice: "Booking rejected."
+        # A host cancelling always refunds the guest in full — they did nothing wrong.
+        result = BookingCanceller.call(@booking, by: :host)
+        notice = if result.refunded.to_d.positive?
+          "Booking cancelled and €#{ActiveSupport::NumberHelper.number_to_rounded(result.refunded, precision: 2)} refunded to the guest."
+        else
+          "Booking rejected."
+        end
+        redirect_to host_booking_path(@booking), notice: notice
       else
         redirect_to host_booking_path(@booking), alert: "Invalid status."
       end

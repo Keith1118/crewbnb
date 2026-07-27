@@ -1,0 +1,60 @@
+<% content_for(:title, "Save your card - Crewbase") %>
+
+<div class="max-w-2xl mx-auto px-4 py-10 space-y-6">
+  <div>
+    <h1 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight mb-2">Hold your dates</h1>
+    <p class="text-sm text-on-surface-variant">
+      <%= @booking.property.title %> &middot;
+      <%= @booking.check_in.strftime("%a %d %b") %> – <%= @booking.check_out.strftime("%a %d %b") %> &middot;
+      <%= pluralize(@booking.nights, "night") %>
+    </p>
+  </div>
+
+  <%# The whole point of this screen: no money moves today. %>
+  <div class="bg-blue-50 border border-blue-200 rounded-2xl p-5 flex items-start gap-3">
+    <span class="material-symbols-outlined text-blue-700" aria-hidden="true">schedule</span>
+    <div>
+      <p class="text-sm font-bold text-blue-900 mb-1">You won't be charged today</p>
+      <p class="text-sm text-blue-800">
+        We save your card now and take
+        <strong>&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></strong>
+        on <strong><%= @booking.charge_on.strftime("%-d %B %Y") %></strong>,
+        <%= Booking::CHARGE_LEAD_TIME.in_days.to_i %> days before check-in.
+      </p>
+      <p class="text-sm text-blue-800 mt-2"><%= @booking.property.cancellation_summary %></p>
+    </div>
+  </div>
+
+  <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/15 p-6"
+       data-controller="payment-form"
+       data-payment-form-mode-value="setup"
+       data-payment-form-client-secret-value="<%= @client_secret %>"
+       data-payment-form-publishable-key-value="<%= @stripe_publishable_key %>"
+       data-payment-form-return-url-value="<%= complete_booking_card_url(@booking) %>">
+    <h2 class="font-headline font-bold text-on-surface mb-6">Card Details</h2>
+
+    <form id="payment-form" class="space-y-5" data-action="submit->payment-form#submit">
+      <div id="payment-element" class="min-h-[200px]"></div>
+      <div id="payment-errors" class="text-sm text-red-600 font-medium" role="alert"></div>
+
+      <div class="bg-green-50 rounded-xl p-4 flex items-center gap-3 border border-green-100">
+        <span class="material-symbols-outlined text-green-600 text-xl">verified_user</span>
+        <div>
+          <p class="text-sm font-medium text-green-800">Stored securely by Stripe</p>
+          <p class="text-xs text-green-600">Crewbase never sees or stores your card number.</p>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" data-payment-form-target="submitButton"
+                class="w-full bg-[#0F224F] text-white px-8 py-4 rounded-xl font-headline font-bold text-lg hover:bg-[#002d75] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2">
+          <span data-payment-form-target="submitText" class="flex items-center gap-2">
+            <span class="material-symbols-outlined" aria-hidden="true">lock</span>
+            Save card &amp; hold dates
+          </span>
+          <span data-payment-form-target="submitSpinner" class="hidden">Saving…</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

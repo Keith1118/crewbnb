@@ -5,7 +5,10 @@ export default class extends Controller {
   static values = {
     clientSecret: String,
     publishableKey: String,
-    returnUrl: String
+    returnUrl: String,
+    // "payment" charges the card now; "setup" only saves it for a later,
+    // off-session charge. Same Element, different confirm call.
+    mode: { type: String, default: "payment" }
   }
 
   connect() {
@@ -34,12 +37,10 @@ export default class extends Controller {
     const errorEl = document.getElementById("payment-errors")
     errorEl.textContent = ""
 
-    const { error } = await this.stripe.confirmPayment({
-      elements: this.elements,
-      confirmParams: {
-        return_url: this.returnUrlValue
-      }
-    })
+    const confirmParams = { return_url: this.returnUrlValue }
+    const { error } = this.modeValue === "setup"
+      ? await this.stripe.confirmSetup({ elements: this.elements, confirmParams })
+      : await this.stripe.confirmPayment({ elements: this.elements, confirmParams })
 
     // This point is only reached if there is an immediate error.
     // On success, the customer is redirected to the return_url.

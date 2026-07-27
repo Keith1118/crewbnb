@@ -10,10 +10,22 @@ class Booking < ApplicationRecord
   has_one :review
 
   # Enums
-  # awaiting_payment: the host approved a request-to-book stay and we've asked the
-  # guest to pay. It still holds the dates — the guest shouldn't lose them while
-  # they reach for a card — and becomes confirmed once payment succeeds.
+  # awaiting_payment: we hold the guest's card but couldn't charge it (expired,
+  # declined, or the bank wants 3-D Secure, which needs the guest present). They
+  # have until payment_due_by to pay by hand before the stay is released.
   enum :status, { pending: 0, confirmed: 1, cancelled: 2, completed: 3, awaiting_payment: 4 }, default: :pending
+
+  # Nobody is charged at the moment of booking. We take the card, then charge it
+  # this far ahead of check-in — or straight away if check-in is nearer than that.
+  CHARGE_LEAD_TIME = 10.days
+
+  # Free cancellation up to here. It sits AFTER the charge deliberately: a guest
+  # who cancels in that window is refunded in full, and the two dates never need
+  # explaining separately — money moves, then three days later the door closes.
+  FREE_CANCELLATION_WINDOW = 7.days
+
+  # How long a guest gets to pay by hand once an automatic charge has failed.
+  MANUAL_PAYMENT_GRACE = 72.hours
 
   # Validations
   validates :check_in, presence: true
@@ -100,6 +112,49 @@ class Booking < ApplicationRecord
   # host approval alone confirms it.
   def payable_online?
     StripeConfig.configured? && property.user.stripe_ready? && !paid?
+  end
+
+  # ----- Scheduled charging -------------------------------------------------
+
+  # The day we take the money. Never in the past: a stay booked inside the lead
+  # time is charged as soon as it's confirmed.
+  def charge_on
+    return nil unless check_in
+
+    [ check_in - CHARGE_LEAD_TIME, Date.current ].max
+  end
+
+  def charge_due?
+    return false unless confirmed? && !paid? && stripe_payment_method_id.present?
+
+    charge_on <= Date.current
+  end
+
+  # ----- Cancellation -------------------------------------------------------
+
+  def free_cancellation_until
+    return nil unless check_in
+
+    check_in - FREE_CANCELLATION_WINDOW
+  end
+
+  def free_cancellation?
+    return true unless check_in
+
+    Date.current <= free_cancellation_until
+  end
+
+  # What a guest gets back if they cancel right now. Full refund inside the free
+  # window; after it, whatever the host's listing promises.
+  def refund_on_cancellation
+    return 0 unless paid?
+    return amount_paid if free_cancellation?
+
+    (amount_paid * property.cancellation_refund_rate).round(2)
+  end
+
+  def amount_paid
+    payments.succeeded.sum(:amount) - payments.sum(:refunded_amount).to_d
   end
 
   def calculate_total

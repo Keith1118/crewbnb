@@ -43,10 +43,14 @@ class BookingsController < ApplicationController
     @booking.status = :pending
 
     if @booking.save
-      if @property.instant_book? && StripeConfig.configured? && @property.user.stripe_ready?
-        redirect_to new_booking_payment_path(@booking), notice: "Booking created — complete payment to confirm your stay."
+      if @booking.payable_online?
+        # Take a card now, charge it nearer check-in. BookingCardsController
+        # picks the booking up from there — including telling the host.
+        redirect_to new_booking_card_path(@booking),
+                    notice: "Almost there — save a card to hold these dates. You won't be charged today."
       else
-        # No online payment available (or request-to-book listing): route through host approval.
+        # No online payment available: the stay is settled off-platform, so it
+        # goes straight to the host for approval.
         BookingMailer.new_booking_host(@booking).deliver_later
         AutoMessenger.booking_requested(@booking)
         redirect_to @booking, notice: "Booking request sent. We'll email you as soon as the host confirms."
@@ -69,19 +73,20 @@ class BookingsController < ApplicationController
       redirect_to @booking, alert: "That booking change isn't allowed." and return
     end
 
-    # Approving a request-to-book stay may need payment collected first, so it
-    # goes through the same path as the host dashboard rather than confirming here.
-    if new_status == "confirmed" && @booking.pending? && @booking.payable_online?
+    # Approving a request-to-book stay goes through the same path as the host
+    # dashboard, so approval and charging behave identically wherever it's done.
+    if new_status == "confirmed" && @booking.pending?
       BookingApprover.call(@booking)
-      redirect_to @booking, notice: "Booking approved — the guest has been asked to pay." and return
+      redirect_to @booking, notice: "Booking approved." and return
+    end
+
+    # Cancelling refunds what the policy owes, so it can't be a plain status change.
+    if new_status == "cancelled" && !@booking.cancelled?
+      redirect_to @booking, notice: cancellation_notice and return
     end
 
     if @booking.update(status: new_status)
-      if @booking.cancelled?
-        BookingMailer.cancellation(@booking).deliver_later
-      else
-        BookingMailer.status_update(@booking).deliver_later
-      end
+      BookingMailer.status_update(@booking).deliver_later
       redirect_to @booking, notice: "Booking status updated."
     else
       render :show, status: :unprocessable_entity
@@ -127,6 +132,21 @@ class BookingsController < ApplicationController
 
   def set_booking
     @booking = Booking.find(params[:id])
+  end
+
+  # Whoever cancels, the refund follows the policy — except a host or admin
+  # cancelling, which always refunds in full.
+  def cancellation_notice
+    by = @booking.user_id == current_user.id ? :guest : :host
+    result = BookingCanceller.call(@booking, by: by)
+
+    if result.refunded.to_d.positive?
+      "Booking cancelled. €#{ActiveSupport::NumberHelper.number_to_rounded(result.refunded, precision: 2)} has been refunded to the guest's card."
+    elsif @booking.paid?
+      "Booking cancelled. No refund is due under this listing's cancellation policy."
+    else
+      "Booking cancelled."
+    end
   end
 
   def booking_params

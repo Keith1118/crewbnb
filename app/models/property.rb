@@ -18,6 +18,12 @@ class Property < ApplicationRecord
   # Enums
   enum :status, { draft: 0, published: 1, archived: 2 }
 
+  # What a guest gets back if they cancel AFTER the free-cancellation cutoff.
+  # Before it they're always refunded in full, whichever of these is set.
+  enum :cancellation_policy, { strict: 0, partial: 1 }, prefix: :policy
+
+  CANCELLATION_REFUND_RATES = { "strict" => BigDecimal("0"), "partial" => BigDecimal("0.5") }.freeze
+
   # Search
   pg_search_scope :search_by_text,
     against: [ :title, :description, :city ],
@@ -44,6 +50,17 @@ class Property < ApplicationRecord
   scope :published, -> { where(status: :published) }
 
   # Methods
+  def cancellation_refund_rate
+    CANCELLATION_REFUND_RATES.fetch(cancellation_policy, BigDecimal("0"))
+  end
+
+  def cancellation_summary
+    days = Booking::FREE_CANCELLATION_WINDOW.in_days.to_i
+    after = policy_partial? ? "50% is refunded" : "the booking is non-refundable"
+
+    "Free cancellation until #{days} days before check-in. After that, #{after}."
+  end
+
   def full_address
     [ address, city, country ].compact.join(", ")
   end

@@ -148,13 +148,22 @@
         </div>
       </div>
 
-      <%# Cancellation policy %>
-      <div class="bg-surface-container-low rounded-2xl border border-outline-variant/10 p-5 text-sm text-on-surface-variant">
-        <h3 class="font-semibold text-on-surface mb-1 flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-base" aria-hidden="true">event_available</span>
-          Cancellation
-        </h3>
-        <p>You can cancel your booking from your bookings page. See our <%= link_to "terms", terms_path, class: "underline hover:text-on-surface" %> for the full cancellation and refund policy.</p>
+      <%# When the money actually moves. Guests ask this before anything else. %>
+      <div class="bg-surface-container-low rounded-2xl border border-outline-variant/10 p-5 text-sm text-on-surface-variant space-y-3">
+        <div>
+          <h3 class="font-semibold text-on-surface mb-1 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-base" aria-hidden="true">schedule</span>
+            When you pay
+          </h3>
+          <p>Nothing today. We save your card and charge it <%= Booking::CHARGE_LEAD_TIME.in_days.to_i %> days before check-in — or straight away if check-in is sooner than that.</p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-on-surface mb-1 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-base" aria-hidden="true">event_available</span>
+            Cancellation
+          </h3>
+          <p><%= @property.cancellation_summary %> See our <%= link_to "terms", terms_path, class: "underline hover:text-on-surface" %> for the full policy.</p>
+        </div>
       </div>
     </div>
   </div>

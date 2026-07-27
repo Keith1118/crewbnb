@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_27_122946) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_27_211520) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -64,12 +64,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_122946) do
   end
 
   create_table "bookings", force: :cascade do |t|
+    t.datetime "charge_failed_at"
     t.date "check_in"
     t.date "check_out"
     t.datetime "confirmation_sent_at"
     t.datetime "created_at", null: false
     t.integer "guests_count"
     t.string "invoice_reference"
+    t.datetime "payment_due_by"
     t.datetime "payment_requested_sent_at"
     t.bigint "property_id", null: false
     t.datetime "reminder_sent_at"
@@ -77,6 +79,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_122946) do
     t.datetime "review_request_sent_at"
     t.text "special_requests"
     t.integer "status"
+    t.string "stripe_payment_method_id"
     t.decimal "total_price"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
@@ -171,6 +174,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_122946) do
     t.integer "bathrooms"
     t.string "bed_configuration"
     t.integer "bedrooms"
+    t.integer "cancellation_policy", default: 0, null: false
     t.string "check_in_time", default: "3:00 PM"
     t.string "check_out_time", default: "10:30 AM"
     t.string "city"

@@ -33,6 +33,10 @@ Rails.application.routes.draw do
     resource :payment, only: [ :new, :create ] do
       get :complete
     end
+    # Card capture at booking time — saved, not charged.
+    resource :card, only: [ :new ], controller: "booking_cards" do
+      get :complete
+    end
     resources :reviews, only: [ :new, :create ]
   end
 

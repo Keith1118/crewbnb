@@ -22,6 +22,25 @@ class BookingMailer < ApplicationMailer
     )
   end
 
+  # The scheduled charge went through — a receipt, not a request.
+  def payment_taken(booking)
+    @booking = booking
+    @property = booking.property
+    @guest = booking.user
+
+    mail(to: @guest.email, subject: "Payment received - #{@property.title}")
+  end
+
+  # The saved card was declined. The guest has a grace period to pay by hand
+  # before the dates are released.
+  def payment_failed(booking)
+    @booking = booking
+    @property = booking.property
+    @guest = booking.user
+
+    mail(to: @guest.email, subject: "Action needed - payment failed for #{@property.title}")
+  end
+
   # The host approved a request-to-book stay — the guest now needs to pay to
   # lock it in.
   def payment_requested(booking)

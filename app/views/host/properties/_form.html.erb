@@ -330,6 +330,21 @@
         </div>
       </label>
 
+      <%# Cancellation policy — only governs what happens AFTER the free window;
+          before it every guest is refunded in full, platform-wide. %>
+      <div>
+        <label for="property_cancellation_policy" class="block text-sm font-semibold text-ink mb-1.5">Cancellation Policy</label>
+        <%= f.select :cancellation_policy,
+              [ [ "Non-refundable after the free window", "strict" ],
+                [ "50% refund after the free window", "partial" ] ],
+              {},
+              class: "w-full px-4 py-3 rounded-xl bg-white border border-neutral-300 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/40" %>
+        <p class="text-xs text-muted mt-1.5">
+          Every guest gets a full refund if they cancel more than
+          <%= Booking::FREE_CANCELLATION_WINDOW.in_days.to_i %> days before check-in. This sets what they get after that.
+        </p>
+      </div>
+
       <%# Status %>
       <div>
         <label for="property_status" class="block text-sm font-semibold text-ink mb-1.5">Listing Status</label>
