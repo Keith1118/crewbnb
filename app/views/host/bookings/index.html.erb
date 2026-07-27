@@ -46,7 +46,7 @@
                 <%= booking.check_in.strftime("%b %d") %> &mdash; <%= booking.check_out.strftime("%b %d, %Y") %>
               </td>
               <td class="px-6 py-4 text-muted text-center"><%= booking.guests_count %></td>
-              <td class="px-6 py-4 font-medium text-ink whitespace-nowrap">&euro;<%= number_with_delimiter(booking.total_price, delimiter: ",") %></td>
+              <td class="px-6 py-4 font-medium text-ink whitespace-nowrap">&euro;<%= number_with_precision(booking.total_price, precision: 2, delimiter: ",") %></td>
               <td class="px-6 py-4">
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold <%= booking_status_badge_classes(booking.status) %>">
                   <%= booking_status_label(booking.status) %>

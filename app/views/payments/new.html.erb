@@ -62,8 +62,8 @@
       <h2 class="font-headline font-bold text-on-surface mb-4">Price Breakdown</h2>
       <div class="space-y-2 text-sm">
         <div class="flex justify-between">
-          <span class="text-on-surface-variant">&euro;<%= number_with_delimiter(@booking.property.price_per_night, delimiter: ",") %> x <%= @booking.nights %> nights</span>
-          <span class="text-on-surface font-medium">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></span>
+          <span class="text-on-surface-variant">&euro;<%= number_with_precision(@booking.property.price_per_night, precision: 2, delimiter: ",") %> x <%= @booking.nights %> nights</span>
+          <span class="text-on-surface font-medium">&euro;<%= number_with_precision(@booking.total_price, precision: 2, delimiter: ",") %></span>
         </div>
         <div class="flex justify-between">
           <span class="text-on-surface-variant">Service fee</span>
@@ -72,7 +72,7 @@
         <div class="border-t border-outline-variant/15 pt-2 mt-2">
           <div class="flex justify-between">
             <span class="font-headline font-bold text-on-surface">Total</span>
-            <span class="font-headline font-bold text-on-surface text-lg">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></span>
+            <span class="font-headline font-bold text-on-surface text-lg">&euro;<%= number_with_precision(@booking.total_price, precision: 2, delimiter: ",") %></span>
           </div>
           <p class="text-xs text-on-surface-variant mt-1">EUR &middot; Invoice will be generated automatically</p>
         </div>
@@ -109,7 +109,7 @@
                   class="w-full bg-[#0F224F] text-white px-8 py-4 rounded-xl font-headline font-bold text-lg hover:bg-[#002d75] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2">
             <span data-payment-form-target="submitText" class="flex items-center gap-2">
               <span class="material-symbols-outlined text-xl">lock</span>
-              Pay &euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %>
+              Pay &euro;<%= number_with_precision(@booking.total_price, precision: 2, delimiter: ",") %>
             </span>
             <span data-payment-form-target="submitSpinner" class="hidden flex items-center gap-2">
               <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

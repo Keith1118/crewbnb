@@ -22,14 +22,8 @@
           </p>
         </div>
 
-        <% badge_classes = case @booking.status
-           when "pending" then "bg-yellow-100 text-yellow-800 border-yellow-200"
-           when "confirmed" then "bg-green-100 text-green-800 border-green-200"
-           when "cancelled" then "bg-red-100 text-red-800 border-red-200"
-           when "completed" then "bg-blue-100 text-blue-800 border-blue-200"
-           end %>
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border <%= badge_classes %>">
-          <%= @booking.status.capitalize %>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold border <%= booking_status_badge_classes(@booking.status, bordered: true) %>">
+          <%= booking_status_label(@booking.status) %>
         </span>
       </div>
 
@@ -52,7 +46,7 @@
         </div>
         <div>
           <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Total Price</p>
-          <p class="font-headline text-xl font-extrabold text-on-surface">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></p>
+          <p class="font-headline text-xl font-extrabold text-on-surface">&euro;<%= number_with_precision(@booking.total_price, precision: 2, delimiter: ",") %></p>
         </div>
         <div>
           <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Invoice Ref</p>
@@ -80,11 +74,11 @@
             <div class="px-6 py-4">
               <div class="flex items-center justify-between">
                 <div>
-                  <p class="text-sm font-medium text-on-surface">&euro;<%= number_with_delimiter(payment.amount) %> <%= payment.currency %></p>
+                  <p class="text-sm font-medium text-on-surface">&euro;<%= number_with_precision(payment.amount, precision: 2, delimiter: ",") %> <%= payment.currency %></p>
                   <p class="text-xs text-on-surface-variant"><%= payment.created_at.strftime("%b %d, %Y at %I:%M %p") %></p>
                   <% if payment.refunded_amount.to_d.positive? %>
                     <p class="text-xs text-purple-700 font-medium mt-0.5">
-                      &euro;<%= number_with_delimiter(payment.refunded_amount) %> refunded
+                      &euro;<%= number_with_precision(payment.refunded_amount, precision: 2, delimiter: ",") %> refunded
                     </p>
                   <% end %>
                 </div>
@@ -99,8 +93,8 @@
                 </span>
               </div>
 
-              <%# Refunds are manual on purpose — there's no cancellation policy
-                  to derive an amount from, so an admin decides it. %>
+              <%# Cancellations refund automatically now. This is the manual
+                  override — goodwill, disputes, and refunds a policy can't cover. %>
               <% if payment.succeeded? && refundable.positive? %>
                 <%= form_with url: refund_admin_payment_path(payment), method: :post,
                     data: { turbo_confirm: "Refund this payment to the guest? The host's payout and Crewbase's commission are reversed to match." },
@@ -155,7 +149,7 @@
       <p class="text-sm font-medium text-on-surface mb-1"><%= @booking.property.title %></p>
       <p class="text-xs text-on-surface-variant mb-3">
         <%= @booking.property.city %>, <%= @booking.property.country %>
-        &middot; &euro;<%= number_with_delimiter(@booking.property.price_per_night) %>/night
+        &middot; &euro;<%= number_with_precision(@booking.property.price_per_night, precision: 2, delimiter: ",") %>/night
       </p>
       <div class="flex items-center gap-3">
         <%= link_to "View Property", admin_property_path(@booking.property), class: "text-xs text-primary-container hover:underline font-medium" %>

@@ -1,5 +1,11 @@
 <% content_for(:title, "Save your card - Crewbase") %>
 
+<%# Without this the Stripe global is undefined, the Element never mounts, and
+    the submit button hangs on "Saving…" with no error. %>
+<% content_for(:head) do %>
+  <script src="https://js.stripe.com/v3/"></script>
+<% end %>
+
 <div class="max-w-2xl mx-auto px-4 py-10 space-y-6">
   <div>
     <h1 class="font-headline text-2xl font-extrabold text-on-surface tracking-tight mb-2">Hold your dates</h1>
@@ -17,7 +23,7 @@
       <p class="text-sm font-bold text-blue-900 mb-1">You won't be charged today</p>
       <p class="text-sm text-blue-800">
         We save your card now and take
-        <strong>&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></strong>
+        <strong>&euro;<%= number_with_precision(@booking.total_price, precision: 2, delimiter: ",") %></strong>
         on <strong><%= @booking.charge_on.strftime("%-d %B %Y") %></strong>,
         <%= Booking::CHARGE_LEAD_TIME.in_days.to_i %> days before check-in.
       </p>

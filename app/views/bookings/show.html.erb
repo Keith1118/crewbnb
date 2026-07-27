@@ -63,7 +63,7 @@
           <%# Total Price %>
           <div>
             <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Total Price</p>
-            <p class="font-headline text-xl font-extrabold text-on-surface">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></p>
+            <p class="font-headline text-xl font-extrabold text-on-surface">&euro;<%= number_with_precision(@booking.total_price, precision: 2, delimiter: ",") %></p>
           </div>
 
           <%# Invoice Reference %>
@@ -89,9 +89,9 @@
           <div class="bg-orange-50 border border-orange-200 rounded-2xl p-5 flex items-start gap-3">
             <span class="material-symbols-outlined text-orange-700" aria-hidden="true">credit_card</span>
             <div>
-              <p class="text-sm font-bold text-orange-900 mb-1">The host approved your stay — complete payment to confirm it.</p>
+              <p class="text-sm font-bold text-orange-900 mb-1">We couldn't take payment from your saved card.</p>
               <p class="text-sm text-orange-800">
-                Your dates are held while you pay, but they're not fully yours until it goes through.
+                Your dates are still held<%= " until #{@booking.payment_due_by.strftime('%A %d %B at %H:%M')}" if @booking.payment_due_by %>. Pay below to secure your stay.
               </p>
             </div>
           </div>
@@ -205,12 +205,12 @@
         <h3 class="font-headline font-bold text-on-surface mb-4">Price Breakdown</h3>
         <div class="space-y-3 text-sm">
           <div class="flex justify-between">
-            <span class="text-on-surface-variant">&euro;<%= number_with_delimiter(@booking.property.price_per_night, delimiter: ",") %> &times; <%= pluralize(@booking.nights, "night") %></span>
-            <span class="font-medium text-on-surface">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></span>
+            <span class="text-on-surface-variant">&euro;<%= number_with_precision(@booking.property.price_per_night, precision: 2, delimiter: ",") %> &times; <%= pluralize(@booking.nights, "night") %></span>
+            <span class="font-medium text-on-surface">&euro;<%= number_with_precision(@booking.total_price, precision: 2, delimiter: ",") %></span>
           </div>
           <div class="border-t border-outline-variant/15 pt-3 flex justify-between">
             <span class="font-bold text-on-surface">Total</span>
-            <span class="font-headline font-extrabold text-on-surface">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></span>
+            <span class="font-headline font-extrabold text-on-surface">&euro;<%= number_with_precision(@booking.total_price, precision: 2, delimiter: ",") %></span>
           </div>
         </div>
       </div>

@@ -47,7 +47,7 @@
             <td class="px-6 py-4 text-on-surface-variant whitespace-nowrap">
               <%= booking.check_in.strftime("%b %d") %> &mdash; <%= booking.check_out.strftime("%b %d") %>
             </td>
-            <td class="px-6 py-4 font-medium text-on-surface whitespace-nowrap">&euro;<%= number_with_delimiter(booking.total_price) %></td>
+            <td class="px-6 py-4 font-medium text-on-surface whitespace-nowrap">&euro;<%= number_with_precision(booking.total_price, precision: 2, delimiter: ",") %></td>
             <td class="px-6 py-4">
               <% badge_classes = case booking.status
                  when "pending" then "bg-yellow-100 text-yellow-800"

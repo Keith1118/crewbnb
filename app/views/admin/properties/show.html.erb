@@ -44,7 +44,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
           <div>
             <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Price/Night</p>
-            <p class="font-headline font-bold text-on-surface">&euro;<%= number_with_delimiter(@property.price_per_night) %></p>
+            <p class="font-headline font-bold text-on-surface">&euro;<%= number_with_precision(@property.price_per_night, precision: 2, delimiter: ",") %></p>
           </div>
           <div>
             <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest mb-1">Max Guests</p>

@@ -44,7 +44,7 @@
                 <%= property.status.capitalize %>
               </span>
             </td>
-            <td class="px-6 py-4 font-medium text-on-surface whitespace-nowrap">&euro;<%= number_with_delimiter(property.price_per_night) %></td>
+            <td class="px-6 py-4 font-medium text-on-surface whitespace-nowrap">&euro;<%= number_with_precision(property.price_per_night, precision: 2, delimiter: ",") %></td>
             <td class="px-6 py-4">
               <div class="flex items-center gap-3">
                 <%= link_to "View", admin_property_path(property), class: "text-primary-container hover:underline font-medium text-xs" %>

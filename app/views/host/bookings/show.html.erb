@@ -44,7 +44,7 @@
         </div>
         <div>
           <p class="text-xs font-medium text-muted uppercase tracking-widest mb-1">Total Price</p>
-          <p class="font-headline text-xl font-extrabold text-ink">&euro;<%= number_with_delimiter(@booking.total_price, delimiter: ",") %></p>
+          <p class="font-headline text-xl font-extrabold text-ink">&euro;<%= number_with_precision(@booking.total_price, precision: 2, delimiter: ",") %></p>
         </div>
       </div>
 

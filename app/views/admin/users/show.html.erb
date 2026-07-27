@@ -75,7 +75,7 @@
               <div class="flex items-center justify-between px-6 py-4 hover:bg-surface-container/30 transition-colors">
                 <div>
                   <p class="text-sm font-medium text-on-surface"><%= property.title %></p>
-                  <p class="text-xs text-on-surface-variant"><%= property.city %>, <%= property.country %> &middot; &euro;<%= number_with_delimiter(property.price_per_night) %>/night</p>
+                  <p class="text-xs text-on-surface-variant"><%= property.city %>, <%= property.country %> &middot; &euro;<%= number_with_precision(property.price_per_night, precision: 2, delimiter: ",") %>/night</p>
                 </div>
                 <div class="flex items-center gap-3">
                   <% status_classes = case property.status
@@ -110,7 +110,7 @@
                 <p class="text-sm font-medium text-on-surface"><%= booking.property.title %></p>
                 <p class="text-xs text-on-surface-variant">
                   <%= booking.check_in.strftime("%b %d") %> &mdash; <%= booking.check_out.strftime("%b %d, %Y") %>
-                  &middot; &euro;<%= number_with_delimiter(booking.total_price) %>
+                  &middot; &euro;<%= number_with_precision(booking.total_price, precision: 2, delimiter: ",") %>
                 </p>
               </div>
               <div class="flex items-center gap-3">

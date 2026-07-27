@@ -52,7 +52,7 @@
             <%# Right: Price & Action %>
             <div class="flex items-center gap-6">
               <div class="text-right">
-                <p class="font-headline text-xl font-bold text-on-surface">&euro;<%= number_with_delimiter(booking.total_price, delimiter: ",") %></p>
+                <p class="font-headline text-xl font-bold text-on-surface">&euro;<%= number_with_precision(booking.total_price, precision: 2, delimiter: ",") %></p>
                 <p class="text-xs text-on-surface-variant">total</p>
               </div>
 
