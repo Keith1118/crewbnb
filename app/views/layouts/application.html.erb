@@ -54,7 +54,11 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%# Name the compiled build exactly. ":app" prefix-matched BOTH
+        builds/application.css and the raw stylesheets/application.tailwind.css,
+        serving the uncompiled source alongside it — whose `@import "tailwindcss"`
+        404'd on every page load. %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
