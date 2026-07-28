@@ -1,5 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
+const STRIPE_JS = "https://js.stripe.com/v3/"
+const STRIPE_LOAD_TIMEOUT = 15000
+
 export default class extends Controller {
   static targets = ["submitButton", "submitText", "submitSpinner"]
   static values = {
@@ -11,14 +14,49 @@ export default class extends Controller {
     mode: { type: String, default: "payment" }
   }
 
-  connect() {
+  async connect() {
+    this.connected = true
+
     // A failure here used to be silent: no card fields, no message, and a submit
     // button that span forever because this.stripe was never assigned.
     try {
-      this.mount()
+      await this.stripeLoaded()
+      if (this.connected) this.mount()
     } catch (error) {
-      this.showFatal(error)
+      if (this.connected) this.showFatal(error)
     }
+  }
+
+  disconnect() {
+    this.connected = false
+  }
+
+  // Turbo swaps the body and connects controllers BEFORE the <script> it copies
+  // into <head> has finished executing. Every guest reaches this page through a
+  // Turbo redirect from the booking form, so checking `typeof Stripe` once at
+  // connect found it undefined, gave up, and left a dead card form that only a
+  // manual refresh fixed. Wait for the script instead of assuming it has run.
+  stripeLoaded() {
+    if (typeof Stripe !== "undefined") return Promise.resolve()
+
+    let script = document.querySelector(`script[src^="${STRIPE_JS}"]`)
+    if (!script) {
+      script = document.createElement("script")
+      script.src = STRIPE_JS
+      document.head.appendChild(script)
+    }
+
+    return new Promise((resolve, reject) => {
+      const done = () => {
+        clearTimeout(timer)
+        typeof Stripe === "undefined"
+          ? reject(new Error("Stripe.js did not load"))
+          : resolve()
+      }
+      const timer = setTimeout(done, STRIPE_LOAD_TIMEOUT)
+      script.addEventListener("load", done, { once: true })
+      script.addEventListener("error", done, { once: true })
+    })
   }
 
   showFatal(error) {
