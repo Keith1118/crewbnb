@@ -65,8 +65,13 @@ class Property < ApplicationRecord
     [ address, city, country ].compact.join(", ")
   end
 
+  # Uses the preloaded association when there is one. `reviews.average(:rating)`
+  # always went to the database, so a listing page ran one extra query per card.
   def average_rating
-    reviews.average(:rating)&.round(1)
+    ratings = reviews.loaded? ? reviews.filter_map(&:rating) : reviews.pluck(:rating).compact
+    return if ratings.empty?
+
+    (ratings.sum.to_f / ratings.size).round(1)
   end
 
   def weekly_price

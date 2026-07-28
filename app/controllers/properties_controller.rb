@@ -44,7 +44,9 @@ class PropertiesController < ApplicationController
       end
     end
 
-    @pagy, @properties = pagy(properties.with_attached_images, limit: 12)
+    # :reviews feeds average_rating on each card — without it the listing ran
+    # one extra query per property.
+    @pagy, @properties = pagy(properties.with_attached_images.includes(:reviews), limit: 12)
   end
 
   def show

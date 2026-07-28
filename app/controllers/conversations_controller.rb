@@ -6,7 +6,7 @@ class ConversationsController < ApplicationController
   def index
     @pagy, @conversations = pagy(
       Conversation.for_user(current_user)
-                  .includes(:participant_1, :participant_2, :property)
+                  .includes(:participant_1, :participant_2, :property, messages: :user)
                   .order(updated_at: :desc),
       limit: 20
     )
