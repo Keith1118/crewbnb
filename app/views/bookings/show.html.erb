@@ -193,8 +193,12 @@
         </div>
 
         <div class="mt-4">
-          <%= link_to conversations_path(recipient_id: host.id, property_id: @booking.property.id),
-              class: "flex items-center justify-center gap-2 w-full border border-outline-variant/30 text-on-surface-variant px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-surface-container transition-colors" do %>
+          <%# Starting a conversation creates one, so it has to be a POST. As a
+              GET link this routed to the conversations index instead, silently
+              dropping recipient_id/property_id and creating nothing. %>
+          <%= button_to conversations_path(recipient_id: host.id, property_id: @booking.property.id),
+              form: { class: "w-full" },
+              class: "flex items-center justify-center gap-2 w-full border border-outline-variant/30 text-on-surface-variant px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-surface-container transition-colors cursor-pointer" do %>
             <span class="material-symbols-outlined text-lg">chat</span>
             Message Host
           <% end %>

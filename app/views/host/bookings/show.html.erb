@@ -144,8 +144,10 @@
       </p>
 
       <div class="mt-4 pt-4 border-t border-line">
-        <%= link_to conversations_path(recipient_id: guest.id, property_id: @booking.property.id),
-            class: "flex items-center justify-center gap-2 w-full border border-line text-muted px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-neutral-100 transition-colors" do %>
+        <%# POST, not GET — see the guest-side note in bookings/show. %>
+        <%= button_to conversations_path(recipient_id: guest.id, property_id: @booking.property.id),
+            form: { class: "w-full" },
+            class: "flex items-center justify-center gap-2 w-full border border-line text-muted px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-neutral-100 transition-colors cursor-pointer" do %>
           <span class="material-symbols-outlined text-lg">chat</span>
           Message Guest
         <% end %>
