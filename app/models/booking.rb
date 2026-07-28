@@ -153,8 +153,17 @@ class Booking < ApplicationRecord
     (amount_paid * property.cancellation_refund_rate).round(2)
   end
 
+  # What the guest is currently out of pocket: everything we captured, less
+  # everything we've given back.
+  #
+  # Must count refunded payments in the captured side too. A FULL refund flips a
+  # payment's status to :refunded, which drops it out of the succeeded scope —
+  # so subtracting its refunded_amount from a total that no longer includes it
+  # returned the amount NEGATED (a fully refunded EUR200 read as -EUR200).
+  # Partial refunds leave the status alone, which is why only full ones broke.
   def amount_paid
-    payments.succeeded.sum(:amount) - payments.sum(:refunded_amount).to_d
+    captured = payments.where(status: [ :succeeded, :refunded ]).sum(:amount)
+    captured - payments.sum(:refunded_amount).to_d
   end
 
   # What the host is owed once the stay has happened: their share of whatever
