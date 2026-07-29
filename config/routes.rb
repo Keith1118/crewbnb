@@ -95,5 +95,7 @@ Rails.application.routes.draw do
     resource :stripe, only: [ :create ], controller: "stripe"
   end
 
-  get "up" => "rails/health#show", as: :rails_health_check
+  # Our own check rather than rails/health#show, which returns 200 whenever the
+  # process is up — including while every database-backed page is failing.
+  get "up" => "health#show", as: :rails_health_check
 end
