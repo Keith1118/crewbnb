@@ -11,6 +11,9 @@ Rails.application.routes.draw do
   get "about", to: "pages#about", as: :about
   get "contact", to: "pages#contact", as: :contact
   post "contact", to: "pages#submit_contact"
+  # Home-page accommodation enquiry — companies email us their requirements
+  # while bookings are closed.
+  post "enquiries", to: "pages#submit_enquiry", as: :enquiries
   get "how-it-works", to: "pages#how_it_works", as: :how_it_works
   get "help", to: "pages#help", as: :help_page
   get "safety", to: "pages#safety", as: :safety
