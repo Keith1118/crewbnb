@@ -1,0 +1,11 @@
+<%# Spam guards for a public form: see SpamProtection. Both are no-ops for a
+    real person — the honeypot is invisible and Turnstile only appears once its
+    keys are configured. %>
+<div class="hidden" aria-hidden="true">
+  <%= label_tag SpamProtection::HONEYPOT_FIELD, "Leave this field empty" %>
+  <%= text_field_tag SpamProtection::HONEYPOT_FIELD, nil, tabindex: -1, autocomplete: "off" %>
+</div>
+
+<% if CaptchaVerifier.configured? %>
+  <div data-controller="captcha" data-captcha-sitekey-value="<%= CaptchaVerifier.site_key %>"></div>
+<% end %>

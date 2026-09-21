@@ -23,10 +23,14 @@ module Crewbase
     #
     config.time_zone = "Dublin"
 
-    # The inbox that everything the site sends us lands in, and the address
-    # shown to visitors. Domain mail for info@crewbase.ie isn't reaching us, so
-    # this points at a mailbox we actually read; set CONTACT_EMAIL to move it.
-    config.x.contact_email = ENV.fetch("CONTACT_EMAIL", "tullyshome@gmail.com")
+    # The address printed on the site for people to write to.
+    config.x.contact_email = ENV.fetch("CONTACT_EMAIL", "info@crewbase.ie")
+
+    # Where mail the site sends us is delivered. Deliberately separate from the
+    # address above: domain mail for info@crewbase.ie isn't reaching us, so our
+    # own copies go to a mailbox we read while the public address stays on the
+    # domain. Point ADMIN_EMAIL back at info@crewbase.ie once it forwards.
+    config.x.admin_inbox = ENV.fetch("ADMIN_EMAIL", "tullyshome@gmail.com")
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end

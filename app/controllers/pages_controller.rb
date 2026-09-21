@@ -1,4 +1,10 @@
 class PagesController < ApplicationController
+  include SpamProtection
+
+  ENQUIRY_THANKS = "Thanks — we have your requirements and we'll come back to you within 24 hours.".freeze
+  CONTACT_THANKS = "Thanks for reaching out. We'll get back to you within 24 hours.".freeze
+  CAPTCHA_FAILED = "We couldn't tell you apart from a bot. Tick the box and send it again, or email us directly.".freeze
+
   rate_limit to: 5, within: 1.minute, only: :submit_contact,
              with: -> { redirect_to contact_path, alert: "Too many messages sent. Please wait a minute and try again." }
   rate_limit to: 5, within: 1.minute, only: :submit_enquiry,
@@ -15,13 +21,22 @@ class PagesController < ApplicationController
   def submit_enquiry
     @enquiry = AccommodationEnquiry.new(enquiry_params)
 
+    # Whatever filled the honeypot is told the same thing a person is told, so
+    # it has no way to work out that it was caught.
+    return redirect_to root_path(anchor: "enquiry"), notice: ENQUIRY_THANKS if honeypot_filled?
+
+    unless captcha_passed?
+      @enquiry.errors.add(:base, CAPTCHA_FAILED)
+      @properties = featured_properties
+      return render :home, status: :unprocessable_entity
+    end
+
     if @enquiry.valid?
       submission = @enquiry.to_contact_submission
       submission.save!
       ContactMailer.auto_reply(submission).deliver_later
       ContactMailer.admin_notification(submission).deliver_later
-      redirect_to root_path(anchor: "enquiry"),
-                  notice: "Thanks — we have your requirements and we'll come back to you within 24 hours."
+      redirect_to root_path(anchor: "enquiry"), notice: ENQUIRY_THANKS
     else
       @properties = featured_properties
       render :home, status: :unprocessable_entity
@@ -38,10 +53,17 @@ class PagesController < ApplicationController
   def submit_contact
     @contact = ContactSubmission.new(contact_params)
 
+    return redirect_to contact_path, notice: CONTACT_THANKS if honeypot_filled?
+
+    unless captcha_passed?
+      @contact.errors.add(:base, CAPTCHA_FAILED)
+      return render :contact, status: :unprocessable_entity
+    end
+
     if @contact.save
       ContactMailer.auto_reply(@contact).deliver_later
       ContactMailer.admin_notification(@contact).deliver_later
-      redirect_to contact_path, notice: "Thanks for reaching out. We'll get back to you within 24 hours."
+      redirect_to contact_path, notice: CONTACT_THANKS
     else
       render :contact, status: :unprocessable_entity
     end

@@ -5,7 +5,7 @@ class HostApplicationMailer < ApplicationMailer
     @applicant = application.user
 
     mail(
-      to: contact_email,
+      to: admin_inbox,
       reply_to: @applicant.email,
       subject: "New host application — #{@application.property_address}"
     )

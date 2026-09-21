@@ -6,7 +6,9 @@ class ContactMailerTest < ActionMailer::TestCase
 
     mail = ContactMailer.admin_notification(submission)
 
-    assert_equal [ Rails.application.config.x.contact_email ], mail.to
+    assert_equal [ Rails.application.config.x.admin_inbox ], mail.to
+    # The inbox we read is deliberately not the address shown on the site.
+    assert_not_equal Rails.application.config.x.contact_email, mail.to.first
     # Sent from the domain SPF and DKIM are signed for, but hitting reply
     # answers whoever wrote in.
     assert_equal [ "info@crewbase.ie" ], mail.from

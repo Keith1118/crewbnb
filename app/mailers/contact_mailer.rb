@@ -12,7 +12,7 @@ class ContactMailer < ApplicationMailer
     @contact = contact_submission
 
     mail(
-      to: contact_email,
+      to: admin_inbox,
       # Replying in the mail client should answer the sender, not us.
       reply_to: @contact.email,
       subject: "New contact form submission: #{@contact.subject}"

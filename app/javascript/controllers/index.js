@@ -10,6 +10,9 @@ application.register("applicant-type", ApplicantTypeController)
 import BookingCalcController from "./booking_calc_controller"
 application.register("booking-calc", BookingCalcController)
 
+import CaptchaController from "./captcha_controller"
+application.register("captcha", CaptchaController)
+
 import DateRangeController from "./date_range_controller"
 application.register("date-range", DateRangeController)
 
