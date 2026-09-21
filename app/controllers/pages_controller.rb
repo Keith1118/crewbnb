@@ -94,13 +94,26 @@ class PagesController < ApplicationController
 
   private
 
-  # A small featured set for the home page — the full catalogue lives on the
-  # Find stays (properties) page.
+  HOME_PAGE_LISTINGS = 6
+
+  # Two rows of three: the listings staff have ticked as featured, topped up
+  # with the newest published ones if fewer than six are ticked. Newest-first on
+  # its own can't express the mix we want — it lands two Edenderry doubles and
+  # no twin.
   def featured_properties
-    Property.published
-            .with_attached_images
-            .order(created_at: :desc)
-            .limit(3)
+    chosen = Property.published.featured
+                     .with_attached_images
+                     .order(created_at: :desc)
+                     .limit(HOME_PAGE_LISTINGS)
+                     .to_a
+    return chosen if chosen.size >= HOME_PAGE_LISTINGS
+
+    chosen + Property.published
+                     .where.not(id: chosen.map(&:id))
+                     .with_attached_images
+                     .order(created_at: :desc)
+                     .limit(HOME_PAGE_LISTINGS - chosen.size)
+                     .to_a
   end
 
   def enquiry_params

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_27_222829) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_21_120001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -184,6 +184,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_222829) do
     t.string "country"
     t.datetime "created_at", null: false
     t.text "description"
+    t.boolean "featured", default: false, null: false
     t.boolean "has_desk", default: false
     t.boolean "has_meeting_room", default: false
     t.boolean "has_parking", default: false
@@ -206,6 +207,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_27_222829) do
     t.integer "weekday_discount", default: 15, null: false
     t.string "wifi_speed"
     t.index ["city"], name: "index_properties_on_city"
+    t.index ["featured"], name: "index_properties_on_featured"
     t.index ["latitude", "longitude"], name: "index_properties_on_latitude_and_longitude"
     t.index ["status"], name: "index_properties_on_status"
     t.index ["user_id"], name: "index_properties_on_user_id"

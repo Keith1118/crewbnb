@@ -67,7 +67,7 @@ module Admin
 
     def property_params
       permitted = params.require(:property).permit(
-        :user_id, :title, :description, :property_type, :address, :city, :country,
+        :user_id, :title, :description, :property_type, :address, :city, :country, :featured,
         :price_per_night, :weekday_discount, :bedrooms, :bathrooms, :max_guests, :status,
         :wifi_speed, :has_desk, :has_meeting_room, :has_parking, :has_printer,
         :instant_book, :cancellation_policy, :bed_configuration, :house_rules, :check_in_time,

@@ -48,6 +48,8 @@ class Property < ApplicationRecord
 
   # Scopes
   scope :published, -> { where(status: :published) }
+  # Hand-picked for the home page — see PagesController#featured_properties.
+  scope :featured, -> { where(featured: true) }
 
   # Methods
   def cancellation_refund_rate
