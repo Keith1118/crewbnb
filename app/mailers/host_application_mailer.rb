@@ -5,7 +5,8 @@ class HostApplicationMailer < ApplicationMailer
     @applicant = application.user
 
     mail(
-      to: "info@crewbase.ie",
+      to: contact_email,
+      reply_to: @applicant.email,
       subject: "New host application — #{@application.property_address}"
     )
   end

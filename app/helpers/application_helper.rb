@@ -9,6 +9,12 @@ module ApplicationHelper
     end
   end
 
+  # The address visitors are told to write to — the same inbox the mailers
+  # deliver to (see config.x.contact_email).
+  def contact_email
+    Rails.application.config.x.contact_email
+  end
+
   def meta_image
     content_for?(:meta_image) ? content_for(:meta_image) : "#{request.base_url}/icon.png"
   end

@@ -22,6 +22,11 @@ module Crewbase
     # in config/environments, which are processed later.
     #
     config.time_zone = "Dublin"
+
+    # The inbox that everything the site sends us lands in, and the address
+    # shown to visitors. Domain mail for info@crewbase.ie isn't reaching us, so
+    # this points at a mailbox we actually read; set CONTACT_EMAIL to move it.
+    config.x.contact_email = ENV.fetch("CONTACT_EMAIL", "tullyshome@gmail.com")
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end
