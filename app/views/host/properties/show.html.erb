@@ -178,8 +178,7 @@
             { icon: "desk", label: "Dedicated Desk", enabled: @property.has_desk? },
             { icon: "meeting_room", label: "Meeting Room", enabled: @property.has_meeting_room? },
             { icon: "print", label: "Printer", enabled: @property.has_printer? },
-            { icon: "local_parking", label: "Parking", enabled: @property.has_parking? },
-            { icon: "bolt", label: "Instant Book", enabled: @property.instant_book? }
+            { icon: "local_parking", label: "Parking", enabled: @property.has_parking? }
           ] %>
           <% work_features.each do |feature| %>
             <div class="flex items-center gap-2 p-3 rounded-xl <%= feature[:enabled] ? 'bg-brand/10' : 'bg-neutral-100' %>">
