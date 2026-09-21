@@ -76,6 +76,8 @@ class Property < ApplicationRecord
     (ratings.sum.to_f / ratings.size).round(1)
   end
 
+  # A Monday-to-Friday stay: five nights. Quoted everywhere in preference to
+  # the nightly rate, because that's how crews book.
   def weekly_price
     (price_per_night * 5).round
   end

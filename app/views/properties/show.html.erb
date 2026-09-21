@@ -301,7 +301,7 @@
         <div class="flex items-baseline gap-1">
           <span class="font-headline text-2xl font-extrabold text-on-surface"><%= number_to_currency(@property.price_per_night, precision: 0) %></span>
           <span class="text-on-surface-variant text-sm font-medium">/ night</span>
-          <span class="text-on-surface-variant text-sm ml-auto"><%= number_to_currency(@property.weekly_price, precision: 0) %> / week</span>
+          <span class="text-on-surface-variant text-sm ml-auto"><%= number_to_currency(@property.weekly_price, precision: 0) %> / Mon&ndash;Fri</span>
         </div>
 
         <%# Booking Form %>
@@ -486,7 +486,7 @@
   <div class="flex items-center justify-between gap-4">
     <div>
       <p class="font-headline text-lg font-extrabold text-on-surface leading-tight"><%= number_to_currency(@property.price_per_night, precision: 0) %><span class="text-sm font-medium text-on-surface-variant"> / night</span></p>
-      <p class="text-xs text-on-surface-variant"><%= number_to_currency(@property.weekly_price, precision: 0) %> / week &middot; no fees</p>
+      <p class="text-xs text-on-surface-variant"><%= number_to_currency(@property.weekly_price, precision: 0) %> / Mon&ndash;Fri &middot; no fees</p>
     </div>
     <a href="#booking-card"
        class="flex-shrink-0 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform">
