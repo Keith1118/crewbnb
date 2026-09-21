@@ -1,5 +1,5 @@
 <% content_for(:title, "Crewbase — Accommodation for working crews in Ireland") %>
-<% meta_description "Rooms and houses for working crews in Wicklow and Edenderry. Tell us the location, dates and team size and we'll come back within 24 hours — weekday pricing, parking, a proper invoice every stay." %>
+<% meta_description "Properties for working crews in Wicklow and Offaly, commutable to Dublin and Kildare. Tell us the location, dates and team size and we'll come back within 24 hours — weekday pricing, parking, a proper invoice every stay." %>
 
 <%# ===== HERO — deliberately short: the beds are the pitch and start below ===== %>
 <section class="bg-[#0F224F] pt-10 pb-12">
@@ -62,11 +62,12 @@
 <section id="our-properties" class="bg-white py-16 scroll-mt-20">
   <div class="max-w-screen-xl mx-auto px-6">
     <%# No "browse all" while the site is pared back — these six are the shop
-        window and anything else comes by email. /properties still works. %>
+        window and anything else comes by email. The catalogue still lives at
+        /properties, it just isn't linked. %>
     <div class="mb-2">
-      <h2 class="font-headline text-2xl font-bold text-slate-900">The beds</h2>
+      <h2 class="font-headline text-2xl font-bold text-slate-900">Properties</h2>
     </div>
-    <p class="text-slate-500 text-sm mb-8">Houses in Tulfarris, Wicklow and rooms in Edenderry. Tell us where the job is and we'll tell you what suits.</p>
+    <p class="text-slate-500 text-sm mb-8">Properties in Wicklow and Offaly, commutable to jobs in Dublin and Kildare. Tell us where the work is and we'll tell you what suits.</p>
 
     <% if @properties.present? %>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
