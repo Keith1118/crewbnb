@@ -103,7 +103,7 @@ class PagesController < ApplicationController
   def featured_properties
     chosen = Property.published.featured
                      .with_attached_images
-                     .order(created_at: :desc)
+                     .order(Arel.sql("featured_position ASC NULLS LAST"), created_at: :desc)
                      .limit(HOME_PAGE_LISTINGS)
                      .to_a
     return chosen if chosen.size >= HOME_PAGE_LISTINGS
