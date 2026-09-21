@@ -78,6 +78,14 @@ services:
         sync: false           # set in Render dashboard = your Resend API key (re_...)
       - key: SMTP_DOMAIN
         value: crewbase.ie
+      # --- Captcha on the public forms (dash.cloudflare.com -> Turnstile) ---
+      # Only the web service serves forms, so the cron jobs don't need these.
+      # While they're unset the forms fall back to the honeypot alone, which is
+      # why an empty value is harmless rather than a boot failure.
+      - key: TURNSTILE_SITE_KEY
+        sync: false            # public — it's rendered into the page
+      - key: TURNSTILE_SECRET_KEY
+        sync: false            # secret — set in the Render dashboard, never here
 
   # --- Daily scheduled messages -------------------------------------------
   # Sends check-in reminders (day before arrival) and review requests (after
