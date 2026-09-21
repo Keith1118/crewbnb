@@ -22,10 +22,14 @@ services:
     dockerCommand: ./bin/render-start
     autoDeploy: true           # redeploy on every push to the default branch
     envVars:
+      # Dashboard-managed on purpose. `fromDatabase` is resolved once when the
+      # service is provisioned and does NOT re-resolve on later deploys, so
+      # rotating the database password left this holding a dead credential and
+      # took the site down for an hour on 2026-07-28. Declaring it here would
+      # also mean a blueprint re-sync could overwrite the working value with
+      # the stale one. Rotations must update this by hand, on every service.
       - key: DATABASE_URL
-        fromDatabase:
-          name: crewbnb-db
-          property: connectionString
+        sync: false
       - key: SECRET_KEY_BASE
         generateValue: true    # Render generates a stable secret so boot never needs the master key
       - key: RAILS_MASTER_KEY
@@ -94,10 +98,11 @@ services:
     schedule: "0 8 * * *"
     dockerCommand: bundle exec rails crewbase:auto_messages
     envVars:
+      # Dashboard-managed — see the note on the web service above. This job was
+      # the rotation's second casualty: it kept failing at 08:00 for a day
+      # because only the web service's credential got fixed.
       - key: DATABASE_URL
-        fromDatabase:
-          name: crewbnb-db
-          property: connectionString
+        sync: false
       - key: SECRET_KEY_BASE
         generateValue: true    # its own value is fine — this job has no sessions or cookies
       - key: RAILS_MASTER_KEY
