@@ -77,12 +77,9 @@
         <div class="hidden md:flex items-center gap-8">
           <%= link_to "Home", root_path,
               class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors" %>
-          <%= link_to "Find stays", properties_path,
-              class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors" %>
-          <%= link_to "How it works", how_it_works_path,
-              class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors" %>
-          <%= link_to "List your property", new_user_registration_path(role: "host"),
-              class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors" %>
+          <%# Pared back to Home + Contact while the site is an email-enquiry
+              landing page. The other pages still work at their URLs — see
+              PagesController — they're just not advertised. %>
           <%= link_to "Contact", contact_path,
               class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors" %>
 
@@ -163,11 +160,13 @@
               </div>
             </div>
           <% else %>
-            <%# Login / Sign Up %>
-            <%= link_to "Log in", new_user_session_path,
-                class: "text-slate-600 text-sm font-medium hover:text-slate-900 transition-colors px-3 py-2" %>
-            <%= link_to "Sign up", new_user_registration_path,
-                class: "bg-[#0F224F] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#002d75] transition-colors" %>
+            <%# The one thing we want a visitor to do. Sign-in lives in the
+                footer so the nav stays a single message. %>
+            <%= mail_to contact_email, subject: "Accommodation enquiry",
+                class: "inline-flex items-center gap-2 bg-[#0F224F] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-[#002d75] transition-colors" do %>
+              <span class="material-symbols-outlined text-base" aria-hidden="true">mail</span>
+              Email us
+            <% end %>
           <% end %>
         </div>
 
@@ -182,9 +181,6 @@
           <div data-mobile-menu-target="menu" class="hidden absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-lg">
             <div class="px-6 py-4 space-y-1">
               <%= link_to "Home", root_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
-              <%= link_to "Find stays", properties_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
-              <%= link_to "How it works", how_it_works_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
-              <%= link_to "About", about_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
               <%= link_to "Contact", contact_path, class: "block py-3 text-slate-700 font-medium text-sm border-b border-slate-100", data: { action: "click->mobile-menu#close" } %>
 
               <% if user_signed_in? && (current_user.host? || current_user.admin?) %>
@@ -204,9 +200,9 @@
                   <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-left py-3 text-error font-medium text-sm cursor-pointer" %>
                 </div>
               <% else %>
-                <div class="flex gap-3 pt-3">
-                  <%= link_to "Log in", new_user_session_path, class: "flex-1 text-center py-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors" %>
-                  <%= link_to "Sign up", new_user_registration_path, class: "flex-1 text-center py-2.5 bg-[#0F224F] text-white rounded-xl text-sm font-semibold hover:bg-[#002d75] transition-colors" %>
+                <div class="pt-3">
+                  <%= mail_to contact_email, "Email us", subject: "Accommodation enquiry",
+                      class: "block text-center py-2.5 bg-[#0F224F] text-white rounded-xl text-sm font-semibold hover:bg-[#002d75] transition-colors" %>
                 </div>
               <% end %>
             </div>
@@ -256,21 +252,11 @@
         </div>
 
         <div>
-          <h4 class="font-semibold text-slate-900 mb-4 text-sm">Platform</h4>
+          <h4 class="font-semibold text-slate-900 mb-4 text-sm">Crewbase</h4>
           <div class="space-y-3 text-sm text-slate-500">
-            <%= link_to "Find stays", properties_path, class: "block hover:text-slate-900 transition-colors" %>
-            <%= link_to "List a property", new_user_registration_path(role: "host"), class: "block hover:text-slate-900 transition-colors" %>
-            <%= link_to "How it works", how_it_works_path, class: "block hover:text-slate-900 transition-colors" %>
-            <%= link_to "About us", about_path, class: "block hover:text-slate-900 transition-colors" %>
-          </div>
-        </div>
-
-        <div>
-          <h4 class="font-semibold text-slate-900 mb-4 text-sm">Support</h4>
-          <div class="space-y-3 text-sm text-slate-500">
-            <%= link_to "Help centre", help_page_path, class: "block hover:text-slate-900 transition-colors" %>
+            <%= link_to "Home", root_path, class: "block hover:text-slate-900 transition-colors" %>
             <%= link_to "Contact us", contact_path, class: "block hover:text-slate-900 transition-colors" %>
-            <%= link_to "Safety", safety_path, class: "block hover:text-slate-900 transition-colors" %>
+            <%= mail_to contact_email, contact_email, subject: "Accommodation enquiry", class: "block hover:text-slate-900 transition-colors" %>
           </div>
         </div>
 
@@ -284,8 +270,12 @@
         </div>
       </div>
 
-      <div class="px-8 py-6 border-t border-slate-200 max-w-screen-xl mx-auto">
+      <div class="px-8 py-6 border-t border-slate-200 max-w-screen-xl mx-auto flex items-center justify-between gap-4">
         <p class="text-sm text-slate-400">&copy; <%= Date.current.year %> crewbase</p>
+        <% unless user_signed_in? %>
+          <%# Staff door: the nav no longer carries a sign-in link. %>
+          <%= link_to "Staff log in", new_user_session_path, class: "text-sm text-slate-400 hover:text-slate-600 transition-colors" %>
+        <% end %>
       </div>
     </footer>
   </body>

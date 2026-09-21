@@ -49,7 +49,8 @@ class MobileLayoutTest < ApplicationSystemTestCase
     assert_hittable(toggle, "mobile menu toggle")
     toggle.click
 
-    assert_text(/find stays/i, wait: 5)
+    # The menu is Home + Contact now — see the layout's nav.
+    assert_text(/contact/i, wait: 5)
     assert_no_js_errors
   end
 

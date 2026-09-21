@@ -1,8 +1,9 @@
 xml.instruct! :xml, version: "1.0", encoding: "UTF-8"
 xml.urlset xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9" do
+  # Only what the site links to now. The other pages still respond, but while
+  # this is an email-enquiry landing page they aren't worth indexing.
   static_pages = [
-    root_url, properties_url, how_it_works_url, about_url, contact_url,
-    help_page_url, safety_url, privacy_url, terms_url, cookies_policy_url
+    root_url, contact_url, privacy_url, terms_url, cookies_policy_url
   ]
 
   static_pages.each do |url|
