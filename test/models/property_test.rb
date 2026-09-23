@@ -26,6 +26,26 @@ class PropertyTest < ActiveSupport::TestCase
     assert_equal [ live ], Property.published.to_a
   end
 
+  test "host_name prefers the listing's own host over the account holder" do
+    property = create(:property, host_display_name: "Rory")
+
+    assert_equal "Rory", property.host_name
+  end
+
+  test "host_name falls back to the account holder when no host is named" do
+    host = create(:user, first_name: "Keith")
+
+    assert_equal "Keith", create(:property, user: host, host_display_name: nil).host_name
+  end
+
+  # The listing page used to print the local part of the owner's email address
+  # when an account had no first name, on a page anyone can read.
+  test "host_name never falls back to an email address" do
+    host = create(:user, first_name: nil, email: "host1@crewbase.ie")
+
+    assert_equal "the host", create(:property, user: host, host_display_name: nil).host_name
+  end
+
   test "weekly_price is four nights, matching a Mon-Fri booking" do
     assert_equal 320, create(:property, price_per_night: 80).weekly_price
   end

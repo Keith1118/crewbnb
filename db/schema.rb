@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_23_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_23_160001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -190,6 +190,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_23_090000) do
     t.boolean "has_meeting_room", default: false
     t.boolean "has_parking", default: false
     t.boolean "has_printer", default: false
+    t.string "host_display_name"
     t.text "house_rules"
     t.datetime "ical_last_synced_at"
     t.string "ical_url"

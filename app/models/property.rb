@@ -80,6 +80,15 @@ class Property < ApplicationRecord
   # out on Friday). Quoted everywhere in preference to the nightly rate, because
   # that's how crews book. Must match Booking#nights, which counts the same way:
   # when these disagreed the site advertised a Mon-Fri price it never charged.
+  # The name shown publicly as the host of this listing. Falls back to the
+  # owning account, which is shared across listings — set host_display_name
+  # when a place is hosted by someone other than the account holder. Never
+  # falls back to the email address: that used to leak the local part of a
+  # private address onto a public page.
+  def host_name
+    host_display_name.presence || user&.first_name.presence || "the host"
+  end
+
   MON_FRI_NIGHTS = 4
 
   def weekly_price

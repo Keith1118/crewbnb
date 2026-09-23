@@ -74,7 +74,7 @@
       <div class="flex items-center gap-2 mt-2">
         <span class="material-symbols-outlined text-on-surface-variant text-lg">person</span>
         <p class="text-on-surface-variant">
-          Hosted by <span class="font-semibold text-on-surface"><%= @property.user.first_name || @property.user.email.split("@").first %></span>
+          Hosted by <span class="font-semibold text-on-surface"><%= @property.host_name %></span>
         </p>
         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-primary-container/10 text-primary-container">
           <span class="material-symbols-outlined text-sm" aria-hidden="true">verified</span>
