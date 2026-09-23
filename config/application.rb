@@ -30,7 +30,7 @@ module Crewbase
     # address above: domain mail for info@crewbase.ie isn't reaching us, so our
     # own copies go to a mailbox we read while the public address stays on the
     # domain. Point ADMIN_EMAIL back at info@crewbase.ie once it forwards.
-    config.x.admin_inbox = ENV.fetch("ADMIN_EMAIL", "tullyshome@gmail.com")
+    config.x.admin_inbox = ENV.fetch("ADMIN_EMAIL", "crewbaseireland@gmail.com")
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end
