@@ -44,6 +44,16 @@ class PublicBrowsingTest < ActionDispatch::IntegrationTest
     assert_select "[aria-disabled]", count: 0
   end
 
+  test "a listing links from the header to its map" do
+    property = create(:property, status: :published, city: "Blessington", country: "Ireland")
+
+    get property_path(property)
+
+    assert_response :success
+    assert_select "a[href=?]", "#location", text: /View on map/
+    assert_select "section#location"
+  end
+
   test "an archived listing is not publicly bookable via new" do
     property = create(:property, status: :archived)
     sign_in create(:user, :business_verified)

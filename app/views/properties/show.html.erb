@@ -1,3 +1,10 @@
+<%# Where the map points. Worked out here rather than beside the embed so the
+    header's "View on map" link can tell whether there's a map to link to. %>
+<% map_query = if @property.latitude.present? && @property.longitude.present?
+                 "#{@property.latitude},#{@property.longitude}"
+               else
+                 [ @property.address, @property.city, @property.country ].compact_blank.join(", ").presence
+               end %>
 <% content_for(:title, "#{@property.title} - Crewbase") %>
 <% meta_description "#{@property.title} in #{@property.city}, #{@property.country}. #{@property.bedrooms} beds, #{@property.max_guests} guests. From EUR #{@property.price_per_night.to_i}/night. Book on Crewbase." %>
 
@@ -56,7 +63,7 @@
 
   <%# Property Header %>
   <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
-    <div>
+    <div class="flex-1 min-w-0">
       <h1 class="font-headline text-2xl md:text-3xl font-extrabold text-on-surface tracking-tight">
         <%= @property.title %>
       </h1>
@@ -73,6 +80,12 @@
           <span class="material-symbols-outlined text-sm" aria-hidden="true">verified</span>
           Verified host
         </span>
+        <% if map_query.present? %>
+          <%= link_to "#location", class: "ml-auto flex-shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-container hover:underline" do %>
+            <span class="material-symbols-outlined text-base" aria-hidden="true">map</span>
+            View on map
+          <% end %>
+        <% end %>
       </div>
     </div>
 
@@ -391,14 +404,10 @@
     </div>
   </div>
 
-  <%# Location — free Google Maps embed (no API key required) %>
-  <% if @property.latitude.present? && @property.longitude.present? %>
-    <% map_query = "#{@property.latitude},#{@property.longitude}" %>
-  <% elsif [@property.address, @property.city, @property.country].any?(&:present?) %>
-    <% map_query = [@property.address, @property.city, @property.country].compact_blank.join(", ") %>
-  <% end %>
-  <% if defined?(map_query) && map_query.present? %>
-    <section class="mt-16 border-t border-outline-variant/20 pt-10">
+  <%# Location — free Google Maps embed (no API key required). scroll-mt keeps
+      the heading clear of the top of the viewport when "View on map" jumps here. %>
+  <% if map_query.present? %>
+    <section id="location" class="scroll-mt-24 mt-16 border-t border-outline-variant/20 pt-10">
       <div class="flex items-center gap-3 mb-6">
         <span class="material-symbols-outlined text-primary-container text-2xl">map</span>
         <h2 class="font-headline text-xl font-bold text-on-surface">Location</h2>
