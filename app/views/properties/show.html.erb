@@ -361,9 +361,11 @@
               <p class="text-xs text-on-surface-variant text-center">You won't be charged yet</p>
             <% end %>
           <% else %>
-            <%# Pre-launch: bookings not open yet %>
-            <div class="w-full bg-surface-container text-on-surface-variant py-3.5 rounded-xl font-headline font-bold text-sm text-center opacity-70 cursor-not-allowed" aria-disabled="true">Bookings opening soon</div>
-            <p class="text-xs text-on-surface-variant text-center">We're launching bookings shortly — check back soon.</p>
+            <%# Pre-launch: bookings aren't open, so send them to the enquiry
+                form rather than a dead button they can't do anything with. %>
+            <%= link_to "Enquire", root_path(anchor: "enquiry"),
+                class: "block w-full bg-primary-container text-on-primary-container py-3.5 rounded-xl font-headline font-bold text-sm text-center hover:bg-primary transition-colors active:scale-[0.98]" %>
+            <p class="text-xs text-on-surface-variant text-center">Tell us your dates and crew size and we'll come straight back to you.</p>
           <% end %>
         <% end %>
 
@@ -490,7 +492,11 @@
     </div>
     <a href="#booking-card"
        class="flex-shrink-0 bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-headline font-bold text-sm active:scale-[0.98] transition-transform">
-      <%= @property.instant_book? && StripeConfig.configured? ? "Book now" : "Request to book" %>
+      <% if bookings_open? %>
+        <%= @property.instant_book? && StripeConfig.configured? ? "Book now" : "Request to book" %>
+      <% else %>
+        Enquire
+      <% end %>
     </a>
   </div>
 </div>

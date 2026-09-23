@@ -31,6 +31,19 @@ class PublicBrowsingTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  # Bookings are closed pre-launch, so the booking card offers an enquiry
+  # instead. It used to show a dead "Bookings opening soon" button, which gave a
+  # ready buyer nothing to do.
+  test "a listing offers an enquiry while bookings are closed" do
+    property = create(:property, status: :published)
+
+    get property_path(property)
+
+    assert_response :success
+    assert_select "a[href=?]", root_path(anchor: "enquiry"), text: "Enquire"
+    assert_select "[aria-disabled]", count: 0
+  end
+
   test "an archived listing is not publicly bookable via new" do
     property = create(:property, status: :archived)
     sign_in create(:user, :business_verified)
