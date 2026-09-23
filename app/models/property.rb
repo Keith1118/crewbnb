@@ -76,10 +76,14 @@ class Property < ApplicationRecord
     (ratings.sum.to_f / ratings.size).round(1)
   end
 
-  # A Monday-to-Friday stay: five nights. Quoted everywhere in preference to
-  # the nightly rate, because that's how crews book.
+  # A Monday-to-Friday stay: four nights (Mon, Tue, Wed, Thu — the guest checks
+  # out on Friday). Quoted everywhere in preference to the nightly rate, because
+  # that's how crews book. Must match Booking#nights, which counts the same way:
+  # when these disagreed the site advertised a Mon-Fri price it never charged.
+  MON_FRI_NIGHTS = 4
+
   def weekly_price
-    (price_per_night * 5).round
+    (price_per_night * MON_FRI_NIGHTS).round
   end
 
   # The typical weekend/tourist nightly rate this weekday rate undercuts,

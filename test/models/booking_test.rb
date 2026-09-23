@@ -11,6 +11,19 @@ class BookingTest < ActiveSupport::TestCase
     assert_equal 3, booking.nights
   end
 
+  # The site advertises weekly_price as the Mon-Fri figure; this is what a crew
+  # actually gets charged for that stay. They drifted apart once — weekly_price
+  # counted five nights while Booking#nights counted four — and the site quoted
+  # €800 for a stay it would have billed at €640.
+  test "a Monday-to-Friday booking is charged the advertised Mon-Fri price" do
+    monday = Date.current.next_occurring(:monday) + 7
+    booking = build(:booking, property: @property,
+                              check_in: monday, check_out: monday + 4)
+
+    assert_equal 4, booking.nights
+    assert_equal @property.weekly_price, booking.send(:calculate_total)
+  end
+
   test "check-out must be after check-in" do
     booking = build(:booking, check_in: Date.current + 10, check_out: Date.current + 7)
 

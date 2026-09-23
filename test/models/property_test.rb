@@ -26,8 +26,8 @@ class PropertyTest < ActiveSupport::TestCase
     assert_equal [ live ], Property.published.to_a
   end
 
-  test "weekly_price is five nights" do
-    assert_equal 400, create(:property, price_per_night: 80).weekly_price
+  test "weekly_price is four nights, matching a Mon-Fri booking" do
+    assert_equal 320, create(:property, price_per_night: 80).weekly_price
   end
 
   test "typical_weekend_rate grosses the discount back up" do
