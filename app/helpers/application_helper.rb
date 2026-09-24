@@ -19,6 +19,16 @@ module ApplicationHelper
     content_for?(:meta_image) ? content_for(:meta_image) : "#{request.base_url}/icon.png"
   end
 
+  # Schema.org wants a Time as ISO 8601 ("16:00:00"). Listings store check-in
+  # and check-out as free text a host typed ("4:00 PM"), which Search Console
+  # rejects as the wrong value type. Returns nil when it can't be parsed, and
+  # the caller leaves the field out rather than emitting something invalid.
+  def schema_time(value)
+    Time.zone.parse(value.to_s)&.strftime("%H:%M:%S")
+  rescue ArgumentError
+    nil
+  end
+
   # Sized variant of an uploaded image, falling back to the original for
   # anything that can't be processed — pages must never break over a thumbnail.
   def sized_image(attachment, **transform)

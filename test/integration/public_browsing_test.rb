@@ -54,6 +54,25 @@ class PublicBrowsingTest < ActionDispatch::IntegrationTest
     assert_select "section#location"
   end
 
+  # Search Console rejects a relative image or a "4:00 PM" time as the wrong
+  # value type, and drops the rich result for the page.
+  test "a listing's structured data is valid and uses absolute URLs" do
+    property = create(:property, status: :published,
+                                 check_in_time: "4:00 PM", check_out_time: "11:00 AM")
+
+    get property_path(property)
+
+    json = css_select("script[type='application/ld+json']")
+             .map { |n| JSON.parse(CGI.unescapeHTML(n.text)) }
+    lodging = json.find { |d| d["@type"] == "LodgingBusiness" }
+
+    assert lodging, "no LodgingBusiness block"
+    assert_equal "16:00:00", lodging["checkinTime"]
+    assert_equal "11:00:00", lodging["checkoutTime"]
+    assert_match %r{\Ahttps?://}, lodging["url"]
+    assert_match %r{\Ahttps?://}, lodging["image"] if lodging["image"]
+  end
+
   test "an archived listing is not publicly bookable via new" do
     property = create(:property, status: :archived)
     sign_in create(:user, :business_verified)

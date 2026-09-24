@@ -16,8 +16,10 @@
       "name": <%= @property.title.to_json %>,
       "description": <%= @property.description.to_s.truncate(300).to_json %>,
       "url": <%= property_url(@property).to_json %>,
+      <%# Must be an absolute URL — url_for on an attachment gives a path, and
+          Search Console rejects it as the wrong value type. %>
       <% if @property.images.attached? %>
-      "image": <%= url_for(@property.images.first).to_json %>,
+      "image": <%= rails_blob_url(@property.images.first).to_json %>,
       <% end %>
       "address": {
         "@type": "PostalAddress",
@@ -41,8 +43,14 @@
         "reviewCount": <%= @property.reviews.count %>
       },
       <% end %>
-      "checkinTime": <%= (@property.check_in_time.presence || "3:00 PM").to_json %>,
-      "checkoutTime": <%= (@property.check_out_time.presence || "10:30 AM").to_json %>,
+      <% checkin = schema_time(@property.check_in_time.presence || "3:00 PM") %>
+      <% checkout = schema_time(@property.check_out_time.presence || "10:30 AM") %>
+      <% if checkin %>
+      "checkinTime": <%= checkin.to_json %>,
+      <% end %>
+      <% if checkout %>
+      "checkoutTime": <%= checkout.to_json %>,
+      <% end %>
       "priceRange": "€<%= @property.price_per_night.to_i %> per night"
     }
   </script>
