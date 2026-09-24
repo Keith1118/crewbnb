@@ -19,6 +19,53 @@ module ApplicationHelper
     content_for?(:meta_image) ? content_for(:meta_image) : "#{request.base_url}/icon.png"
   end
 
+  # The JSON-LD describing a listing, as a Hash.
+  #
+  # Built here rather than written out by hand in the template. ERB escapes
+  # what <%= %> prints, so "<%= title.to_json %>" inside a <script> emitted
+  # &quot; instead of " — and entities are NOT decoded inside a script tag, so
+  # Google received invalid JSON and dropped the page's rich result. Render it
+  # with `raw json_escape(...)`, never a bare <%= %>.
+  def lodging_structured_data(property)
+    data = {
+      "@context" => "https://schema.org",
+      "@type" => "LodgingBusiness",
+      "name" => property.title,
+      "description" => property.description.to_s.truncate(300),
+      "url" => property_url(property),
+      "address" => {
+        "@type" => "PostalAddress",
+        "streetAddress" => property.address.presence,
+        "addressLocality" => property.city,
+        "addressCountry" => property.country
+      }.compact
+    }
+
+    data["image"] = rails_blob_url(property.images.first) if property.images.attached?
+
+    if property.latitude.present? && property.longitude.present?
+      data["geo"] = {
+        "@type" => "GeoCoordinates",
+        "latitude" => property.latitude.to_f,
+        "longitude" => property.longitude.to_f
+      }
+    end
+
+    if property.average_rating && property.reviews.any?
+      data["aggregateRating"] = {
+        "@type" => "AggregateRating",
+        "ratingValue" => property.average_rating,
+        "reviewCount" => property.reviews.count
+      }
+    end
+
+    data["checkinTime"] = schema_time(property.check_in_time.presence || "3:00 PM")
+    data["checkoutTime"] = schema_time(property.check_out_time.presence || "10:30 AM")
+    data["priceRange"] = "\u20ac#{property.price_per_night.to_i} per night"
+
+    data.compact
+  end
+
   # Schema.org wants a Time as ISO 8601 ("16:00:00"). Listings store check-in
   # and check-out as free text a host typed ("4:00 PM"), which Search Console
   # rejects as the wrong value type. Returns nil when it can't be parsed, and

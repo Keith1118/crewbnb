@@ -9,50 +9,10 @@
 <% meta_description "#{@property.title} in #{@property.city}, #{@property.country}. #{@property.bedrooms} beds, #{@property.max_guests} guests. From EUR #{@property.price_per_night.to_i}/night. Book on Crewbase." %>
 
 <% content_for(:head) do %>
+  <%# raw + json_escape, never a bare <%%= %%>: ERB would HTML-escape the
+      quotes into &quot;, which a script tag does not decode. %>
   <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "LodgingBusiness",
-      "name": <%= @property.title.to_json %>,
-      "description": <%= @property.description.to_s.truncate(300).to_json %>,
-      "url": <%= property_url(@property).to_json %>,
-      <%# Must be an absolute URL — url_for on an attachment gives a path, and
-          Search Console rejects it as the wrong value type. %>
-      <% if @property.images.attached? %>
-      "image": <%= rails_blob_url(@property.images.first).to_json %>,
-      <% end %>
-      "address": {
-        "@type": "PostalAddress",
-        <% if @property.address.present? %>
-        "streetAddress": <%= @property.address.to_json %>,
-        <% end %>
-        "addressLocality": <%= @property.city.to_json %>,
-        "addressCountry": <%= @property.country.to_json %>
-      },
-      <% if @property.latitude.present? && @property.longitude.present? %>
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": <%= @property.latitude %>,
-        "longitude": <%= @property.longitude %>
-      },
-      <% end %>
-      <% if @property.average_rating && @property.reviews.any? %>
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": <%= @property.average_rating %>,
-        "reviewCount": <%= @property.reviews.count %>
-      },
-      <% end %>
-      <% checkin = schema_time(@property.check_in_time.presence || "3:00 PM") %>
-      <% checkout = schema_time(@property.check_out_time.presence || "10:30 AM") %>
-      <% if checkin %>
-      "checkinTime": <%= checkin.to_json %>,
-      <% end %>
-      <% if checkout %>
-      "checkoutTime": <%= checkout.to_json %>,
-      <% end %>
-      "priceRange": "€<%= @property.price_per_night.to_i %> per night"
-    }
+    <%= raw json_escape(lodging_structured_data(@property).to_json) %>
   </script>
 <% end %>
 

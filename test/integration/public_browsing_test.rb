@@ -62,8 +62,12 @@ class PublicBrowsingTest < ActionDispatch::IntegrationTest
 
     get property_path(property)
 
-    json = css_select("script[type='application/ld+json']")
-             .map { |n| JSON.parse(CGI.unescapeHTML(n.text)) }
+    # Parse exactly what is served. Entities are NOT decoded inside a script
+    # tag, so unescaping here would hide the very bug this guards against:
+    # ERB once turned every quote into &quot; and Google refused the page.
+    scripts = css_select("script[type='application/ld+json']").map(&:text)
+    scripts.each { |raw| assert_no_match(/&quot;|&#39;|&amp;quot;/, raw) }
+    json = scripts.map { |raw| JSON.parse(raw) }
     lodging = json.find { |d| d["@type"] == "LodgingBusiness" }
 
     assert lodging, "no LodgingBusiness block"
