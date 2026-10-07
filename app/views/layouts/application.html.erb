@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="scroll-smooth" lang="en">
   <head>
-    <title><%= content_for(:title) || "Crewbase — Crew Accommodation, Booked in Minutes" %></title>
+    <title><%= content_for(:title) || "Crewbase — Contractor & Crew Accommodation in Ireland" %></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
     <%# Open Graph / Social Sharing %>
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Crewbase">
-    <meta property="og:title" content="<%= content_for(:title) || 'Crewbase — Crew Accommodation, Booked in Minutes' %>">
+    <meta property="og:title" content="<%= content_for(:title) || 'Crewbase — Contractor & Crew Accommodation in Ireland' %>">
     <meta property="og:description" content="<%= meta_description %>">
     <meta property="og:image" content="<%= meta_image %>">
     <meta property="og:url" content="<%= request.original_url %>">
@@ -37,7 +37,7 @@
         "url": "<%= request.base_url %>",
         "logo": "<%= request.base_url %>/icon.png",
         "email": "<%= contact_email %>",
-        "description": "Accommodation for working crews of every kind — construction, film, engineering, business teams and more. Weekday pricing, automatic invoices, stays built for people who travel for work."
+        "description": "Contractor accommodation in Ireland for working crews of every kind — construction, film, engineering, business teams and more. Weekday pricing, automatic invoices, stays built for people who travel for work."
       }
     </script>
 
@@ -259,6 +259,18 @@
             <%= mail_to contact_email, contact_email, subject: "Accommodation enquiry", class: "block hover:text-slate-900 transition-colors" %>
           </div>
         </div>
+
+        <% if (footer_towns = Town.with_listings).any? %>
+          <div>
+            <h4 class="font-semibold text-slate-900 mb-4 text-sm">Contractor accommodation</h4>
+            <div class="space-y-3 text-sm text-slate-500">
+              <% footer_towns.each do |town| %>
+                <%= link_to town.name, town_path(town), class: "block hover:text-slate-900 transition-colors" %>
+              <% end %>
+              <%= link_to "All listings", properties_path, class: "block hover:text-slate-900 transition-colors" %>
+            </div>
+          </div>
+        <% end %>
 
         <div>
           <h4 class="font-semibold text-slate-900 mb-4 text-sm">Legal</h4>

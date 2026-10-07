@@ -5,14 +5,25 @@
                else
                  [ @property.address, @property.city, @property.country ].compact_blank.join(", ").presence
                end %>
-<% content_for(:title, "#{@property.title} - Crewbase") %>
-<% meta_description "#{@property.title} in #{@property.city}, #{@property.country}. #{@property.bedrooms} beds, #{@property.max_guests} guests. From EUR #{@property.price_per_night.to_i}/night. Book on Crewbase." %>
+<% town = Town.for_city(@property.city) %>
+<% content_for(:title, listing_page_title(@property)) %>
+<% meta_description "Contractor accommodation in #{[@property.city, (town && "Co. #{town.county}")].compact_blank.join(", ")}: #{@property.title}, sleeps #{@property.max_guests}#{" with parking" if @property.has_parking}. From €#{@property.price_per_night.to_i} a night, weekday pricing and an invoice for every stay." %>
 
 <% content_for(:head) do %>
-  <%# raw + json_escape, never a bare <%%= %%>: ERB would HTML-escape the
-      quotes into &quot;, which a script tag does not decode. %>
+  <%# raw + json_escape, never a bare output tag: ERB would HTML-escape the
+      quotes into &quot;, which a script tag does not decode. (Don't write the
+      tag itself in this comment either: its closing delimiter ends the
+      comment early and the rest is printed onto the page.) %>
   <script type="application/ld+json">
     <%= raw json_escape(lodging_structured_data(@property).to_json) %>
+  </script>
+  <script type="application/ld+json">
+    <%= raw json_escape(breadcrumb_structured_data([
+          [ "Crewbase", root_url ],
+          [ "Contractor accommodation", properties_url ],
+          (town && [ town.name, town_url(town) ]),
+          [ @property.title, property_url(@property) ]
+        ].compact).to_json) %>
   </script>
 <% end %>
 
@@ -23,10 +34,14 @@
 
 <div class="max-w-screen-xl mx-auto px-6 md:px-8 py-8">
   <%# Breadcrumb %>
-  <nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-6">
-    <%= link_to "Properties", properties_path, class: "hover:text-primary-container transition-colors" %>
-    <span class="material-symbols-outlined text-base">chevron_right</span>
-    <span class="text-on-surface font-medium truncate"><%= @property.title %></span>
+  <nav class="flex items-center gap-2 text-sm text-on-surface-variant mb-6 min-w-0" aria-label="Breadcrumb">
+    <%= link_to "Contractor accommodation", properties_path, class: "whitespace-nowrap hover:text-primary-container transition-colors" %>
+    <span class="material-symbols-outlined text-base" aria-hidden="true">chevron_right</span>
+    <% if town %>
+      <%= link_to town.name, town_path(town), class: "whitespace-nowrap hover:text-primary-container transition-colors" %>
+      <span class="material-symbols-outlined text-base" aria-hidden="true">chevron_right</span>
+    <% end %>
+    <span class="text-on-surface font-medium truncate min-w-0"><%= @property.title %></span>
   </nav>
 
   <%# Property Header %>

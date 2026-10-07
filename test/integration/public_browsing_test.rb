@@ -77,6 +77,16 @@ class PublicBrowsingTest < ActionDispatch::IntegrationTest
     assert_match %r{\Ahttps?://}, lodging["image"] if lodging["image"]
   end
 
+  # A template comment that mentioned an output tag closed itself early and
+  # printed the rest of the comment at the top of every listing.
+  test "no template comment leaks onto a listing page" do
+    property = create(:property, status: :published)
+
+    get property_path(property)
+
+    assert_no_match(/ERB would|%>/, @response.body)
+  end
+
   test "an archived listing is not publicly bookable via new" do
     property = create(:property, status: :archived)
     sign_in create(:user, :business_verified)
@@ -117,6 +127,72 @@ class PublicBrowsingTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match "Sleeps Eight", @response.body
     assert_no_match "Sleeps Two", @response.body
+  end
+
+  test "a town page lists that town's published stays and nothing else" do
+    create(:property, status: :published, city: "Edenderry", title: "Edenderry Twin")
+    create(:property, :draft, city: "Edenderry", title: "Edenderry Draft")
+    create(:property, status: :published, city: "Blessington", title: "Lakeside House")
+
+    get town_path("edenderry")
+
+    assert_response :success
+    assert_select "h1", text: /Contractor accommodation in Edenderry, Co\. Offaly/
+    assert_select "title", text: /Contractor Accommodation in Edenderry/
+    assert_match "Edenderry Twin", @response.body
+    assert_no_match "Edenderry Draft", @response.body
+    assert_no_match "Lakeside House", @response.body
+    # Links across to the other town that has listings.
+    assert_select "a[href=?]", town_path("blessington")
+  end
+
+  test "a town page's structured data parses" do
+    create(:property, status: :published, city: "Edenderry")
+
+    get town_path("edenderry")
+
+    types = css_select("script[type='application/ld+json']").map { |s| JSON.parse(s.text)["@type"] }
+    assert_includes types, "BreadcrumbList"
+    assert_includes types, "ItemList"
+  end
+
+  # An empty town page is the thin kind Google penalises; an unknown slug is a
+  # typo. Neither should render.
+  test "a town with no live listings, or no such town, is a 404" do
+    create(:property, :draft, city: "Blessington")
+
+    get town_path("blessington")
+    assert_response :not_found
+
+    get town_path("atlantis")
+    assert_response :not_found
+  end
+
+  # Ten listings are titled "Double Room" or "Twin Room"; the town and the
+  # category are what stop them all having the same <title>.
+  test "a listing's title names the town and the category" do
+    property = create(:property, status: :published, title: "Double Room", city: "Edenderry")
+
+    get property_path(property)
+
+    assert_select "title", text: "Double Room — Contractor Accommodation in Edenderry | Crewbase"
+    assert_select "nav[aria-label=Breadcrumb] a[href=?]", town_path("edenderry")
+    crumbs = css_select("script[type='application/ld+json']").map { |s| JSON.parse(s.text) }
+                                                             .find { |d| d["@type"] == "BreadcrumbList" }
+    assert_equal [ "Crewbase", "Contractor accommodation", "Edenderry", "Double Room" ],
+                 crumbs["itemListElement"].map { |i| i["name"] }
+  end
+
+  test "the home page and sitemap link to towns with listings only" do
+    create(:property, status: :published, city: "Edenderry")
+
+    get root_path
+    assert_select "a[href=?]", town_path("edenderry")
+    assert_select "a[href=?]", town_path("blessington"), count: 0
+
+    get sitemap_path
+    assert_match town_url("edenderry"), @response.body
+    assert_no_match town_url("blessington"), @response.body
   end
 
   private

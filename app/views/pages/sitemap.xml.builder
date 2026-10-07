@@ -17,6 +17,14 @@ xml.urlset xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9" do
     end
   end
 
+  # Town landing pages — see Town. Only towns with a live listing; the rest 404.
+  @towns.each do |town|
+    xml.url do
+      xml.loc town_url(town)
+      xml.changefreq "weekly"
+    end
+  end
+
   @properties.each do |property|
     xml.url do
       xml.loc property_url(property)

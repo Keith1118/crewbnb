@@ -20,6 +20,8 @@ Rails.application.routes.draw do
   get "privacy", to: "pages#privacy", as: :privacy
   get "terms", to: "pages#terms", as: :terms
   get "cookies", to: "pages#cookies", as: :cookies_policy
+  # One landing page per town we have listings in — see Town.
+  get "contractor-accommodation/:id", to: "towns#show", as: :town
   get "sitemap.xml", to: "pages#sitemap", defaults: { format: "xml" }, as: :sitemap
 
   resources :properties, only: [ :index, :show ] do

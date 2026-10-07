@@ -1,12 +1,13 @@
-<% content_for(:title, "Crewbase — Accommodation for working crews in Leinster") %>
-<% meta_description "Properties for working crews in Wicklow and Offaly, commutable to Dublin and Kildare. Tell us the location, dates and team size and we'll come back within 24 hours — weekday pricing, parking, a proper invoice every stay." %>
+<% content_for(:title, "Contractor Accommodation in Wicklow & Offaly, near Dublin | Crewbase") %>
+<% meta_description "Contractor accommodation in Wicklow and Offaly, commutable to Dublin and Kildare. Weekday pricing, parking and a proper invoice for every stay. We reply within 24 hours." %>
+<% towns = Town.with_listings %>
 
 <%# ===== HERO — deliberately short: the beds are the pitch and start below ===== %>
 <section class="bg-[#0F224F] pt-10 pb-12">
   <div class="max-w-screen-xl mx-auto px-6">
     <p class="text-blue-200/60 text-sm font-medium mb-3">For companies housing teams in Ireland</p>
     <h1 class="font-headline text-3xl md:text-4xl font-extrabold text-white leading-[1.1] tracking-tight mb-4 max-w-3xl">
-      Accommodation for working crews in Leinster.
+      Contractor accommodation for working crews in Leinster.
     </h1>
     <p class="text-blue-200/80 text-base md:text-lg max-w-xl mb-8">
       Beds near the site with weekday pricing, parking and a proper invoice every stay. Email us what you need and we'll come back within 24 hours.
@@ -65,9 +66,9 @@
         window and anything else comes by email. The catalogue still lives at
         /properties, it just isn't linked. %>
     <div class="mb-2">
-      <h2 class="font-headline text-2xl font-bold text-slate-900">Properties</h2>
+      <h2 class="font-headline text-2xl font-bold text-slate-900">Contractor accommodation in Wicklow and Offaly</h2>
     </div>
-    <p class="text-slate-500 text-sm mb-8">Properties in Wicklow and Offaly, commutable to jobs in Dublin and Kildare. Tell us where the work is and we'll tell you what suits.</p>
+    <p class="text-slate-500 text-sm mb-8">Rooms and houses commutable to jobs in Dublin and Kildare. Tell us where the work is and we'll tell you what suits.</p>
 
     <% if @properties.present? %>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -75,6 +76,16 @@
           <%= render "properties/property_card", property: property %>
         <% end %>
       </div>
+      <% if towns.any? %>
+        <div class="mt-10 flex flex-wrap gap-3">
+          <% towns.each do |town| %>
+            <%= link_to town_path(town), class: "inline-flex items-center gap-1.5 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#0F224F] hover:bg-slate-50 transition-colors" do %>
+              Contractor accommodation in <%= town.name %>
+              <span class="material-symbols-outlined text-base" aria-hidden="true">arrow_forward</span>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
     <% else %>
       <div class="text-center py-20">
         <span class="material-symbols-outlined text-slate-300 text-5xl mb-4">search_off</span>
@@ -233,6 +244,45 @@
         We've housed working crews ourselves and dealt with every problem — teams who need invoices, accountants who need receipts, people who just need a comfortable bed near the job and somewhere to park. Whether it's a construction crew, a film unit or a business team, we built Crewbase because nothing else was built for this.
       </p>
     </div>
+  </div>
+</section>
+
+<%# ===== CONTRACTOR ACCOMMODATION, EXPLAINED — the questions a company
+    asks before booking, and the words people search with ===== %>
+<section id="faq" class="bg-white py-16 border-t border-slate-100 scroll-mt-20">
+  <div class="max-w-3xl mx-auto px-6">
+    <h2 class="font-headline text-2xl font-bold text-slate-900 mb-8">Contractor accommodation, explained</h2>
+    <dl class="space-y-7">
+      <div>
+        <dt class="font-semibold text-slate-900 mb-1">What is contractor accommodation?</dt>
+        <dd class="text-slate-600 leading-relaxed">Somewhere to stay for people working away from home — construction crews, engineers, installers, film units, business teams. It's booked by the company, priced for weeknights rather than weekends, and invoiced like any other job cost. Holiday lets are built for the opposite.</dd>
+      </div>
+      <% if towns.any? %>
+        <div>
+          <dt class="font-semibold text-slate-900 mb-1">Where is your accommodation?</dt>
+          <dd class="text-slate-600 leading-relaxed">
+            <% towns.each_with_index do |town, i| %><%= i.zero? ? "In " : (i == towns.size - 1 ? " and " : ", ") %><%= link_to "#{town.name}, Co. #{town.county}", town_path(town), class: "font-semibold text-[#0F224F] hover:underline" %><% end %>
+            — commutable to sites in Dublin, Kildare and along the M4 and N81. If your job is somewhere else, tell us anyway and we'll say honestly whether anything we have is in reach.
+          </dd>
+        </div>
+      <% end %>
+      <div>
+        <dt class="font-semibold text-slate-900 mb-1">Can a whole crew stay together?</dt>
+        <dd class="text-slate-600 leading-relaxed">Yes — book several rooms in the same house, or a whole house for the team. Tell us how many people and we'll put the options together.</dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-slate-900 mb-1">Can we book Monday to Friday only?</dt>
+        <dd class="text-slate-600 leading-relaxed">Yes. Weekday stays are 10–25% cheaper, so a crew that goes home at the weekend doesn't pay for nights it doesn't use.</dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-slate-900 mb-1">Do you invoice the company?</dt>
+        <dd class="text-slate-600 leading-relaxed">Every stay comes with a proper invoice made out to the business, so it goes straight through accounts — no chasing receipts.</dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-slate-900 mb-1">How quickly can you answer?</dt>
+        <dd class="text-slate-600 leading-relaxed">Within 24 hours, usually quicker. <%= link_to "Send your requirements", root_path(anchor: "enquiry"), class: "font-semibold text-[#0F224F] hover:underline" %> or email <%= mail_to contact_email, contact_email, subject: "Accommodation enquiry", class: "font-semibold text-[#0F224F] hover:underline" %>.</dd>
+      </div>
+    </dl>
   </div>
 </section>
 

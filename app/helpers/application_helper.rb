@@ -5,7 +5,7 @@ module ApplicationHelper
     if text
       content_for(:meta_description, text)
     else
-      content_for?(:meta_description) ? content_for(:meta_description) : "Crewbase — book accommodation for working crews of every kind: construction, film, engineering, business teams and more. Weekday pricing, automatic invoices, stays built for people who travel for work."
+      content_for?(:meta_description) ? content_for(:meta_description) : "Crewbase — contractor accommodation for working crews of every kind: construction, film, engineering, business teams and more. Weekday pricing, automatic invoices, stays built for people who travel for work."
     end
   end
 
@@ -64,6 +64,27 @@ module ApplicationHelper
     data["priceRange"] = "\u20ac#{property.price_per_night.to_i} per night"
 
     data.compact
+  end
+
+  # BreadcrumbList JSON-LD from [name, url] pairs, home first. Google shows the
+  # trail in place of the bare URL in results. Render it like
+  # lodging_structured_data: `raw json_escape(...to_json)`.
+  def breadcrumb_structured_data(crumbs)
+    {
+      "@context" => "https://schema.org",
+      "@type" => "BreadcrumbList",
+      "itemListElement" => crumbs.each_with_index.map do |(name, url), index|
+        { "@type" => "ListItem", "position" => index + 1, "name" => name, "item" => url }
+      end
+    }
+  end
+
+  # The <title> for a listing. Ten listings are called "Double Room" or "Twin
+  # Room", so the title alone gave Google ten identical page titles — the town
+  # and the category are what make each one worth ranking.
+  def listing_page_title(property)
+    place = property.city.presence && " in #{property.city}"
+    "#{property.title} — Contractor Accommodation#{place} | Crewbase"
   end
 
   # Schema.org wants a Time as ISO 8601 ("16:00:00"). Listings store check-in

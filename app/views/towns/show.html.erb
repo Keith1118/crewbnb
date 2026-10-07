@@ -1,0 +1,147 @@
+<% beds = @properties.sum { |p| p.max_guests.to_i } %>
+<% from_price = @properties.map(&:price_per_night).compact.min %>
+<% with_parking = @properties.count(&:has_parking) %>
+<% town_label = "#{@town.name}, Co. #{@town.county}" %>
+
+<% content_for(:title, "Contractor Accommodation in #{@town.name}, Co. #{@town.county} | Crewbase") %>
+<% meta_description "Contractor accommodation in #{town_label}: #{pluralize(@properties.size, 'listing')} sleeping #{beds} in total#{", from €#{from_price.to_i} a night" if from_price}. Weekday pricing and an invoice for every stay — tell us the job and we'll reply within 24 hours." %>
+
+<% content_for(:head) do %>
+  <script type="application/ld+json">
+    <%= raw json_escape(breadcrumb_structured_data([
+          [ "Crewbase", root_url ],
+          [ "Contractor accommodation", properties_url ],
+          [ @town.name, town_url(@town) ]
+        ]).to_json) %>
+  </script>
+  <script type="application/ld+json">
+    <%= raw json_escape({
+          "@context" => "https://schema.org",
+          "@type" => "ItemList",
+          "name" => "Contractor accommodation in #{town_label}",
+          "itemListElement" => @properties.each_with_index.map { |p, i|
+            { "@type" => "ListItem", "position" => i + 1, "url" => property_url(p), "name" => p.title }
+          }
+        }.to_json) %>
+  </script>
+<% end %>
+
+<%# ===== HERO ===== %>
+<section class="bg-[#0F224F] pt-10 pb-12">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <nav class="flex flex-wrap items-center gap-2 text-sm text-blue-200/60 mb-4" aria-label="Breadcrumb">
+      <%= link_to "Home", root_path, class: "hover:text-white transition-colors" %>
+      <span aria-hidden="true">/</span>
+      <%= link_to "Contractor accommodation", properties_path, class: "hover:text-white transition-colors" %>
+      <span aria-hidden="true">/</span>
+      <span class="text-white"><%= @town.name %></span>
+    </nav>
+    <h1 class="font-headline text-3xl md:text-4xl font-extrabold text-white leading-[1.1] tracking-tight mb-4 max-w-3xl">
+      Contractor accommodation in <%= @town.name %>, Co. <%= @town.county %>
+    </h1>
+    <p class="text-blue-200/80 text-base md:text-lg max-w-2xl mb-8">
+      <%= pluralize(@properties.size, "place") %> for working crews, sleeping <%= beds %> in total<% if from_price %>, from €<%= from_price.to_i %> a night<% end %>. Weekday pricing and a proper invoice for every stay.
+    </p>
+    <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+      <%= link_to root_path(anchor: "enquiry"),
+          class: "inline-flex items-center justify-center gap-2 bg-white text-[#0F224F] px-6 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition-colors" do %>
+        Send your requirements
+      <% end %>
+      <%= mail_to contact_email, "Email #{contact_email}", subject: "Accommodation enquiry — #{@town.name}",
+          class: "inline-flex items-center justify-center border border-white/25 text-white px-6 py-3 rounded-xl font-semibold text-sm hover:bg-white/10 transition-colors" %>
+    </div>
+  </div>
+</section>
+
+<%# ===== AT A GLANCE — all worked out from the live listings ===== %>
+<section class="bg-green-50 border-b border-green-100">
+  <div class="max-w-screen-xl mx-auto px-6 py-3 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-green-800 font-medium">
+    <span><%= pluralize(@properties.size, "listing") %></span>
+    <span class="hidden md:inline text-green-300">|</span>
+    <span>Sleeps <%= beds %> in total</span>
+    <% if with_parking.positive? %>
+      <span class="hidden md:inline text-green-300">|</span>
+      <span><%= with_parking == @properties.size ? "Parking at every listing" : "Parking at #{with_parking} of #{@properties.size}" %></span>
+    <% end %>
+    <span class="hidden md:inline text-green-300">|</span>
+    <span>Invoice with every stay</span>
+  </div>
+</section>
+
+<%# ===== LISTINGS ===== %>
+<section class="bg-white py-14">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <h2 class="font-headline text-2xl font-bold text-slate-900 mb-8">Places to stay in <%= @town.name %></h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <%= render partial: "properties/property_card", collection: @properties, as: :property %>
+    </div>
+  </div>
+</section>
+
+<%# ===== ABOUT THE TOWN + DRIVE TIMES ===== %>
+<section class="bg-slate-50 py-14 border-t border-slate-100">
+  <div class="max-w-screen-xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-10">
+    <div class="lg:col-span-2">
+      <h2 class="font-headline text-2xl font-bold text-slate-900 mb-4">Staying in <%= @town.name %> for work</h2>
+      <div class="space-y-4 text-slate-600 leading-relaxed">
+        <% @town.intro.each do |paragraph| %>
+          <p><%= paragraph %></p>
+        <% end %>
+      </div>
+    </div>
+    <div>
+      <h2 class="font-headline text-lg font-bold text-slate-900 mb-1">Drive times from <%= @town.name %></h2>
+      <p class="text-xs text-slate-400 mb-4">Approximate, outside rush hour.</p>
+      <ul class="divide-y divide-slate-200 bg-white rounded-2xl border border-slate-100">
+        <% @town.nearby.each do |place| %>
+          <li class="flex items-center justify-between px-4 py-3 text-sm">
+            <span class="text-slate-700"><%= place.name %></span>
+            <span class="font-semibold text-slate-900">~<%= format_drive_time(approx_drive_minutes(@town.distance_to(place))) %></span>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<%# ===== HOW IT WORKS FOR A COMPANY ===== %>
+<section class="bg-white py-14 border-t border-slate-100">
+  <div class="max-w-3xl mx-auto px-6">
+    <h2 class="font-headline text-2xl font-bold text-slate-900 mb-6">Booking contractor accommodation in <%= @town.name %></h2>
+    <dl class="space-y-6">
+      <div>
+        <dt class="font-semibold text-slate-900 mb-1">Who books?</dt>
+        <dd class="text-slate-600 leading-relaxed">Usually the company — a contractor, site manager or office manager housing a crew for a job nearby. Tell us how many people, the dates and where the site is, and we'll come back with what suits within 24 hours.</dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-slate-900 mb-1">Can the crew stay Monday to Friday only?</dt>
+        <dd class="text-slate-600 leading-relaxed">Yes. Weekday stays are discounted, so a crew that goes home at the weekend doesn't pay for nights it isn't using.</dd>
+      </div>
+      <div>
+        <dt class="font-semibold text-slate-900 mb-1">How is it invoiced?</dt>
+        <dd class="text-slate-600 leading-relaxed">Every stay comes with a proper invoice made out to the business, so it goes straight through accounts.</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<%# ===== CTA + OTHER TOWNS ===== %>
+<section class="bg-slate-50 py-14 border-t border-slate-100">
+  <div class="max-w-screen-xl mx-auto px-6">
+    <div class="bg-[#0F224F] rounded-2xl px-8 py-12 md:px-16 text-center">
+      <h2 class="font-headline text-2xl md:text-3xl font-bold text-white mb-3">Housing a crew near <%= @town.name %>?</h2>
+      <p class="text-blue-200/60 max-w-md mx-auto mb-8 text-sm">Send the dates and numbers. We'll come back within 24 hours.</p>
+      <%= link_to "Send an enquiry", root_path(anchor: "enquiry"),
+          class: "inline-block bg-white text-[#0F224F] px-7 py-3 rounded-xl font-semibold text-sm hover:bg-blue-50 transition-colors" %>
+    </div>
+
+    <% if @other_towns.any? %>
+      <div class="mt-10 text-center text-sm text-slate-500">
+        Also:
+        <% @other_towns.each do |town| %>
+          <%= link_to "contractor accommodation in #{town.name}", town_path(town), class: "font-semibold text-[#0F224F] hover:underline" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</section>

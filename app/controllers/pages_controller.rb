@@ -89,6 +89,7 @@ class PagesController < ApplicationController
 
   def sitemap
     @properties = Property.published.order(updated_at: :desc)
+    @towns = Town.with_listings
     render formats: :xml
   end
 
